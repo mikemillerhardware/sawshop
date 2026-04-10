@@ -623,7 +623,7 @@ function initFirebase(){
     STORAGE=firebase.storage();
     setSP('ok','Live sync on');
     DB.ref('orders').on('value',function(s){ORDERS={};nextWO=1001;s.forEach(function(ch){var v=ch.val();ORDERS[ch.key]=v;if(v.woNum>=nextWO)nextWO=v.woNum+1;});refreshAll();});
-    DB.ref('customers').on('value',function(s){CUSTS={};s.forEach(function(ch){CUSTS[ch.key]=ch.val();});renderCustomers();populateCustSel();});
+    DB.ref('customers').on('value',function(s){CUSTS={};s.forEach(function(ch){CUSTS[ch.key]=ch.val();});renderCustomers();populateCustSel();renderDash();renderOrders();});
     DB.ref('techs').on('value',function(s){var t=s.val();if(t&&Array.isArray(t))TECHS=t;renderTechs();populateTechSels();});
     DB.ref('equipment').on('value',function(s){EQUIPMENT={};s.forEach(function(ch){EQUIPMENT[ch.key]=ch.val();});renderReminders();});
     DB.ref('attachments').on('value',function(s){ATTACHMENTS={};s.forEach(function(ch){ATTACHMENTS[ch.key]=ch.val();});});
