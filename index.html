@@ -28,8 +28,8 @@ body{font-family:'Barlow',sans-serif;font-size:17px;color:var(--dark);background
 .tab.active{color:var(--red);border-bottom-color:var(--red)}
 .tab .tab-badge{background:var(--red);color:#fff;font-size:10px;font-weight:700;border-radius:8px;padding:1px 5px;margin-left:4px}
 .btn{padding:7px 14px;border-radius:3px;border:1.5px solid var(--silver);background:var(--white);font-size:15px;font-weight:600;cursor:pointer;color:var(--dark);font-family:'Barlow',sans-serif;transition:background .12s}
-.fab{display:none;position:fixed;bottom:20px;right:20px;z-index:150;background:var(--red);color:#fff;border:none;border-radius:50px;padding:14px 20px;font-size:15px;font-weight:700;font-family:'Barlow',sans-serif;box-shadow:0 4px 16px rgba(0,0,0,.25);cursor:pointer;white-space:nowrap}
-@media(max-width:600px){.navbar-new-wo-btn{display:none!important}.fab{display:block}}
+.fab{display:none;position:fixed;bottom:24px;right:20px;z-index:190;background:var(--red);color:#fff;border:none;border-radius:50px;padding:16px 22px;font-size:15px;font-weight:700;font-family:'Barlow',sans-serif;box-shadow:0 4px 16px rgba(0,0,0,.3);cursor:pointer;white-space:nowrap;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
+@media(max-width:600px){.navbar-new-wo-btn{display:none!important}.fab{display:block}.modal-bg{padding:0;align-items:flex-start}.modal{width:100%;min-height:100vh;border-radius:0;border-top:4px solid var(--red);padding:16px}}
 .btn:hover{background:var(--off)}
 .btn.primary{background:var(--red);border-color:var(--red);color:#fff}
 .btn.primary:hover{background:var(--red-dk)}
@@ -229,7 +229,7 @@ hr{border:none;border-top:1.5px solid var(--silver);margin:12px 0}
     </div>
     <button class="btn primary navbar-new-wo-btn" onclick="openNewWO()">+ New Work Order</button>
   </div>
-  <button class="fab" onclick="openNewWO()">+ New Work Order</button>
+  <button class="fab" onclick="openNewWO()" ontouchstart="openNewWO();event.preventDefault()">+ New Work Order</button>
 
   <div class="view active" id="tab-dash">
     <div class="stat-row">
