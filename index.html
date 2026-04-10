@@ -947,7 +947,26 @@ function renderCustomers(){
 
 function woRow(o,c){var isW=o.status==='Waiting on Parts';return '<div class="wo-row'+(o.urgent?' urgent':isW?' waiting':'')+'" onclick="openDet(\''+o.id+'\')">'+'<span class="wo-num">#'+o.woNum+(o.tag?'<br><span style="font-size:10px;color:var(--muted);font-weight:400">Tag: '+o.tag+'</span>':'')+'</span><div class="wo-main"><div class="wo-cust">'+(c.first||'')+' '+(c.last||'')+'</div><div class="wo-equip">'+(o.brand||'')+' '+(o.equipType||'')+(o.model?' — '+o.model:'')+(o.serial?' | SN: '+o.serial:'')+(isW&&o.partsWaiting?' · '+o.partsWaiting:'')+'</div></div><div class="wo-meta">'+(o.urgent?'<span class="badge b-urgent">Urgent</span>':'')+badge(o.status||'Intake')+(o.estHrs?'<span style="font-size:10px;color:var(--muted)">'+o.estHrs+'h</span>':'')+'</div><span class="wo-tech">'+(o.tech||'')+'</span></div>';}
 
-function openNewWO(){editWOid=null;document.getElementById('wo-mtitle').textContent='New Work Order';document.getElementById('wo-del-btn').style.display='none';populateTechSels();clearCustSel();['m-tag','m-brand','m-year','m-model','m-product','m-serial','m-engine','m-hours','m-complaint','m-notes','m-estdate','m-dateout','m-parts-waiting','m-est-hrs','m-act-hrs','m-bill-hrs'].forEach(function(id){document.getElementById(id).value='';});document.getElementById('m-tech').value='Unassigned';document.getElementById('m-etype').value='Chainsaw';document.getElementById('m-status').value='Intake';document.getElementById('m-datein').value=today();document.getElementById('m-urg').checked=false;document.getElementById('m-notes-ts').textContent='';document.getElementById('pt-body').innerHTML='';document.getElementById('waiting-parts-row').style.display='none';document.getElementById('hrs-variance-display').textContent='';document.getElementById('wo-modal').classList.add('open');}
+function openNewWO(){
+  editWOid=null;
+  var m=document.getElementById('wo-modal');
+  if(!m)return;
+  var ti=document.getElementById('wo-mtitle');if(ti)ti.textContent='New Work Order';
+  var db=document.getElementById('wo-del-btn');if(db)db.style.display='none';
+  populateTechSels();
+  clearCustSel();
+  ['m-tag','m-brand','m-year','m-model','m-product','m-serial','m-engine','m-hours','m-complaint','m-notes','m-estdate','m-dateout','m-parts-waiting','m-est-hrs','m-act-hrs','m-bill-hrs'].forEach(function(id){var el=document.getElementById(id);if(el)el.value='';});
+  var tech=document.getElementById('m-tech');if(tech)tech.value='Unassigned';
+  var etype=document.getElementById('m-etype');if(etype)etype.value='Chainsaw';
+  var status=document.getElementById('m-status');if(status)status.value='Intake';
+  var datein=document.getElementById('m-datein');if(datein)datein.value=today();
+  var urg=document.getElementById('m-urg');if(urg)urg.checked=false;
+  var nts=document.getElementById('m-notes-ts');if(nts)nts.textContent='';
+  var ptb=document.getElementById('pt-body');if(ptb)ptb.innerHTML='';
+  var wr=document.getElementById('waiting-parts-row');if(wr)wr.style.display='none';
+  var hv=document.getElementById('hrs-variance-display');if(hv)hv.textContent='';
+  m.classList.add('open');
+}
 
 function openEditWO(id){var o=ORDERS[id];if(!o)return;editWOid=id;document.getElementById('wo-mtitle').textContent='Edit WO #'+o.woNum;document.getElementById('wo-del-btn').style.display='';populateTechSels();setCustSelById(o.custId||'');document.getElementById('m-tech').value=o.tech||'Unassigned';document.getElementById('m-etype').value=o.equipType||'Chainsaw';document.getElementById('m-brand').value=o.brand||'';document.getElementById('m-year').value=o.year||'';document.getElementById('m-model').value=o.model||'';document.getElementById('m-product').value=o.product||'';document.getElementById('m-serial').value=o.serial||'';document.getElementById('m-engine').value=o.engine||'';document.getElementById('m-hours').value=o.hours||'';document.getElementById('m-complaint').value=o.complaint||'';document.getElementById('m-notes').value=o.notes||'';document.getElementById('m-notes-ts').textContent=o.notesTs?'Last updated: '+o.notesTs:'';document.getElementById('m-status').value=o.status||'Intake';document.getElementById('m-datein').value=o.dateIn||'';document.getElementById('m-estdate').value=o.estDate||'';document.getElementById('m-dateout').value=o.dateOut||'';document.getElementById('m-tag').value=o.tag||'';document.getElementById('m-est-hrs').value=o.estHrs||'';document.getElementById('m-act-hrs').value=o.actHrs||'';document.getElementById('m-bill-hrs').value=o.billHrs||'';document.getElementById('waiting-parts-row').style.display=o.status==='Waiting on Parts'?'block':'none';updateHrsVariance();var pb=document.getElementById('pt-body');pb.innerHTML='';(o.parts||[]).forEach(function(p){appPR(p);});closeM('det-modal');document.getElementById('wo-modal').classList.add('open');}
 
