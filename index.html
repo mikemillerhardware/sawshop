@@ -1003,7 +1003,8 @@ function quickAddPart(id){
   o.parts=parts;
   writeOrder(o);
   openDet(id);
-}if(!inp.files||!inp.files[0])return;var reader=new FileReader();reader.onload=function(e){var atts=ATTACHMENTS[woid]?JSON.parse(JSON.stringify(ATTACHMENTS[woid])):[];atts.push({name:inp.files[0].name,data:e.target.result,ts:new Date().toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})});writeAttachments(woid,atts);var tb=document.getElementById('att-thumbs-'+woid);if(tb){var i=atts.length-1;var div=document.createElement('div');div.className='attach-thumb';div.innerHTML='<img src="'+e.target.result+'" onclick="viewImg(\''+woid+'\','+i+')" title="'+inp.files[0].name+'"><button class="rm-att" onclick="removeAtt(\''+woid+'\','+i+')">&#x2715;</button>';tb.appendChild(div);}};reader.readAsDataURL(inp.files[0]);inp.value='';}
+}
+function handleAttach(woid,inp){if(!inp.files||!inp.files[0])return;var reader=new FileReader();reader.onload=function(e){var atts=ATTACHMENTS[woid]?JSON.parse(JSON.stringify(ATTACHMENTS[woid])):[];atts.push({name:inp.files[0].name,data:e.target.result,ts:new Date().toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})});writeAttachments(woid,atts);var tb=document.getElementById('att-thumbs-'+woid);if(tb){var i=atts.length-1;var div=document.createElement('div');div.className='attach-thumb';div.innerHTML='<img src="'+e.target.result+'" onclick="viewImg(\''+woid+'\','+i+')" title="'+inp.files[0].name+'"><button class="rm-att" onclick="removeAtt(\''+woid+'\','+i+')">&#x2715;</button>';tb.appendChild(div);}};reader.readAsDataURL(inp.files[0]);inp.value='';}
 function removeAtt(woid,idx){if(!confirm('Remove?'))return;var atts=ATTACHMENTS[woid]||[];atts.splice(idx,1);writeAttachments(woid,atts);openDet(woid);}
 function viewImg(woid,idx){var a=ATTACHMENTS[woid];if(!a||!a[idx])return;var w=window.open();w.document.write('<img src="'+a[idx].data+'" style="max-width:100%;height:auto">');}
 
@@ -1061,7 +1062,7 @@ function printWO(id){
     +'.thank-you strong{font-size:11px;color:#CC0000}'
     +'.thank-you div{font-size:9px;color:#888;margin-top:2px}'
     +'</style></head><body>'
-    +'<div class="logo-wrap" style="text-align:center;margin-bottom:8px"><div style="font-family:Cinzel,serif;font-size:26px;font-weight:700;letter-spacing:.08em;color:#1a1a1a;line-height:1;text-transform:uppercase">Miller <span style='font-weight:400'>Hardware</span></div><div style="display:flex;align-items:center;gap:8px;margin:4px 0 3px"><hr style='flex:1;border:none;border-top:1.5px solid #1a1a1a;margin:0'><span style='font-family:Cinzel,serif;font-size:8px;letter-spacing:.16em;text-transform:uppercase;font-weight:500;white-space:nowrap'>Company, Inc. &mdash; Est. 1931</span><hr style='flex:1;border:none;border-top:1.5px solid #1a1a1a;margin:0'></div><div style='font-size:9px;color:#555;letter-spacing:.08em;text-transform:uppercase;font-family:Arial,sans-serif'>True Value Dealer &mdash; Harrison &amp; Yellville, Arkansas</div></div>'
+    +'<div class="logo-wrap" style="text-align:center;margin-bottom:8px"><div style="font-family:Cinzel,serif;font-size:26px;font-weight:700;letter-spacing:.08em;color:#1a1a1a;line-height:1;text-transform:uppercase">Miller <span style="font-weight:400">Hardware</span></div><div style="display:flex;align-items:center;gap:8px;margin:4px 0 3px"><hr style="flex:1;border:none;border-top:1.5px solid #1a1a1a;margin:0"><span style="font-family:Cinzel,serif;font-size:8px;letter-spacing:.16em;text-transform:uppercase;font-weight:500;white-space:nowrap">Company, Inc. &mdash; Est. 1931</span><hr style="flex:1;border:none;border-top:1.5px solid #1a1a1a;margin:0"></div><div style="font-size:9px;color:#555;letter-spacing:.08em;text-transform:uppercase;font-family:Arial,sans-serif">True Value Dealer &mdash; Harrison &amp; Yellville, Arkansas</div></div>'
     +'<div class="red-bar"></div>'
     +'<div class="wo-meta">'
     +'<div><div class="wo-num-lbl">Work Order</div><div class="wo-num">#'+o.woNum+'</div></div>'
@@ -1095,8 +1096,7 @@ function printWO(id){
     +'<div>Miller Hardware Company &mdash; Serving Arkansas Since 1931</div>'
     +'<div>'+locAddr+'</div>'
     +'</div>'
-    +'
-</body></html>';
+    +'</body></html>';
   var pw=window.open('','_blank','width=800,height=700');
   pw.document.write(html);
   pw.document.close();
