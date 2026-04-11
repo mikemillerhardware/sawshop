@@ -1,67 +1,62 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Miller Hardware — Saw Shop</title>
-<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700;800&family=Barlow+Condensed:wght@600;700;800&family=Cinzel:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
 <style>
+@import url('https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700;800&family=Barlow+Condensed:wght@600;700;800&display=swap');
 *{box-sizing:border-box;margin:0;padding:0}
+.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
 :root{--red:#CC0000;--red-dk:#a30000;--dark:#1a1a1a;--gray2:#555;--muted:#888;--silver:#e0e0e0;--off:#f6f4f1;--white:#ffffff}
-body{font-family:'Barlow',sans-serif;font-size:17px;color:var(--dark);background:var(--off);min-height:100vh}
-.app{display:flex;flex-direction:column;min-height:100vh}
-.topbar{background:var(--dark);padding:7px 16px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:6px;position:sticky;top:0;z-index:50}
-.topbar-brand{font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:800;color:#fff;letter-spacing:.02em}
+body{font-family:'Barlow',sans-serif;font-size:16px;color:var(--dark);background:var(--off)}
+.app{display:flex;flex-direction:column;min-height:500px}
+.topbar{background:var(--dark);padding:7px 14px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:6px}
+.topbar-brand{font-family:'Barlow Condensed',sans-serif;font-size:19px;font-weight:800;color:#fff;letter-spacing:.02em}
 .topbar-brand span{color:var(--red)}
 .topbar-right{display:flex;align-items:center;gap:8px}
-.tv-pill{background:var(--red);color:#fff;font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:3px 8px;border-radius:3px}
-.sync-pill{font-size:13px;padding:3px 9px;border-radius:3px;display:flex;align-items:center;gap:5px}
+.tv-pill{background:var(--red);color:#fff;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:3px 8px;border-radius:3px}
+.sync-pill{font-size:12px;padding:3px 8px;border-radius:3px;display:flex;align-items:center;gap:5px}
 .sync-pill.ok{background:#2d5a1b;color:#b8e68a}
 .sync-pill.warn{background:#5a3e1b;color:#f5c87a}
 .sync-pill.err{background:#5a1b1b;color:#f5a0a0}
 .dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
 .dot.g{background:#7ec94a}.dot.a{background:#f5a623}.dot.r{background:#e24b4a}
-.navbar{background:var(--white);border-bottom:3px solid var(--red);display:flex;align-items:center;justify-content:space-between;padding:0 16px;min-height:52px;flex-wrap:nowrap;gap:6px;position:sticky;top:42px;z-index:49;overflow:hidden}
-.tabs{display:flex;gap:2px;height:52px;overflow-x:auto;flex:1;min-width:0}
-.tab{display:flex;align-items:center;padding:0 11px;font-size:15px;font-weight:600;cursor:pointer;color:var(--gray2);border-bottom:3px solid transparent;margin-bottom:-3px;white-space:nowrap;flex-shrink:0;user-select:none}
+.navbar{background:var(--white);border-bottom:3px solid var(--red);display:flex;align-items:center;justify-content:space-between;padding:0 14px;min-height:52px;flex-wrap:wrap;gap:6px}
+.tabs{display:flex;gap:2px;height:52px;overflow-x:auto}
+.tab{display:flex;align-items:center;padding:0 10px;font-size:15px;font-weight:600;cursor:pointer;color:var(--gray2);border-bottom:3px solid transparent;margin-bottom:-3px;white-space:nowrap;flex-shrink:0}
 .tab:hover{color:var(--dark)}
 .tab.active{color:var(--red);border-bottom-color:var(--red)}
-.tab .tab-badge{background:var(--red);color:#fff;font-size:10px;font-weight:700;border-radius:8px;padding:1px 5px;margin-left:4px}
-.btn{padding:7px 14px;border-radius:3px;border:1.5px solid var(--silver);background:var(--white);font-size:15px;font-weight:600;cursor:pointer;color:var(--dark);font-family:'Barlow',sans-serif;transition:background .12s}
-.fab{display:none;position:fixed;bottom:24px;right:20px;z-index:190;background:var(--red);color:#fff;border:none;border-radius:50px;padding:16px 22px;font-size:15px;font-weight:700;font-family:'Barlow',sans-serif;box-shadow:0 4px 16px rgba(0,0,0,.3);cursor:pointer;white-space:nowrap;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
-@media(max-width:600px){.navbar-new-wo-btn{display:none!important}.fab{display:block}.modal-bg{padding:0;align-items:flex-start}.modal{width:100%;min-height:100vh;border-radius:0;border-top:4px solid var(--red);padding:16px}}
+.tab .tab-badge{background:var(--red);color:#fff;font-size:10px;font-weight:700;border-radius:8px;padding:1px 5px;margin-left:4px;vertical-align:middle}
+.btn{padding:7px 14px;border-radius:3px;border:1.5px solid var(--silver);background:var(--white);font-size:15px;font-weight:600;cursor:pointer;color:var(--dark);font-family:'Barlow',sans-serif}
 .btn:hover{background:var(--off)}
 .btn.primary{background:var(--red);border-color:var(--red);color:#fff}
 .btn.primary:hover{background:var(--red-dk)}
-.btn.sm{padding:4px 10px;font-size:14px}
+.btn.sm{padding:4px 10px;font-size:13px}
 .btn.success{background:#2d7d1e;border-color:#2d7d1e;color:#fff}
-.btn.success:hover{background:#235f16}
 .btn.del{color:var(--red);border-color:#f5c6c6}
 .btn.del:hover{background:#fff0f0}
 .btn.outline{background:transparent;border-color:var(--red);color:var(--red)}
 .btn.outline:hover{background:#fff0f0}
-.view{display:none;padding:16px;max-width:1100px;margin:0 auto;width:100%}
+.btn.amber{background:#BA7517;border-color:#BA7517;color:#fff}
+.btn.amber:hover{background:#854F0B}
+.view{display:none;padding:14px}
 .view.active{display:block}
-.stat-row{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px;margin-bottom:16px}
-.stat{background:var(--white);border:1.5px solid var(--silver);border-radius:3px;padding:10px 14px;border-top:3px solid var(--red)}
-.stat .lbl{font-size:13px;color:var(--muted);font-weight:600;letter-spacing:.04em;text-transform:uppercase;margin-bottom:3px}
-.stat .val{font-size:25px;font-weight:800}
+.stat-row{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px;margin-bottom:14px}
+.stat{background:var(--white);border:1.5px solid var(--silver);border-radius:3px;padding:10px 12px;border-top:3px solid var(--red)}
+.stat .lbl{font-size:12px;color:var(--muted);font-weight:600;letter-spacing:.04em;text-transform:uppercase;margin-bottom:3px}
+.stat .val{font-size:22px;font-weight:800}
 .stat.urg .val{color:var(--red)}
 .stat.parts-stat .val{color:#854F0B}
 .srow{display:flex;gap:7px;margin-bottom:12px;flex-wrap:wrap}
 .srow input,.srow select{padding:7px 10px;border:1.5px solid var(--silver);border-radius:3px;font-size:15px;background:var(--white);color:var(--dark);font-family:'Barlow',sans-serif}
 .srow input{flex:1;min-width:150px}
-.wo-row{display:flex;align-items:center;gap:10px;padding:10px 14px;border:1.5px solid var(--silver);border-radius:3px;margin-bottom:7px;background:var(--white);cursor:pointer;transition:border-color .15s}
+.wo-row{display:flex;align-items:center;gap:10px;padding:10px 12px;border:1.5px solid var(--silver);border-radius:3px;margin-bottom:7px;background:var(--white);cursor:pointer;transition:border-color .15s}
 .wo-row:hover{border-color:var(--red)}
 .wo-row.urgent{border-left:4px solid var(--red)}
 .wo-row.waiting{border-left:4px solid #BA7517}
-.wo-num{font-size:13px;color:var(--muted);font-weight:700;min-width:50px;font-family:'Barlow Condensed',sans-serif}
+.wo-num{font-size:12px;color:var(--muted);font-weight:700;min-width:46px;font-family:'Barlow Condensed',sans-serif}
 .wo-main{flex:1;min-width:0}
 .wo-cust{font-weight:700;font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.wo-equip{font-size:13px;color:var(--gray2)}
-.wo-tech{font-size:13px;color:var(--muted);min-width:80px;text-align:right}
+.wo-equip{font-size:12px;color:var(--gray2)}
+.wo-tech{font-size:12px;color:var(--muted);min-width:70px;text-align:right}
 .wo-meta{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
-.badge{display:inline-block;padding:2px 7px;border-radius:2px;font-size:12px;font-weight:700;letter-spacing:.05em;text-transform:uppercase}
+.badge{display:inline-block;padding:2px 7px;border-radius:2px;font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase}
 .b-intake{background:#e6f1fb;color:#0c447c}
 .b-diag{background:#faeeda;color:#633806}
 .b-repair{background:#eeedfe;color:#3c3489}
@@ -73,92 +68,79 @@ body{font-family:'Barlow',sans-serif;font-size:17px;color:var(--dark);background
 .b-warranty{background:#eaf3de;color:#1a5c0a}
 .b-warranty-exp{background:#FCEBEB;color:#A32D2D}
 .b-warranty-soon{background:#FAEEDA;color:#633806}
+.b-overdue{background:#FCEBEB;color:#A32D2D}
+.b-due-soon{background:#FAEEDA;color:#633806}
+.b-seasonal{background:#eeedfe;color:#3c3489}
 .card{background:var(--white);border:1.5px solid var(--silver);border-radius:3px;padding:14px;margin-bottom:10px}
 .card-hdr{font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-bottom:10px;padding-bottom:6px;border-bottom:1.5px solid var(--silver)}
 .g2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
 .g4{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:10px}
 .f{display:flex;flex-direction:column;gap:3px;margin-bottom:10px}
-.f label{font-size:13px;font-weight:700;color:var(--muted);letter-spacing:.04em;text-transform:uppercase}
-.f input,.f select,.f textarea{width:100%;padding:7px 10px;border:1.5px solid var(--silver);border-radius:3px;font-size:15px;background:var(--white);color:var(--dark);font-family:'Barlow',sans-serif}
+.f label{font-size:12px;font-weight:700;color:var(--muted);letter-spacing:.04em;text-transform:uppercase}
+.f input,.f select,.f textarea{width:100%;padding:7px 9px;border:1.5px solid var(--silver);border-radius:3px;font-size:15px;background:var(--white);color:var(--dark);font-family:'Barlow',sans-serif}
 .f input:focus,.f select:focus,.f textarea:focus{outline:none;border-color:var(--red)}
-.f textarea{min-height:56px;resize:vertical}
-.modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:200;align-items:flex-start;justify-content:center;padding:20px;overflow-y:auto}
-#det-modal{z-index:200}
-#wo-modal{z-index:210}
-#cust-modal{z-index:220}
-#eq-modal{z-index:220}
-#contact-modal{z-index:220}
-#part-order-modal{z-index:220}
-.part-item{display:flex;align-items:flex-start;gap:8px;padding:7px 0;border-bottom:1px solid var(--off)}
-.part-item:last-child{border-bottom:none}
-.part-item-check{margin-top:2px;width:16px;height:16px;accent-color:var(--red);cursor:pointer;flex-shrink:0}
-.part-item-body{flex:1;min-width:0}
-.part-item-num{font-size:12px;font-weight:700;color:var(--dark)}
-.part-item-desc{font-size:12px;color:var(--gray2)}
-.part-item-meta{font-size:11px;color:var(--muted);margin-top:1px}
-.part-item.received .part-item-num,.part-item.received .part-item-desc{text-decoration:line-through;color:var(--muted)}.part-item.ordered-flag{background:#faeeda;border-radius:3px;padding:2px 4px}.part-status-row{display:flex;gap:14px;margin-top:5px;flex-wrap:wrap}.part-status-label{display:flex;align-items:center;gap:5px;font-size:12px;color:var(--gray2);cursor:pointer;user-select:none}.part-status-label input{width:15px;height:15px;cursor:pointer;accent-color:var(--red)}
-.part-item-del{background:none;border:none;cursor:pointer;color:var(--muted);font-size:13px;padding:0 3px;flex-shrink:0}
-.part-item-del:hover{color:var(--red)}
+.f textarea{min-height:52px;resize:vertical}
+.modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:100;align-items:flex-start;justify-content:center;padding:20px;overflow-y:auto}
 .modal-bg.open{display:flex}
-.modal{background:var(--white);border-radius:3px;border-top:4px solid var(--red);padding:22px;width:min(97vw,660px);margin:auto}
-.modal-title{font-family:'Barlow Condensed',sans-serif;font-size:23px;font-weight:800;margin-bottom:16px}
+.modal{background:var(--white);border-radius:3px;border-top:4px solid var(--red);padding:20px;width:min(97vw,640px);margin:auto}
+.modal-title{font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:800;margin-bottom:16px}
 .mfoot{display:flex;gap:7px;justify-content:flex-end;margin-top:14px;padding-top:12px;border-top:1.5px solid var(--silver);flex-wrap:wrap}
-.sect-lbl{font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--red);margin:14px 0 8px;padding-bottom:4px;border-bottom:1.5px solid var(--red)}
+.sect-lbl{font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--red);margin:14px 0 8px;padding-bottom:4px;border-bottom:1.5px solid var(--red)}
 hr{border:none;border-top:1.5px solid var(--silver);margin:12px 0}
-.pt{width:100%;border-collapse:collapse;font-size:14px;table-layout:fixed}
-.pt th{text-align:left;font-size:12px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);padding:4px 6px;border-bottom:1.5px solid var(--silver)}
+.pt{width:100%;border-collapse:collapse;font-size:13px;table-layout:fixed}
+.pt th{text-align:left;font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);padding:4px 6px;border-bottom:1.5px solid var(--silver)}
 .pt td{padding:5px 4px;border-bottom:1px solid var(--off);vertical-align:top}
 .pt tr:last-child td{border-bottom:none}
-.empty{color:var(--muted);font-size:15px;text-align:center;padding:32px 0;font-style:italic}
+.empty{color:var(--muted);font-size:15px;text-align:center;padding:28px 0;font-style:italic}
 .status-btns{display:flex;gap:5px;flex-wrap:wrap;margin:8px 0}
-.sbtn{padding:5px 10px;border-radius:3px;border:1.5px solid var(--silver);background:var(--white);font-size:13px;font-weight:700;cursor:pointer;color:var(--gray2);font-family:'Barlow',sans-serif;white-space:nowrap}
+.sbtn{padding:5px 10px;border-radius:3px;border:1.5px solid var(--silver);background:var(--white);font-size:12px;font-weight:700;cursor:pointer;color:var(--gray2);font-family:'Barlow',sans-serif;white-space:nowrap}
 .sbtn:hover{border-color:var(--red);color:var(--red)}
 .sbtn.active{background:var(--red);border-color:var(--red);color:#fff}
 .sbtn.waiting-btn.active{background:#BA7517;border-color:#BA7517;color:#fff}
 .tech-chip{display:inline-flex;align-items:center;gap:6px;background:var(--off);border:1.5px solid var(--silver);border-radius:3px;padding:5px 10px;font-size:15px;font-weight:600;margin:4px}
 .tech-chip button{background:none;border:none;cursor:pointer;color:var(--muted);font-size:16px;padding:0 2px}
 .tech-chip button:hover{color:var(--red)}
-.note-ts{font-size:12px;color:var(--muted);margin-top:3px;font-style:italic}
-.df-lbl{font-size:12px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);margin-bottom:2px}
+.note-ts{font-size:11px;color:var(--muted);margin-top:3px;font-style:italic}
+.df-lbl{font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);margin-bottom:2px}
 .df-val{font-size:15px}
 .attach-thumb{display:inline-block;margin:4px;position:relative}
-.attach-thumb img{width:72px;height:72px;object-fit:cover;border-radius:3px;border:1.5px solid var(--silver);cursor:pointer}
-.rm-att{position:absolute;top:-6px;right:-6px;background:var(--red);color:#fff;border:none;border-radius:50%;width:18px;height:18px;font-size:13px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-weight:700}
-.upload-zone{border:2px dashed var(--silver);border-radius:3px;padding:14px;text-align:center;font-size:14px;color:var(--muted);cursor:pointer;margin-top:8px}
+.attach-thumb img{width:68px;height:68px;object-fit:cover;border-radius:3px;border:1.5px solid var(--silver);cursor:pointer}
+.rm-att{position:absolute;top:-6px;right:-6px;background:var(--red);color:#fff;border:none;border-radius:50%;width:18px;height:18px;font-size:12px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-weight:700}
+.upload-zone{border:2px dashed var(--silver);border-radius:3px;padding:12px;text-align:center;font-size:13px;color:var(--muted);cursor:pointer;margin-top:8px}
 .upload-zone:hover{border-color:var(--red);color:var(--red)}
-.equip-card{background:var(--off);border:1.5px solid var(--silver);border-radius:3px;padding:10px 14px;margin-bottom:8px;position:relative}
+.equip-card{background:var(--off);border:1.5px solid var(--silver);border-radius:3px;padding:10px 12px;margin-bottom:8px;position:relative}
 .equip-card .eq-badge{position:absolute;top:8px;right:8px;display:flex;gap:4px;flex-wrap:wrap;justify-content:flex-end;max-width:55%}
 .equip-card .eq-brand{font-size:16px;font-weight:700;padding-right:80px}
-.equip-card .eq-detail{font-size:13px;color:var(--muted);margin-top:2px}
+.equip-card .eq-detail{font-size:12px;color:var(--muted);margin-top:2px}
 .equip-card .eq-actions{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap}
-.contact-log-entry{padding:8px 10px;background:var(--off);border-radius:3px;margin-bottom:6px;font-size:14px}
-.contact-log-entry .cl-meta{font-size:12px;color:var(--muted);margin-top:3px}
+.contact-log-entry{padding:8px 10px;background:var(--off);border-radius:3px;margin-bottom:6px;font-size:13px}
+.contact-log-entry .cl-meta{font-size:11px;color:var(--muted);margin-top:3px}
 .board-wrap{overflow-x:auto;padding-bottom:8px}
 .board{display:flex;gap:12px;min-width:max-content;align-items:flex-start}
-.board-col{width:220px;flex-shrink:0}
+.board-col{width:210px;flex-shrink:0}
 .board-col-hdr{background:var(--dark);color:#fff;font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:8px 12px;border-radius:3px 3px 0 0;display:flex;justify-content:space-between;align-items:center}
-.board-col-hdr .col-count{background:var(--red);color:#fff;font-size:12px;font-weight:700;border-radius:10px;padding:1px 7px}
+.board-col-hdr .col-count{background:var(--red);color:#fff;font-size:11px;font-weight:700;border-radius:10px;padding:1px 7px}
 .board-col-hdr.overloaded{background:var(--red)}
 .board-col-body{background:var(--white);border:1.5px solid var(--silver);border-top:none;border-radius:0 0 3px 3px;min-height:80px;padding:8px}
 .board-card{background:var(--off);border:1.5px solid var(--silver);border-radius:3px;padding:8px 10px;margin-bottom:7px;cursor:pointer;transition:border-color .15s}
 .board-card:hover{border-color:var(--red)}
 .board-card.urgent{border-left:3px solid var(--red)}
 .board-card.waiting{border-left:3px solid #BA7517}
-.board-card .bc-wo{font-size:12px;color:var(--muted);font-weight:700}
+.board-card .bc-wo{font-size:11px;color:var(--muted);font-weight:700}
 .board-card .bc-cust{font-size:15px;font-weight:700;margin:1px 0}
-.board-card .bc-equip{font-size:13px;color:var(--gray2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.board-card .bc-equip{font-size:12px;color:var(--gray2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .board-card .bc-meta{display:flex;gap:5px;margin-top:5px;flex-wrap:wrap;align-items:center}
-.board-card .bc-hours{font-size:12px;color:var(--muted);margin-top:3px}
-.board-empty{font-size:14px;color:var(--muted);font-style:italic;text-align:center;padding:16px 0}
+.board-card .bc-hours{font-size:11px;color:var(--muted);margin-top:3px}
+.board-empty{font-size:13px;color:var(--muted);font-style:italic;text-align:center;padding:16px 0}
 .hours-summary{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-bottom:14px}
-.hours-stat{background:var(--white);border:1.5px solid var(--silver);border-radius:3px;padding:10px 14px;border-top:3px solid var(--dark)}
+.hours-stat{background:var(--white);border:1.5px solid var(--silver);border-radius:3px;padding:10px 12px;border-top:3px solid var(--dark)}
 .hours-stat.good{border-top-color:#2d7d1e}
 .hours-stat.over{border-top-color:var(--red)}
-.hours-stat .lbl{font-size:13px;color:var(--muted);font-weight:600;letter-spacing:.04em;text-transform:uppercase;margin-bottom:3px}
-.hours-stat .val{font-size:25px;font-weight:800}
-.hours-table{width:100%;border-collapse:collapse;font-size:14px}
-.hours-table th{text-align:left;font-size:12px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);padding:5px 8px;border-bottom:1.5px solid var(--silver);background:var(--off)}
+.hours-stat .lbl{font-size:12px;color:var(--muted);font-weight:600;letter-spacing:.04em;text-transform:uppercase;margin-bottom:3px}
+.hours-stat .val{font-size:22px;font-weight:800}
+.hours-table{width:100%;border-collapse:collapse;font-size:13px}
+.hours-table th{text-align:left;font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);padding:5px 8px;border-bottom:1.5px solid var(--silver);background:var(--off)}
 .hours-table td{padding:6px 8px;border-bottom:1px solid var(--off)}
 .hours-table tr:hover td{background:var(--off);cursor:pointer}
 .over-est{color:var(--red);font-weight:700}
@@ -166,54 +148,39 @@ hr{border:none;border-top:1.5px solid var(--silver);margin:12px 0}
 .hrs-bar-wrap{background:var(--silver);border-radius:2px;height:6px;width:80px;display:inline-block;vertical-align:middle;margin-left:4px}
 .hrs-bar{height:6px;border-radius:2px;background:#2d7d1e}
 .hrs-bar.over{background:var(--red)}
+
+/* REMINDERS */
 .reminder-row{display:flex;align-items:flex-start;gap:12px;padding:12px 14px;border:1.5px solid var(--silver);border-radius:3px;margin-bottom:8px;background:var(--white)}
 .reminder-row.overdue{border-left:4px solid var(--red)}
 .reminder-row.due-soon{border-left:4px solid #BA7517}
 .reminder-row.seasonal{border-left:4px solid #7F77DD}
-.reminder-row.warranty{border-left:4px solid #2d7d1e}
+.reminder-icon{font-size:22px;flex-shrink:0;margin-top:1px;width:24px;text-align:center}
 .reminder-main{flex:1;min-width:0}
 .reminder-name{font-weight:700;font-size:15px}
-.reminder-detail{font-size:14px;color:var(--gray2);margin-top:2px}
-.reminder-meta{font-size:13px;color:var(--muted);margin-top:3px}
+.reminder-detail{font-size:13px;color:var(--gray2);margin-top:2px}
+.reminder-meta{font-size:12px;color:var(--muted);margin-top:3px}
 .reminder-actions{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap}
 .season-banner{padding:10px 14px;border-radius:3px;font-size:15px;font-weight:600;margin-bottom:14px;display:flex;align-items:center;gap:10px}
 .season-banner.spring{background:#eaf3de;color:#1a5c0a;border:1.5px solid #97C459}
 .season-banner.fall{background:#FAEEDA;color:#633806;border:1.5px solid #EF9F27}
 .season-banner.winter{background:#e6f1fb;color:#0c447c;border:1.5px solid #85B7EB}
 .season-banner.summer{background:#fff0f0;color:#A32D2D;border:1.5px solid #F09595}
-.rfbtn{padding:5px 12px;border-radius:3px;border:1.5px solid var(--silver);background:var(--white);font-size:14px;font-weight:700;cursor:pointer;color:var(--gray2);font-family:'Barlow',sans-serif}
+.reminder-filter-row{display:flex;gap:7px;margin-bottom:12px;flex-wrap:wrap}
+.rfbtn{padding:5px 12px;border-radius:3px;border:1.5px solid var(--silver);background:var(--white);font-size:13px;font-weight:700;cursor:pointer;color:var(--gray2);font-family:'Barlow',sans-serif}
 .rfbtn:hover{border-color:var(--red);color:var(--red)}
 .rfbtn.active{background:var(--red);border-color:var(--red);color:#fff}
 .svc-interval-row{display:flex;align-items:center;gap:10px;padding:8px 12px;background:var(--off);border-radius:3px;margin-bottom:6px;font-size:15px;flex-wrap:wrap}
-.svc-interval-row strong{min-width:130px}
-@media(max-width:540px){.stat-row{grid-template-columns:1fr 1fr}.g2,.g3,.g4{grid-template-columns:1fr}.modal{padding:14px}.modal-title{font-size:18px}}
-.cust-search-wrap{position:relative;flex:1}
-.cust-search-wrap input{width:100%;padding:7px 10px;border:1.5px solid var(--silver);border-radius:3px;font-size:15px;background:var(--white);color:var(--dark);font-family:'Barlow',sans-serif}
-.cust-search-wrap input:focus{outline:none;border-color:var(--red)}
-.cust-dropdown{position:absolute;top:100%;left:0;right:0;background:var(--white);border:1.5px solid var(--red);border-top:none;border-radius:0 0 3px 3px;z-index:300;max-height:220px;overflow-y:auto;box-shadow:0 4px 12px rgba(0,0,0,.12)}
-.cust-dropdown-item{padding:8px 12px;cursor:pointer;font-size:15px;border-bottom:0.5px solid var(--off)}
-.cust-dropdown-item:last-child{border-bottom:none}
-.cust-dropdown-item:hover,.cust-dropdown-item.selected{background:var(--off)}
-.cust-dropdown-item .cd-name{font-weight:700}
-.cust-dropdown-item .cd-phone{font-size:13px;color:var(--muted);margin-top:1px}
-.cust-selected-pill{display:inline-flex;align-items:center;gap:6px;background:#e6f1fb;border:1.5px solid #85B7EB;border-radius:3px;padding:5px 10px;font-size:15px;font-weight:600;color:#0c447c}
-.cust-selected-pill button{background:none;border:none;cursor:pointer;color:#185FA5;font-size:16px;padding:0 2px;line-height:1}
-.cust-selected-pill button:hover{color:var(--red)}
-@media print{
-  *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
-  body,html{margin:0;padding:0;background:#fff}
-  .topbar,.navbar,.modal-bg,.app{display:none!important}
-  #print-area{display:block!important;position:static!important;margin:0;padding:0}
-  @page{margin:0.6in 0.65in;size:letter}
-}
+.svc-interval-row strong{min-width:120px}
+
+@media print{body *{visibility:hidden}#print-area,#print-area *{visibility:visible}#print-area{position:fixed;left:0;top:0;width:100%;background:#fff}}
 </style>
-</head>
-<body>
+
+<h2 class="sr-only">Miller Hardware Saw Shop \u2014 work order system v8</h2>
 <div class="app">
   <div class="topbar">
     <div class="topbar-brand">MILLER <span>HARDWARE</span> <span style="font-size:12px;font-weight:600;color:#aaa;letter-spacing:.06em">SAW SHOP</span></div>
     <div class="topbar-right">
-      <div id="sync-pill" class="sync-pill warn"><div class="dot a"></div><span id="sync-txt">Connecting...</span></div>
+      <div id="sync-pill" class="sync-pill warn"><div class="dot a"></div><span id="sync-txt">Checking...</span></div>
       <div class="tv-pill">True Value</div>
     </div>
   </div>
@@ -227,39 +194,19 @@ hr{border:none;border-top:1.5px solid var(--silver);margin:12px 0}
       <div class="tab" onclick="showTab('customers')">Customers</div>
       <div class="tab" onclick="showTab('settings')">Settings</div>
     </div>
-    <button class="btn primary navbar-new-wo-btn" onclick="openNewWO()">+ New Work Order</button>
+    <button class="btn primary" onclick="openNewWO()">+ New Work Order</button>
   </div>
-  <button class="fab" onclick="openNewWO()" ontouchstart="openNewWO();event.preventDefault()">+ New Work Order</button>
 
   <div class="view active" id="tab-dash">
     <div class="stat-row">
-      <div class="stat"><div class="lbl">Open Orders</div><div class="val" id="s-open">—</div></div>
-      <div class="stat urg"><div class="lbl">Priority</div><div class="val" id="s-urg">—</div></div>
-      <div class="stat parts-stat"><div class="lbl">Waiting on Parts</div><div class="val" id="s-parts">—</div></div>
-      <div class="stat"><div class="lbl">Ready for Pickup</div><div class="val" id="s-ready">—</div></div>
-      <div class="stat"><div class="lbl">Completed</div><div class="val" id="s-done">—</div></div>
+      <div class="stat"><div class="lbl">Open Orders</div><div class="val" id="s-open">\u2014</div></div>
+      <div class="stat urg"><div class="lbl">Priority</div><div class="val" id="s-urg">\u2014</div></div>
+      <div class="stat parts-stat"><div class="lbl">Waiting on Parts</div><div class="val" id="s-parts">\u2014</div></div>
+      <div class="stat"><div class="lbl">Ready for Pickup</div><div class="val" id="s-ready">\u2014</div></div>
+      <div class="stat"><div class="lbl">Completed</div><div class="val" id="s-done">\u2014</div></div>
     </div>
     <div id="dash-season-banner"></div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px">
-      <div class="card" style="margin-bottom:0">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
-          <div style="font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--dark)">Stihl Parts to Order</div>
-          <button class="btn sm primary" onclick="openAddPart('stihl')">+ Add</button>
-        </div>
-        <div id="parts-list-stihl"><div class="empty" style="padding:12px 0">No parts listed.</div></div>
-      </div>
-      <div class="card" style="margin-bottom:0">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
-          <div style="font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--dark)">Other Parts to Order</div>
-          <button class="btn sm primary" onclick="openAddPart('other')">+ Add</button>
-        </div>
-        <div id="parts-list-other"><div class="empty" style="padding:12px 0">No parts listed.</div></div>
-      </div>
-    </div>
-    <div style="display:flex;gap:8px;align-items:center;margin-bottom:10px">
-      <div style="font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);white-space:nowrap">Active Orders</div>
-      <input type="text" id="dash-search" placeholder="Search by tag #, customer, WO#, model..." oninput="renderDash()" style="flex:1;padding:6px 10px;border:1.5px solid var(--silver);border-radius:3px;font-size:13px;background:var(--white);color:var(--dark);font-family:'Barlow',sans-serif">
-    </div>
+    <div style="font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-bottom:8px">Active Orders</div>
     <div id="dash-list"><div class="empty">Loading...</div></div>
   </div>
 
@@ -270,47 +217,48 @@ hr{border:none;border-top:1.5px solid var(--silver);margin:12px 0}
 
   <div class="view" id="tab-orders">
     <div class="srow">
-      <input type="text" id="wo-q" placeholder="Search by tag #, customer, brand, model, serial, WO#..." oninput="renderOrders()">
+      <input type="text" id="wo-q" placeholder="Search customer, brand, model, serial, WO#..." oninput="renderOrders()">
       <select id="wo-f" onchange="renderOrders()" style="min-width:160px">
         <option value="">All Statuses</option>
         <option>Intake</option><option>Diagnosing</option><option>In Repair</option>
-        <option>Waiting on Parts</option><option>Ready for Pickup</option><option>Complete</option>
+        <option>Waiting on Parts</option><option>Ready</option><option>Complete</option>
       </select>
-      <select id="wo-tf" onchange="renderOrders()" style="min-width:130px"><option value="">All Techs</option></select>
+      <select id="wo-tf" onchange="renderOrders()" style="min-width:120px"><option value="">All Techs</option></select>
     </div>
     <div id="wo-list"><div class="empty">Loading...</div></div>
   </div>
 
   <div class="view" id="tab-hours">
     <div class="hours-summary">
-      <div class="hours-stat"><div class="lbl">Completed orders tracked</div><div class="val" id="h-tracked">—</div></div>
-      <div class="hours-stat good"><div class="lbl">Avg accuracy</div><div class="val" id="h-accuracy">—</div></div>
-      <div class="hours-stat over"><div class="lbl">Jobs over estimate</div><div class="val" id="h-over">—</div></div>
+      <div class="hours-stat"><div class="lbl">Completed orders tracked</div><div class="val" id="h-tracked">\u2014</div></div>
+      <div class="hours-stat good"><div class="lbl">Avg accuracy (est vs actual)</div><div class="val" id="h-accuracy">\u2014</div></div>
+      <div class="hours-stat over"><div class="lbl">Jobs over estimate</div><div class="val" id="h-over">\u2014</div></div>
     </div>
-    <div style="font-size:13px;color:var(--muted);margin-bottom:10px">Completed orders with both estimated and actual hours recorded.</div>
-    <table class="hours-table"><thead><tr><th>WO#</th><th>Customer</th><th>Equipment</th><th>Tech</th><th>Est. hrs</th><th>Actual hrs</th><th>Variance</th></tr></thead><tbody id="hours-body"></tbody></table>
+    <table class="hours-table" id="hours-table-el">
+      <thead><tr><th>WO#</th><th>Customer</th><th>Equipment</th><th>Tech</th><th>Est. hrs</th><th>Actual hrs</th><th>Variance</th></tr></thead>
+      <tbody id="hours-body"></tbody>
+    </table>
     <div id="hours-empty" class="empty" style="display:none">No completed orders with hours data yet.</div>
   </div>
 
   <div class="view" id="tab-reminders">
     <div id="reminder-season-banner"></div>
-    <div class="srow" style="margin-bottom:12px">
+    <div class="reminder-filter-row">
       <button class="rfbtn active" onclick="setRFilter('all',this)">All</button>
-      <button class="rfbtn" onclick="setRFilter('overdue',this)">Overdue</button>
-      <button class="rfbtn" onclick="setRFilter('due-soon',this)">Due Soon</button>
+      <button class="rfbtn" onclick="setRFilter('overdue',this)">Overdue service</button>
       <button class="rfbtn" onclick="setRFilter('seasonal',this)">Seasonal</button>
-      <button class="rfbtn" onclick="setRFilter('warranty',this)">Warranty</button>
+      <button class="rfbtn" onclick="setRFilter('warranty',this)">Warranty expiring</button>
     </div>
     <div id="reminders-list"><div class="empty">Loading...</div></div>
-    <div style="margin-top:18px;padding-top:14px;border-top:1.5px solid var(--silver)">
-      <div style="font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-bottom:8px">Service Interval Settings</div>
-      <div style="font-size:12px;color:var(--muted);margin-bottom:10px">Customers who haven't had service in this long will appear as overdue.</div>
-      <div class="svc-interval-row"><strong>Chainsaw</strong><input type="number" id="si-chainsaw" value="12" min="1" max="60" style="width:60px;padding:4px 8px;border:1.5px solid var(--silver);border-radius:3px;font-size:13px"> months</div>
-      <div class="svc-interval-row"><strong>Mower / Zero Turn</strong><input type="number" id="si-mower" value="12" min="1" max="60" style="width:60px;padding:4px 8px;border:1.5px solid var(--silver);border-radius:3px;font-size:13px"> months</div>
-      <div class="svc-interval-row"><strong>Generator</strong><input type="number" id="si-generator" value="24" min="1" max="60" style="width:60px;padding:4px 8px;border:1.5px solid var(--silver);border-radius:3px;font-size:13px"> months</div>
+    <div style="margin-top:16px;padding-top:14px;border-top:1.5px solid var(--silver)">
+      <div style="font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-bottom:10px">Service Interval Settings</div>
+      <div style="font-size:12px;color:var(--muted);margin-bottom:10px">Customers who haven't had service in this long will appear as overdue. Adjust to match your shop's typical service cadence.</div>
+      <div class="svc-interval-row"><strong>Chainsaw</strong><input type="number" id="si-chainsaw" value="12" min="1" max="60" style="width:60px;padding:4px 8px;border:1.5px solid var(--silver);border-radius:3px;font-size:13px"> months <span style="font-size:11px;color:var(--muted);margin-left:4px">(typical annual sharpening / tune-up)</span></div>
+      <div class="svc-interval-row"><strong>Mower / Zero Turn</strong><input type="number" id="si-mower" value="12" min="1" max="60" style="width:60px;padding:4px 8px;border:1.5px solid var(--silver);border-radius:3px;font-size:13px"> months <span style="font-size:11px;color:var(--muted);margin-left:4px">(annual pre-season service)</span></div>
+      <div class="svc-interval-row"><strong>Generator</strong><input type="number" id="si-generator" value="24" min="1" max="60" style="width:60px;padding:4px 8px;border:1.5px solid var(--silver);border-radius:3px;font-size:13px"> months <span style="font-size:11px;color:var(--muted);margin-left:4px">(every other year)</span></div>
       <div class="svc-interval-row"><strong>Trimmer / Blower</strong><input type="number" id="si-trimmer" value="18" min="1" max="60" style="width:60px;padding:4px 8px;border:1.5px solid var(--silver);border-radius:3px;font-size:13px"> months</div>
       <div class="svc-interval-row"><strong>Other equipment</strong><input type="number" id="si-other" value="18" min="1" max="60" style="width:60px;padding:4px 8px;border:1.5px solid var(--silver);border-radius:3px;font-size:13px"> months</div>
-      <button class="btn primary sm" onclick="saveIntervals();renderReminders()" style="margin-top:8px">Save Intervals</button>
+      <button class="btn primary sm" onclick="saveIntervals();renderReminders()" style="margin-top:8px">Save Intervals &amp; Refresh</button>
     </div>
   </div>
 
@@ -332,6 +280,16 @@ hr{border:none;border-top:1.5px solid var(--silver);margin:12px 0}
       </div>
     </div>
     <div class="card">
+      <div class="card-hdr">Firebase Cloud Sync</div>
+      <div style="font-size:13px;color:var(--gray2);margin-bottom:8px">Paste your Firebase config to enable live sync across all devices.</div>
+      <textarea id="fb-cfg" style="width:100%;min-height:72px;padding:8px;border:1.5px solid var(--silver);border-radius:3px;font-family:monospace;font-size:12px;background:var(--off);color:var(--dark)" placeholder='{ apiKey: "...", databaseURL: "...", storageBucket: "...", ... }'></textarea>
+      <div style="display:flex;gap:7px;margin-top:8px;justify-content:flex-end">
+        <button class="btn sm del" onclick="clearFB()">Clear</button>
+        <button class="btn sm primary" onclick="saveFB()">Connect</button>
+      </div>
+      <div id="fb-msg" style="font-size:12px;margin-top:5px;color:var(--muted)"></div>
+    </div>
+    <div class="card">
       <div class="card-hdr">Export &amp; Backup</div>
       <div style="display:flex;gap:8px;flex-wrap:wrap">
         <button class="btn" onclick="exportCSV('orders')">Work Orders CSV</button>
@@ -342,14 +300,6 @@ hr{border:none;border-top:1.5px solid var(--silver);margin:12px 0}
         <button class="btn" onclick="exportJSON()">Full Backup (JSON)</button>
       </div>
     </div>
-    <div class="card">
-      <div class="card-hdr">About</div>
-      <div style="font-size:13px;color:var(--gray2);line-height:1.7">
-        Miller Hardware Saw Shop — Work Order System<br>
-        Connected to Firebase: <strong>millersawshop-f716a</strong><br>
-        Harrison: (870) 741-3493 &middot; Yellville: (870) 449-4255
-      </div>
-    </div>
   </div>
 </div>
 
@@ -357,23 +307,8 @@ hr{border:none;border-top:1.5px solid var(--silver);margin:12px 0}
 <div class="modal-bg" id="wo-modal">
 <div class="modal">
   <div class="modal-title" id="wo-mtitle">New Work Order</div>
-  <div class="f" style="background:var(--off);border:1.5px solid var(--silver);border-radius:3px;padding:10px 12px;margin-bottom:12px">
-    <label style="color:var(--red)">Tag / Ticket # <span style="font-size:10px;font-weight:400;color:var(--muted);text-transform:none;letter-spacing:0">(from paper tag on equipment)</span></label>
-    <input type="text" id="m-tag" placeholder="e.g. 1042" style="font-size:17px;font-weight:700;letter-spacing:.04em">
-  </div>
   <div class="g2">
-    <div class="f">
-      <label>Customer</label>
-      <div style="display:flex;gap:6px;align-items:flex-start">
-        <div class="cust-search-wrap" id="cust-picker-wrap">
-          <input type="text" id="cust-search-input" placeholder="Type name or phone to search..." autocomplete="off" oninput="filterCustDropdown()" onfocus="showCustDropdown()" onblur="hideCustDropdown()">
-          <div class="cust-dropdown" id="cust-dropdown" style="display:none"></div>
-        </div>
-        <button class="btn sm primary" onclick="openQuickNewCust()" title="Add new customer" style="flex-shrink:0;white-space:nowrap">+ New</button>
-      </div>
-      <div id="cust-selected-display" style="margin-top:6px"></div>
-      <input type="hidden" id="m-cust">
-    </div>
+    <div class="f"><label>Customer</label><select id="m-cust"><option value="">-- Select Customer --</option></select></div>
     <div class="f"><label>Assigned Tech</label><select id="m-tech"><option>Unassigned</option></select></div>
   </div>
   <label style="display:flex;align-items:center;gap:7px;font-size:13px;font-weight:600;cursor:pointer;margin-bottom:12px">
@@ -383,8 +318,8 @@ hr{border:none;border-top:1.5px solid var(--silver);margin:12px 0}
   <div class="g3">
     <div class="f"><label>Equipment Type</label>
       <select id="m-etype">
-        <option>Chainsaw</option><option>Trimmer / Weedeater</option><option>Mower — Push</option>
-        <option>Mower — Riding</option><option>Zero Turn Mower</option><option>Blower</option>
+        <option>Chainsaw</option><option>Trimmer / Weedeater</option><option>Mower \u2014 Push</option>
+        <option>Mower \u2014 Riding</option><option>Zero Turn Mower</option><option>Blower</option>
         <option>Generator</option><option>Pressure Washer</option><option>Hedge Trimmer</option>
         <option>Tiller / Cultivator</option><option>Edger</option><option>Log Splitter</option>
         <option>Auger</option><option>Other</option>
@@ -393,17 +328,14 @@ hr{border:none;border-top:1.5px solid var(--silver);margin:12px 0}
     <div class="f"><label>Brand</label><input type="text" id="m-brand" placeholder="e.g. Stihl, Husqvarna..."></div>
     <div class="f"><label>Year</label><input type="text" id="m-year" placeholder="e.g. 2019"></div>
   </div>
-  <div class="g2">
+  <div class="g3">
     <div class="f"><label>Model Number</label><input type="text" id="m-model" placeholder="e.g. MS 271"></div>
-    <div class="f"><label>Product Number</label><input type="text" id="m-product" placeholder="e.g. 1141 200 0469"></div>
-  </div>
-  <div class="g2">
     <div class="f"><label>Serial Number</label><input type="text" id="m-serial" placeholder="e.g. 129184732"></div>
     <div class="f"><label>Engine Size / Type</label><input type="text" id="m-engine" placeholder="e.g. 50.2cc, 22HP"></div>
   </div>
   <div class="g2">
+    <div class="f"><label>Hours / Condition</label><input type="text" id="m-hours" placeholder="e.g. ~150 hrs, heavy use"></div>
     <div class="f"><label>Date In</label><input type="date" id="m-datein"></div>
-    <div class="f"></div>
   </div>
   <div class="sect-lbl">Work Details</div>
   <div class="f"><label>Customer Complaint</label><textarea id="m-complaint" placeholder="What is the customer reporting?"></textarea></div>
@@ -412,14 +344,14 @@ hr{border:none;border-top:1.5px solid var(--silver);margin:12px 0}
     <textarea id="m-notes" placeholder="Findings, parts needed, internal notes..."></textarea>
     <div class="note-ts" id="m-notes-ts"></div>
   </div>
-  <div id="waiting-parts-row" style="display:none">
-    <div class="f"><label>Parts Being Waited On</label><input type="text" id="m-parts-waiting" placeholder="e.g. Carburetor kit — ordered from Stihl 4/8"></div>
+  <div id="waiting-parts-row" style="display:none;margin-bottom:10px">
+    <div class="f"><label>Parts Being Waited On</label><input type="text" id="m-parts-waiting" placeholder="e.g. Carburetor kit \u2014 ordered from Stihl 4/8"></div>
   </div>
   <div class="g3">
     <div class="f"><label>Status</label>
       <select id="m-status" onchange="toggleWaitingRow()">
         <option>Intake</option><option>Diagnosing</option><option>In Repair</option>
-        <option>Waiting on Parts</option><option>Ready for Pickup</option><option>Complete</option>
+        <option>Waiting on Parts</option><option>Ready</option><option>Complete</option>
       </select>
     </div>
     <div class="f"><label>Est. Completion</label><input type="date" id="m-estdate"></div>
@@ -430,7 +362,7 @@ hr{border:none;border-top:1.5px solid var(--silver);margin:12px 0}
     <div class="f"><label>Est. Labor Hours</label><input type="number" id="m-est-hrs" min="0" step="0.25" placeholder="e.g. 2.0"></div>
     <div class="f"><label>Actual Hours</label><input type="number" id="m-act-hrs" min="0" step="0.25" placeholder="Fill when done"></div>
     <div class="f"><label>Billed Hours</label><input type="number" id="m-bill-hrs" min="0" step="0.25" placeholder="If different"></div>
-    <div class="f"><div id="hrs-variance-display" style="font-size:12px;color:var(--muted);padding-top:24px"></div></div>
+    <div class="f" style="justify-content:flex-end;padding-bottom:10px"><div id="hrs-variance-display" style="font-size:12px;color:var(--muted);padding-top:20px"></div></div>
   </div>
   <hr>
   <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
@@ -438,7 +370,7 @@ hr{border:none;border-top:1.5px solid var(--silver);margin:12px 0}
     <button class="btn sm" onclick="addPRow()">+ Add Line</button>
   </div>
   <table class="pt">
-    <thead><tr><th style="width:40%">Description</th><th style="width:12%">Qty</th><th style="width:48%">Part Number</th></tr></thead>
+    <thead><tr><th style="width:40%">Description</th><th style="width:12%">Qty</th><th style="width:48%">Notes / Comments</th></tr></thead>
     <tbody id="pt-body"></tbody>
   </table>
   <div class="mfoot">
@@ -479,30 +411,27 @@ hr{border:none;border-top:1.5px solid var(--silver);margin:12px 0}
   <div class="g3">
     <div class="f"><label>Equipment Type</label>
       <select id="eq-type">
-        <option>Chainsaw</option><option>Trimmer / Weedeater</option><option>Mower — Push</option>
-        <option>Mower — Riding</option><option>Zero Turn Mower</option><option>Blower</option>
+        <option>Chainsaw</option><option>Trimmer / Weedeater</option><option>Mower \u2014 Push</option>
+        <option>Mower \u2014 Riding</option><option>Zero Turn Mower</option><option>Blower</option>
         <option>Generator</option><option>Pressure Washer</option><option>Hedge Trimmer</option>
         <option>Tiller / Cultivator</option><option>Edger</option><option>Log Splitter</option>
         <option>Auger</option><option>Other</option>
       </select>
     </div>
-    <div class="f"><label>Brand</label><input type="text" id="eq-brand"></div>
-    <div class="f"><label>Year</label><input type="text" id="eq-year"></div>
+    <div class="f"><label>Brand</label><input type="text" id="eq-brand" placeholder="e.g. Stihl"></div>
+    <div class="f"><label>Year</label><input type="text" id="eq-year" placeholder="e.g. 2024"></div>
   </div>
-  <div class="g2">
+  <div class="g3">
     <div class="f"><label>Model Number</label><input type="text" id="eq-model"></div>
-    <div class="f"><label>Product Number</label><input type="text" id="eq-product" placeholder="e.g. 1141 200 0469"></div>
-  </div>
-  <div class="g2">
     <div class="f"><label>Serial Number</label><input type="text" id="eq-serial"></div>
-    <div class="f"><label>Engine Size / Type</label><input type="text" id="eq-engine" placeholder="e.g. 50.2cc, 22HP"></div>
+    <div class="f"><label>Engine Size / Type</label><input type="text" id="eq-engine"></div>
   </div>
   <div class="g2">
     <div class="f"><label>Date Sold / Acquired</label><input type="date" id="eq-date"></div>
     <div class="f"><label>Record Type</label>
       <select id="eq-rectype">
-        <option value="sale">New unit sale — sold by Miller Hardware</option>
-        <option value="existing">Customer-owned — for service records</option>
+        <option value="sale">New unit sale \u2014 sold by Miller Hardware</option>
+        <option value="existing">Customer-owned \u2014 logging for service records</option>
       </select>
     </div>
   </div>
@@ -547,34 +476,6 @@ hr{border:none;border-top:1.5px solid var(--silver);margin:12px 0}
 </div>
 </div>
 
-<!-- PARTS TO ORDER MODAL -->
-<div class="modal-bg" id="part-order-modal">
-<div class="modal">
-  <div class="modal-title" id="part-order-title">Add Part to Order List</div>
-  <div class="g2">
-    <div class="f"><label>Part Number</label><input type="text" id="po-partnum" placeholder="e.g. 1141 200 0469"></div>
-    <div class="f"><label>Qty Needed</label><input type="number" id="po-qty" value="1" min="1"></div>
-  </div>
-  <div class="f"><label>Description</label><input type="text" id="po-desc" placeholder="e.g. Air filter, carb kit..."></div>
-  <div class="f"><label>For Work Order #</label><input type="text" id="po-wo" placeholder="e.g. 1001 (optional)"></div>
-  <div class="f">
-    <label>Link to Equipment (optional)</label>
-    <div style="position:relative">
-      <input type="text" id="po-eq-search" placeholder="Type customer name or phone to search..." autocomplete="off" oninput="filterPoEquip()" onfocus="filterPoEquip()" onblur="hidePoEquipDrop()">
-      <div id="po-eq-dropdown" style="display:none;position:absolute;top:100%;left:0;right:0;background:var(--white);border:1.5px solid var(--red);border-top:none;border-radius:0 0 3px 3px;z-index:400;max-height:200px;overflow-y:auto;box-shadow:0 4px 12px rgba(0,0,0,.12)"></div>
-    </div>
-    <div id="po-eq-selected" style="margin-top:6px"></div>
-    <input type="hidden" id="po-eq-custid">
-    <input type="hidden" id="po-eq-idx">
-    <input type="hidden" id="po-cust">
-  </div>
-  <div class="mfoot">
-    <button class="btn" onclick="closeM('part-order-modal')">Cancel</button>
-    <button class="btn primary" onclick="savePartOrder()">Add to List</button>
-  </div>
-</div>
-</div>
-
 <!-- DETAIL MODAL -->
 <div class="modal-bg" id="det-modal">
 <div class="modal" id="det-body"></div>
@@ -582,667 +483,529 @@ hr{border:none;border-top:1.5px solid var(--silver);margin:12px 0}
 
 <div id="print-area" style="display:none"></div>
 
-<script src="https://cdn.jsdelivr.net/npm/firebase@9.23.0/firebase-app-compat.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/firebase@9.23.0/firebase-database-compat.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/firebase@9.23.0/firebase-storage-compat.min.js"></script>
 <script>
-// ── FIREBASE CONFIG (baked in) ──────────────────────────────────────────────
-const FB_CONFIG = {
-  apiKey: "AIzaSyDNEl1mXtNLGN0nsvr1lZi7SJzsiypJFLM",
-  authDomain: "millersawshop-f716a.firebaseapp.com",
-  databaseURL: "https://millersawshop-f716a-default-rtdb.firebaseio.com",
-  projectId: "millersawshop-f716a",
-  storageBucket: "millersawshop-f716a.firebasestorage.app",
-  messagingSenderId: "187757043776",
-  appId: "1:187757043776:web:a0cce22b59172da8db7fa5",
-  measurementId: "G-NGCMST4SWE"
-};
-// ────────────────────────────────────────────────────────────────────────────
-
-var DB=null,STORAGE=null,ORDERS={},CUSTS={},TECHS=['Michael','Tech 2','Tech 3'],EQUIPMENT={},ATTACHMENTS={},CONTACTLOGS={},PARTORDERS={stihl:[],other:[]};
+var DB=null,STORAGE=null,ORDERS={},CUSTS={},TECHS=['Michael','Tech 2','Tech 3'],EQUIPMENT={},ATTACHMENTS={},CONTACTLOGS={};
 var editWOid=null,editCid=null,editEqCid=null,editEqIdx=null,contactLogWOid=null,nextWO=1001;
 var activeRFilter='all';
 var SVC_INTERVALS={chainsaw:12,mower:12,generator:24,trimmer:18,other:18};
 
-function bc(s){return{'Intake':'b-intake','Diagnosing':'b-diag','In Repair':'b-repair','Waiting on Parts':'b-waiting','Ready for Pickup':'b-ready','Complete':'b-complete'}[s]||'b-intake';}
+function bc(s){return{'Intake':'b-intake','Diagnosing':'b-diag','In Repair':'b-repair','Waiting on Parts':'b-waiting','Ready':'b-ready','Complete':'b-complete'}[s]||'b-intake';}
 function badge(s){return '<span class="badge '+bc(s)+'">'+s+'</span>';}
 function setSP(st,t){var p=document.getElementById('sync-pill');p.className='sync-pill '+st;p.querySelector('.dot').className='dot '+(st==='ok'?'g':st==='err'?'r':'a');document.getElementById('sync-txt').textContent=t;}
 function genId(){return Date.now().toString(36)+Math.random().toString(36).slice(2,5);}
 function today(){return new Date().toISOString().slice(0,10);}
-function warrantyStatus(d){if(!d)return null;var exp=new Date(d),now=new Date(),diff=Math.round((exp-now)/(864e5));if(diff<0)return{label:'Warranty expired',cls:'b-warranty-exp'};if(diff<=30)return{label:'Expires in '+diff+'d',cls:'b-warranty-soon'};return{label:'Under warranty',cls:'b-warranty'};}
-function getSeason(){var m=new Date().getMonth();if(m>=2&&m<=4)return{name:'Spring',cls:'spring',msg:'Spring rush — mowers, trimmers, and chainsaws. Good time to reach out to overdue customers.'};if(m>=5&&m<=7)return{name:'Summer',cls:'summer',msg:'Summer — zero turns, trimmers, and pressure washers in heavy use.'};if(m>=8&&m<=10)return{name:'Fall',cls:'fall',msg:'Fall season — chainsaws, log splitters, and blowers. Remind customers to service before the season peaks.'};return{name:'Winter',cls:'winter',msg:'Winter — good time for generator service and pre-season prep on stored equipment.'};}
-function getIntervalMonths(t){var tl=(t||'').toLowerCase();if(tl.indexOf('chainsaw')>=0)return SVC_INTERVALS.chainsaw;if(tl.indexOf('mower')>=0||tl.indexOf('zero turn')>=0)return SVC_INTERVALS.mower;if(tl.indexOf('generator')>=0)return SVC_INTERVALS.generator;if(tl.indexOf('trimmer')>=0||tl.indexOf('blower')>=0||tl.indexOf('weedeater')>=0)return SVC_INTERVALS.trimmer;return SVC_INTERVALS.other;}
-function lastServiceDate(cid,eqType){var orders=orderArr().filter(function(o){return o.custId===cid&&o.status==='Complete';});if(eqType){var kw=(eqType||'').toLowerCase().split(' ')[0];orders=orders.filter(function(o){return(o.equipType||'').toLowerCase().indexOf(kw)>=0;});}if(!orders.length)return null;var dates=orders.map(function(o){return o.dateOut||o.dateIn||'';}).filter(Boolean).sort();return dates[dates.length-1]||null;}
 
-function loadLocalFallback(){try{var d=JSON.parse(localStorage.getItem('sawshop_v8')||'{}');ORDERS=d.orders||{};CUSTS=d.customers||{};TECHS=d.techs||['Michael','Tech 2','Tech 3'];EQUIPMENT=d.equipment||{};ATTACHMENTS=d.attachments||{};CONTACTLOGS=d.contactlogs||{};PARTORDERS=d.partorders||{stihl:[],other:[]};nextWO=d.nextWO||1001;if(d.svcIntervals)SVC_INTERVALS=d.svcIntervals;}catch(e){}}
+function warrantyStatus(expDate){if(!expDate)return null;var exp=new Date(expDate),now=new Date(),diff=Math.round((exp-now)/(1000*60*60*24));if(diff<0)return{label:'Warranty expired',cls:'b-warranty-exp'};if(diff<=30)return{label:'Expires in '+diff+'d',cls:'b-warranty-soon'};return{label:'Under warranty',cls:'b-warranty'};}
 
-function initFirebase(){
-  try{
-    firebase.initializeApp(FB_CONFIG);
-    DB=firebase.database();
-    STORAGE=firebase.storage();
-    setSP('ok','Live sync on');
-    DB.ref('orders').on('value',function(s){ORDERS={};nextWO=1001;s.forEach(function(ch){var v=ch.val();ORDERS[ch.key]=v;if(v.woNum>=nextWO)nextWO=v.woNum+1;});refreshAll();});
-    DB.ref('customers').on('value',function(s){CUSTS={};s.forEach(function(ch){CUSTS[ch.key]=ch.val();});renderCustomers();populateCustSel();renderDash();renderOrders();});
-    DB.ref('techs').on('value',function(s){var t=s.val();if(t&&Array.isArray(t))TECHS=t;renderTechs();populateTechSels();});
-    DB.ref('equipment').on('value',function(s){EQUIPMENT={};s.forEach(function(ch){EQUIPMENT[ch.key]=ch.val();});renderReminders();});
-    DB.ref('attachments').on('value',function(s){ATTACHMENTS={};s.forEach(function(ch){ATTACHMENTS[ch.key]=ch.val();});});
-    DB.ref('contactlogs').on('value',function(s){CONTACTLOGS={};s.forEach(function(ch){CONTACTLOGS[ch.key]=ch.val();});});
-    DB.ref('partorders').on('value',function(s){var v=s.val();if(v)PARTORDERS=v;else PARTORDERS={stihl:[],other:[]};renderPartOrders();});
-    DB.ref('svcIntervals').on('value',function(s){var v=s.val();if(v)SVC_INTERVALS=v;loadIntervalInputs();});
-  }catch(e){
-    setSP('err','Firebase error — '+e.message);
-    loadLocalFallback();
-    boot();
-  }
+function getSeason(){
+  var m=new Date().getMonth();
+  if(m>=2&&m<=4)return{name:'Spring',cls:'spring',msg:'Spring rush season \u2014 mowers, trimmers, and chainsaws. Great time to reach out to overdue customers.'};
+  if(m>=5&&m<=7)return{name:'Summer',cls:'summer',msg:'Summer season \u2014 zero turns, trimmers, and pressure washers in heavy use.'};
+  if(m>=8&&m<=10)return{name:'Fall',cls:'fall',msg:'Fall season \u2014 chainsaws, log splitters, and leaf blowers. Remind customers to service before the season peaks.'};
+  return{name:'Winter',cls:'winter',msg:'Winter season \u2014 good time to service generators and equipment stored over summer.'};
 }
 
-function writePartOrders(){if(DB){DB.ref('partorders').set(PARTORDERS);}else{try{var d=JSON.parse(localStorage.getItem('sawshop_v8')||'{}');d.partorders=PARTORDERS;localStorage.setItem('sawshop_v8',JSON.stringify(d));}catch(e){}}}
-
-var addPartCategory=null;
-function openAddPart(cat){
-  addPartCategory=cat;
-  document.getElementById('part-order-title').textContent=cat==='stihl'?'Add Stihl Part to Order':'Add Part to Order List';
-  ['po-partnum','po-wo','po-desc','po-eq-search','po-eq-custid','po-eq-idx','po-cust'].forEach(function(id){var el=document.getElementById(id);if(el)el.value='';});
-  document.getElementById('po-qty').value='1';
-  document.getElementById('po-eq-selected').innerHTML='';
-  document.getElementById('po-eq-dropdown').style.display='none';
-  document.getElementById('part-order-modal').classList.add('open');
+function getIntervalMonths(equipType){
+  var t=(equipType||'').toLowerCase();
+  if(t.indexOf('chainsaw')>=0)return SVC_INTERVALS.chainsaw;
+  if(t.indexOf('mower')>=0||t.indexOf('zero turn')>=0)return SVC_INTERVALS.mower;
+  if(t.indexOf('generator')>=0)return SVC_INTERVALS.generator;
+  if(t.indexOf('trimmer')>=0||t.indexOf('blower')>=0||t.indexOf('weedeater')>=0)return SVC_INTERVALS.trimmer;
+  return SVC_INTERVALS.other;
 }
-function filterPoEquip(){
-  var q=(document.getElementById('po-eq-search').value||'').toLowerCase().trim();
-  var dd=document.getElementById('po-eq-dropdown');
-  var isPhone=q.length>0&&/^[\d\s\-\(\)]+$/.test(q);
-  var custs=custArr().filter(function(c){
-    if(!q)return true;
-    if(isPhone)return(c.phone||'').replace(/\D/g,'').indexOf(q.replace(/\D/g,''))>=0;
-    var fn=(c.first||'').toLowerCase(),ln=(c.last||'').toLowerCase();
-    return fn.indexOf(q)>=0||ln.indexOf(q)>=0||(c.phone||'').toLowerCase().indexOf(q)>=0;
-  }).slice(0,8);
-  if(!custs.length){dd.innerHTML='<div style="padding:8px 12px;font-size:12px;color:var(--muted);font-style:italic">No customers found</div>';dd.style.display='block';return;}
-  var html='';
-  custs.forEach(function(c){
+
+function lastServiceDate(custId,equipType){
+  var orders=orderArr().filter(function(o){return o.custId===custId&&o.status==='Complete';});
+  if(equipType){orders=orders.filter(function(o){return(o.equipType||'').toLowerCase().indexOf((equipType||'').toLowerCase().split(' ')[0])>=0;});}
+  if(!orders.length)return null;
+  var dates=orders.map(function(o){return o.dateOut||o.dateIn||'';}).filter(Boolean).sort();
+  return dates[dates.length-1]||null;
+}
+
+function buildReminders(){
+  var reminders=[];
+  var now=new Date();
+  custArr().forEach(function(c){
     var eq=custEquip(c.id);
-    if(!eq.length){
-      html+='<div style="padding:6px 12px;font-size:12px;color:var(--muted);border-bottom:0.5px solid var(--off)">'+c.first+' '+c.last+' — no equipment on file</div>';
-    }else{
-      eq.forEach(function(e,i){
-        var label=c.first+' '+c.last+' — '+(e.brand||'')+' '+(e.type||'')+(e.model?' '+e.model:'')+(e.serial?' (SN: '+e.serial+')':'');
-        html+='<div style="padding:7px 12px;cursor:pointer;font-size:13px;border-bottom:0.5px solid var(--off)" onmousedown="selectPoEquip(\''+c.id+'\','+i+',\''+label.replace(/'/g,'&#39;')+'\')">'
-          +'<div style="font-weight:600">'+c.first+' '+c.last+'</div>'
-          +'<div style="font-size:11px;color:var(--muted)">'+(e.brand||'')+' '+(e.type||'')+(e.model?' — '+e.model:'')+(e.serial?' | SN: '+e.serial:'')+'</div>'
-          +'</div>';
-      });
-    }
+    eq.forEach(function(e,i){
+      var months=getIntervalMonths(e.type);
+      var lastSvc=lastServiceDate(c.id,e.type);
+      if(lastSvc){
+        var last=new Date(lastSvc),diff=Math.round((now-last)/(1000*60*60*24*30.44));
+        var overduePct=diff/months;
+        if(overduePct>=0.9){
+          var isOverdue=overduePct>=1;
+          reminders.push({type:isOverdue?'overdue':'due-soon',custId:c.id,eqIdx:i,
+            custName:c.first+' '+c.last,phone:c.phone||'',
+            equip:(e.brand||'')+' '+(e.type||'')+(e.model?' \u2014 '+e.model:''),
+            detail:isOverdue?'Overdue for service by '+(diff-months)+' month'+(diff-months!==1?'s':''):'Due for service in '+(months-diff)+' month'+(months-diff!==1?'s':''),
+            lastSvc:lastSvc,months:months,overduePct:overduePct,equipType:e.type});
+        }
+      } else if(e.date){
+        var sold=new Date(e.date),mths=Math.round((now-sold)/(1000*60*60*24*30.44));
+        if(mths>=months){
+          reminders.push({type:'overdue',custId:c.id,eqIdx:i,
+            custName:c.first+' '+c.last,phone:c.phone||'',
+            equip:(e.brand||'')+' '+(e.type||'')+(e.model?' \u2014 '+e.model:''),
+            detail:'No service on record \u2014 sold '+mths+' months ago',
+            lastSvc:null,months:months,overduePct:mths/months,equipType:e.type});
+        }
+      }
+      if(e.warrantyExp){
+        var ws=warrantyStatus(e.warrantyExp);
+        if(ws&&(ws.cls==='b-warranty-exp'||ws.cls==='b-warranty-soon')){
+          reminders.push({type:'warranty',custId:c.id,eqIdx:i,
+            custName:c.first+' '+c.last,phone:c.phone||'',
+            equip:(e.brand||'')+' '+(e.type||'')+(e.model?' \u2014 '+e.model:''),
+            detail:ws.label+(e.warrantyNotes?' &middot; '+e.warrantyNotes:''),
+            warrantyExp:e.warrantyExp,equipType:e.type});
+        }
+      }
+    });
+    var season=getSeason().name;
+    var seasonalTypes={'Spring':['Mower','Zero Turn','Trimmer','Blower'],'Fall':['Chainsaw','Log Splitter','Blower'],'Summer':['Pressure Washer','Trimmer'],'Winter':['Generator']};
+    var sTypes=seasonalTypes[season]||[];
+    eq.forEach(function(e,i){
+      var matches=sTypes.some(function(t){return(e.type||'').toLowerCase().indexOf(t.toLowerCase())>=0;});
+      if(matches){
+        var lastSvc=lastServiceDate(c.id,e.type);
+        var monthsSince=lastSvc?Math.round((now-new Date(lastSvc))/(1000*60*60*24*30.44)):999;
+        if(monthsSince>=8){
+          var alreadyIn=reminders.some(function(r){return r.custId===c.id&&r.eqIdx===i&&r.type!=='warranty';});
+          if(!alreadyIn){
+            reminders.push({type:'seasonal',custId:c.id,eqIdx:i,
+              custName:c.first+' '+c.last,phone:c.phone||'',
+              equip:(e.brand||'')+' '+(e.type||'')+(e.model?' \u2014 '+e.model:''),
+              detail:season+' season \u2014 consider reaching out for pre-season service',
+              lastSvc:lastSvc,equipType:e.type});
+          }
+        }
+      }
+    });
   });
-  dd.innerHTML=html;dd.style.display='block';
+  reminders.sort(function(a,b){var o={overdue:0,'due-soon':1,seasonal:2,warranty:3};return(o[a.type]||9)-(o[b.type]||9);});
+  return reminders;
 }
-function selectPoEquip(custId,eqIdx,label){
-  document.getElementById('po-eq-custid').value=custId;
-  document.getElementById('po-eq-idx').value=eqIdx;
-  document.getElementById('po-cust').value=label;
-  document.getElementById('po-eq-search').value='';
-  document.getElementById('po-eq-dropdown').style.display='none';
-  document.getElementById('po-eq-selected').innerHTML='<div class="cust-selected-pill">'+label+' <button onmousedown="clearPoEquip()" title="Clear">&#x2715;</button></div>';
+
+function setRFilter(f,btn){
+  activeRFilter=f;
+  document.querySelectorAll('.rfbtn').forEach(function(b){b.classList.remove('active');});
+  btn.classList.add('active');
+  renderReminders();
 }
-function clearPoEquip(){
-  ['po-eq-custid','po-eq-idx','po-cust'].forEach(function(id){var el=document.getElementById(id);if(el)el.value='';});
-  document.getElementById('po-eq-selected').innerHTML='';
-  document.getElementById('po-eq-search').value='';
+
+function renderReminders(){
+  var all=buildReminders();
+  var filtered=activeRFilter==='all'?all:all.filter(function(r){return r.type===activeRFilter;});
+  var badge=document.getElementById('reminder-badge');
+  var overdueCount=all.filter(function(r){return r.type==='overdue'||r.type==='due-soon';}).length;
+  if(overdueCount>0){badge.style.display='';badge.textContent=overdueCount;}else{badge.style.display='none';}
+  var season=getSeason();
+  var bannerHtml='<div class="season-banner '+season.cls+'"><strong>'+season.name+' Season:</strong> '+season.msg+'</div>';
+  var b1=document.getElementById('reminder-season-banner'),b2=document.getElementById('dash-season-banner');
+  if(b1)b1.innerHTML=bannerHtml;if(b2)b2.innerHTML=bannerHtml;
+  var el=document.getElementById('reminders-list');
+  if(!el)return;
+  if(!filtered.length){el.innerHTML='<div class="empty">No reminders right now \u2014 you\'re all caught up.</div>';return;}
+  el.innerHTML=filtered.map(function(r){
+    var icon=r.type==='overdue'?'!':r.type==='due-soon'?'~':r.type==='seasonal'?'S':'W';
+    var iconColor=r.type==='overdue'?'var(--red)':r.type==='due-soon'?'#BA7517':r.type==='seasonal'?'#7F77DD':'#2d7d1e';
+    return '<div class="reminder-row '+r.type+'">'
+      +'<div class="reminder-icon" style="color:'+iconColor+';font-weight:800;font-size:16px">'+icon+'</div>'
+      +'<div class="reminder-main">'
+      +'<div class="reminder-name">'+r.custName+(r.phone?' <span style="font-weight:400;font-size:12px;color:var(--muted)">'+r.phone+'</span>':'')+'</div>'
+      +'<div class="reminder-detail">'+r.equip+'</div>'
+      +'<div class="reminder-detail" style="color:'+(r.type==='overdue'?'var(--red)':r.type==='due-soon'?'#BA7517':'var(--gray2)')+'">'+r.detail+'</div>'
+      +(r.lastSvc?'<div class="reminder-meta">Last service: '+r.lastSvc+'</div>':'')
+      +'<div class="reminder-actions">'
+      +'<button class="btn sm primary" onclick="closeM(\'det-modal\');openCustDet(\''+r.custId+'\')">View Customer</button>'
+      +'<button class="btn sm" onclick="newWOForCustEquip(\''+r.custId+'\','+r.eqIdx+')">+ Work Order</button>'
+      +'</div></div></div>';
+  }).join('');
 }
-function hidePoEquipDrop(){setTimeout(function(){document.getElementById('po-eq-dropdown').style.display='none';},150);}
-function savePartOrder(){
-  var desc=(document.getElementById('po-desc').value||'').trim();
-  var partnum=(document.getElementById('po-partnum').value||'').trim();
-  if(!desc&&!partnum){alert('Please enter a part number or description.');return;}
-  var custId=document.getElementById('po-eq-custid').value;
-  var eqIdx=document.getElementById('po-eq-idx').value;
-  var custLabel=document.getElementById('po-cust').value;
-  var eqData=null;
-  if(custId&&eqIdx!==''){
-    var eq=custEquip(custId)[parseInt(eqIdx)];
-    if(eq)eqData={custId:custId,eqIdx:parseInt(eqIdx),brand:eq.brand||'',type:eq.type||'',model:eq.model||'',serial:eq.serial||'',product:eq.product||''};
+
+function loadLocal(){
+  try{var d=JSON.parse(localStorage.getItem('sawshop_v8')||'{}');
+    ORDERS=d.orders||{};CUSTS=d.customers||{};TECHS=d.techs||['Michael','Tech 2','Tech 3'];
+    EQUIPMENT=d.equipment||{};ATTACHMENTS=d.attachments||{};CONTACTLOGS=d.contactlogs||{};nextWO=d.nextWO||1001;
+    if(d.svcIntervals)SVC_INTERVALS=d.svcIntervals;
+  }catch(e){}
+}
+function saveLocal(){try{localStorage.setItem('sawshop_v8',JSON.stringify({orders:ORDERS,customers:CUSTS,techs:TECHS,equipment:EQUIPMENT,attachments:ATTACHMENTS,contactlogs:CONTACTLOGS,nextWO:nextWO,svcIntervals:SVC_INTERVALS}));}catch(e){}}
+
+function saveIntervals(){
+  SVC_INTERVALS={
+    chainsaw:parseInt(document.getElementById('si-chainsaw').value)||12,
+    mower:parseInt(document.getElementById('si-mower').value)||12,
+    generator:parseInt(document.getElementById('si-generator').value)||24,
+    trimmer:parseInt(document.getElementById('si-trimmer').value)||18,
+    other:parseInt(document.getElementById('si-other').value)||18
+  };
+  saveLocal();
+}
+
+
+  var FB_BAKED = {
+    apiKey: "AIzaSyDNEl1mXtNLGN0nsvr1lZi7SJzsiypJFLM",
+    authDomain: "millersawshop-f716a.firebaseapp.com",
+    databaseURL: "https://millersawshop-f716a-default-rtdb.firebaseio.com",
+    projectId: "millersawshop-f716a",
+    storageBucket: "millersawshop-f716a.firebasestorage.app",
+    messagingSenderId: "187757043776",
+    appId: "1:187757043776:web:a0cce22b59172da8db7fa5"
+  };
+
+function initFB(){
+  var raw=null;try{raw=localStorage.getItem('fb_config_raw');}catch(e){}
+  var cfgEl=document.getElementById('fb-cfg');if(raw&&cfgEl)cfgEl.value=raw;
+  if(!raw){
+    // Use baked-in Firebase config
+    raw = JSON.stringify(FB_BAKED);
   }
-  var item={id:genId(),partnum:partnum,desc:desc,qty:parseInt(document.getElementById('po-qty').value)||1,wo:document.getElementById('po-wo').value.trim(),cust:custLabel,equipment:eqData,ordered:false,received:false,ts:new Date().toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})};
-  if(!PARTORDERS[addPartCategory])PARTORDERS[addPartCategory]=[];
-  PARTORDERS[addPartCategory].push(item);
-  writePartOrders();renderPartOrders();
-  closeM('part-order-modal');
+  var c=null;
+  try{var cl=raw.trim().replace(/(\w+)\s*:/g,'"$1":').replace(/'/g,'"');if(cl.indexOf('{')!==0)cl=cl.substring(cl.indexOf('{'));c=JSON.parse(cl);}catch(e){}
+  if(!c||!c.databaseURL){setSP('err','Bad config');loadLocal();boot();return;}
+  setSP('warn','Connecting...');
+  function go(){
+    try{
+      if(!firebase.apps.length)firebase.initializeApp(c);
+      DB=firebase.database();if(c.storageBucket)STORAGE=firebase.storage();
+      setSP('ok','Live sync on');
+      DB.ref('orders').on('value',function(s){ORDERS={};nextWO=1001;s.forEach(function(ch){var v=ch.val();ORDERS[ch.key]=v;if(v.woNum>=nextWO)nextWO=v.woNum+1;});refreshAll();});
+      DB.ref('customers').on('value',function(s){CUSTS={};s.forEach(function(ch){CUSTS[ch.key]=ch.val();});renderCustomers();populateCustSel();renderDash();renderOrders();});
+      DB.ref('techs').on('value',function(s){var t=s.val();if(t&&Array.isArray(t))TECHS=t;renderTechs();populateTechSels();});
+      DB.ref('equipment').on('value',function(s){EQUIPMENT={};s.forEach(function(ch){EQUIPMENT[ch.key]=ch.val();});renderReminders();});
+      DB.ref('attachments').on('value',function(s){ATTACHMENTS={};s.forEach(function(ch){ATTACHMENTS[ch.key]=ch.val();});});
+      DB.ref('contactlogs').on('value',function(s){CONTACTLOGS={};s.forEach(function(ch){CONTACTLOGS[ch.key]=ch.val();});});
+    }catch(e){setSP('err','FB error');loadLocal();boot();}
+  }
+  function loadSDK(urls,cb){if(!urls.length){cb();return;}var s=document.createElement('script');s.src=urls[0];s.onload=function(){loadSDK(urls.slice(1),cb);};s.onerror=function(){setSP('err','Load failed');loadLocal();boot();};document.head.appendChild(s);}
+  if(typeof firebase!=='undefined'){go();return;}
+  loadSDK(['https://cdn.jsdelivr.net/npm/firebase@9.23.0/firebase-app-compat.min.js','https://cdn.jsdelivr.net/npm/firebase@9.23.0/firebase-database-compat.min.js','https://cdn.jsdelivr.net/npm/firebase@9.23.0/firebase-storage-compat.min.js'],go);
 }
-function togglePartOrdered(cat,idx){if(PARTORDERS[cat]&&PARTORDERS[cat][idx]!==undefined){PARTORDERS[cat][idx].ordered=!PARTORDERS[cat][idx].ordered;writePartOrders();renderPartOrders();}}
-function togglePartReceived(cat,idx){if(PARTORDERS[cat]&&PARTORDERS[cat][idx]!==undefined){PARTORDERS[cat][idx].received=!PARTORDERS[cat][idx].received;writePartOrders();renderPartOrders();}}
-function deletePartOrder(cat,idx){
-  if(!confirm('Remove this part from the list?'))return;
-  if(PARTORDERS[cat])PARTORDERS[cat].splice(idx,1);
-  writePartOrders();renderPartOrders();
-}
-function clearOrderedParts(cat){
-  if(!PARTORDERS[cat])return;
-  var remaining=PARTORDERS[cat].filter(function(p){return!p.received;});
-  if(PARTORDERS[cat].length===remaining.length)return;
-  if(!confirm('Remove all received parts from the list?'))return;
-  PARTORDERS[cat]=remaining;
-  writePartOrders();renderPartOrders();
-}
-function renderPartOrders(){
-  // Build waiting/ready orders grouped by Stihl vs other
-  var waiting=orderArr().filter(function(o){return o.status==='Waiting on Parts'&&o.partsWaiting;});
-  var ready=orderArr().filter(function(o){return o.status==='Ready for Pickup';});
+function boot(){refreshAll();renderTechs();populateTechSels();populateCustSel();renderReminders();loadIntervalInputs();}
 
-  function isStihlOrder(o){return(o.brand||'').toLowerCase().indexOf('stihl')>=0||(o.partsWaiting||'').toLowerCase().indexOf('stihl')>=0;}
-
-  ['stihl','other'].forEach(function(cat){
-    var el=document.getElementById('parts-list-'+cat);if(!el)return;
-    var items=PARTORDERS[cat]||[];
-
-    // Manual parts section
-    var manualHtml='';
-    if(items.length){
-      var hasReceived=items.some(function(p){return p.received;});
-      manualHtml=items.map(function(p,i){
-        return '<div class="part-item'+(p.received?' received':'')+'">'
-          +'<div class="part-item-body">'
-          +(p.partnum?'<div class="part-item-num">'+p.partnum+(p.qty>1?' &times;'+p.qty:'')+'</div>':'')
-          +(p.desc?'<div class="part-item-desc">'+p.desc+'</div>':'')
-          +(p.equipment?'<div class="part-item-meta" style="color:var(--dark);font-weight:600">'+(p.equipment.brand||'')+' '+(p.equipment.type||'')+(p.equipment.model?' — '+p.equipment.model:'')+(p.equipment.serial?' | SN: '+p.equipment.serial:'')+'</div>':'')
-          +((p.wo||(!p.equipment&&p.cust))?'<div class="part-item-meta">'+(p.wo?'WO #'+p.wo+' ':'')+(!p.equipment&&p.cust?p.cust:'')+'</div>':'')
-          +'<div class="part-item-meta">Added '+p.ts+'</div>'
-          +'<div class="part-status-row">'
-          +'<label class="part-status-label"><input type="checkbox"'+(p.ordered?' checked':'')+' onchange="togglePartOrdered(\''+cat+'\','+i+')"> Ordered</label>'
-          +'<label class="part-status-label"><input type="checkbox"'+(p.received?' checked':'')+' onchange="togglePartReceived(\''+cat+'\','+i+')"> Received</label>'
-          +'</div></div>'
-          +'<button class="part-item-del" onclick="deletePartOrder(\''+cat+'\','+i+')" title="Remove">&#x2715;</button>'
-          +'</div>';
-      }).join('')+(hasReceived?'<button class="btn sm del" onclick="clearOrderedParts(\''+cat+'\')" style="margin-top:8px;font-size:11px">Clear received</button>':'');
-    }
-
-    // Live workflow section — Waiting on Parts orders
-    var wOrders=waiting.filter(function(o){return cat==='stihl'?isStihlOrder(o):!isStihlOrder(o);});
-    var rOrders=ready.filter(function(o){return cat==='stihl'?isStihlOrder(o):!isStihlOrder(o);});
-    var liveHtml='';
-    if(wOrders.length||rOrders.length){
-      liveHtml+='<div style="font-family:\'Barlow Condensed\',sans-serif;font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin:'+(items.length?'12px':'4px')+' 0 6px;padding-top:'+(items.length?'10px':'0')+';border-top:'+(items.length?'1.5px solid var(--silver)':'none')+'">From Work Orders</div>';
-      wOrders.forEach(function(o){
-        var c=CUSTS[o.custId]||{};
-        liveHtml+='<div class="part-item" style="border-left:3px solid #BA7517;padding-left:8px;margin-left:-2px">'
-          +'<div class="part-item-body">'
-          +'<div class="part-item-num" style="color:#854F0B">'+o.partsWaiting+'</div>'
-          +'<div class="part-item-desc">'+(o.brand||'')+' '+(o.equipType||'')+(o.model?' — '+o.model:'')+'</div>'
-          +'<div class="part-item-meta">WO #'+o.woNum+' &middot; '+(c.first||'')+' '+(c.last||'')+'</div>'
-          +'<div class="part-status-row"><span class="badge b-waiting" style="font-size:10px">Waiting on Parts</span></div>'
-          +'</div>'
-          +'<button class="btn sm" onclick="openDet(\''+o.id+'\')" style="flex-shrink:0;align-self:center;font-size:11px">View</button>'
-          +'</div>';
-      });
-      rOrders.forEach(function(o){
-        var c=CUSTS[o.custId]||{};
-        liveHtml+='<div class="part-item" style="border-left:3px solid #2d7d1e;padding-left:8px;margin-left:-2px">'
-          +'<div class="part-item-body">'
-          +'<div class="part-item-desc">'+(o.brand||'')+' '+(o.equipType||'')+(o.model?' — '+o.model:'')+'</div>'
-          +'<div class="part-item-meta">WO #'+o.woNum+' &middot; '+(c.first||'')+' '+(c.last||'')+'</div>'
-          +'<div class="part-status-row"><span class="badge b-ready" style="font-size:10px">Ready for Pickup</span></div>'
-          +'</div>'
-          +'<button class="btn sm" onclick="openDet(\''+o.id+'\')" style="flex-shrink:0;align-self:center;font-size:11px">View</button>'
-          +'</div>';
-      });
-    }
-
-    if(!manualHtml&&!liveHtml){el.innerHTML='<div class="empty" style="padding:12px 0">No parts listed.</div>';return;}
-    el.innerHTML=manualHtml+liveHtml;
-  });
+function loadIntervalInputs(){
+  document.getElementById('si-chainsaw').value=SVC_INTERVALS.chainsaw;
+  document.getElementById('si-mower').value=SVC_INTERVALS.mower;
+  document.getElementById('si-generator').value=SVC_INTERVALS.generator;
+  document.getElementById('si-trimmer').value=SVC_INTERVALS.trimmer;
+  document.getElementById('si-other').value=SVC_INTERVALS.other;
 }
 
-function boot(){refreshAll();renderTechs();populateTechSels();populateCustSel();renderReminders();loadIntervalInputs();renderPartOrders();}
-function loadIntervalInputs(){document.getElementById('si-chainsaw').value=SVC_INTERVALS.chainsaw;document.getElementById('si-mower').value=SVC_INTERVALS.mower;document.getElementById('si-generator').value=SVC_INTERVALS.generator;document.getElementById('si-trimmer').value=SVC_INTERVALS.trimmer;document.getElementById('si-other').value=SVC_INTERVALS.other;}
-function saveIntervals(){SVC_INTERVALS={chainsaw:parseInt(document.getElementById('si-chainsaw').value)||12,mower:parseInt(document.getElementById('si-mower').value)||12,generator:parseInt(document.getElementById('si-generator').value)||24,trimmer:parseInt(document.getElementById('si-trimmer').value)||18,other:parseInt(document.getElementById('si-other').value)||18};if(DB)DB.ref('svcIntervals').set(SVC_INTERVALS);}
-
-function writeOrder(o){if(DB)DB.ref('orders/'+o.id).set(o);}
-function deleteOrder(id){if(DB)DB.ref('orders/'+id).remove();else{delete ORDERS[id];refreshAll();}}
-function writeCust(c){if(DB)DB.ref('customers/'+c.id).set(c);}
-function writeTechs(){if(DB)DB.ref('techs').set(TECHS);}
-function writeEquipment(cid,eq){if(DB)DB.ref('equipment/'+cid).set(eq);else{EQUIPMENT[cid]=eq;renderReminders();}}
-function writeAttachments(woid,atts){if(DB)DB.ref('attachments/'+woid).set(atts);else ATTACHMENTS[woid]=atts;}
-function writeContactLogs(woid,logs){if(DB)DB.ref('contactlogs/'+woid).set(logs);else CONTACTLOGS[woid]=logs;}
+function writeOrder(o){if(DB){DB.ref('orders/'+o.id).set(o);}else{ORDERS[o.id]=o;saveLocal();refreshAll();}}
+function deleteOrder(id){if(DB){DB.ref('orders/'+id).remove();}else{delete ORDERS[id];saveLocal();refreshAll();}}
+function writeCust(c){if(DB){DB.ref('customers/'+c.id).set(c);}else{CUSTS[c.id]=c;saveLocal();renderCustomers();populateCustSel();}}
+function writeTechs(){if(DB){DB.ref('techs').set(TECHS);}else{saveLocal();}}
+function writeEquipment(cid,eq){if(DB){DB.ref('equipment/'+cid).set(eq);}else{EQUIPMENT[cid]=eq;saveLocal();renderReminders();}}
+function writeAttachments(woid,atts){if(DB){DB.ref('attachments/'+woid).set(atts);}else{ATTACHMENTS[woid]=atts;saveLocal();}}
+function writeContactLogs(woid,logs){if(DB){DB.ref('contactlogs/'+woid).set(logs);}else{CONTACTLOGS[woid]=logs;saveLocal();}}
 
 function addTech(){var n=document.getElementById('new-tech').value.trim();if(!n||TECHS.indexOf(n)>=0)return;TECHS.push(n);writeTechs();renderTechs();populateTechSels();document.getElementById('new-tech').value='';}
 function removeTech(n){if(!confirm('Remove '+n+'?'))return;TECHS=TECHS.filter(function(t){return t!==n;});writeTechs();renderTechs();populateTechSels();}
 function renderTechs(){var el=document.getElementById('tech-chips');if(!el)return;el.innerHTML=TECHS.map(function(t){return '<span class="tech-chip">'+t+'<button onclick="removeTech(\''+t+'\')">&#x2715;</button></span>';}).join('');}
 function populateTechSels(){['m-tech','wo-tf'].forEach(function(id){var sel=document.getElementById(id);if(!sel)return;var cur=sel.value;sel.innerHTML=id==='m-tech'?'<option>Unassigned</option>':'<option value="">All Techs</option>';TECHS.forEach(function(t){var o=document.createElement('option');o.value=t;o.textContent=t;sel.appendChild(o);});if(cur)sel.value=cur;});}
-function populateCustSel(){/* legacy - handled by search picker */}
+function populateCustSel(){var sel=document.getElementById('m-cust');if(!sel)return;var cur=sel.value;sel.innerHTML='<option value="">-- Select Customer --</option>';custArr().forEach(function(c){var o=document.createElement('option');o.value=c.id;o.textContent=c.first+' '+c.last+(c.phone?' ('+c.phone+')':'');sel.appendChild(o);});if(cur)sel.value=cur;}
 
-function filterCustDropdown(){
-  var q=(document.getElementById('cust-search-input').value||'').toLowerCase().trim();
-  showCustDropdown(q);
-}
-function showCustDropdown(q){
-  var inp=document.getElementById('cust-search-input');
-  if(!q&&inp)q=(inp.value||'').toLowerCase().trim();
-  var dd=document.getElementById('cust-dropdown');if(!dd)return;
-  var isPhone=q.length>0&&/^[\d\s\-\(\)]+$/.test(q);
-  var list=custArr().filter(function(c){
-    if(!q)return true;
-    if(isPhone){return(c.phone||'').replace(/\D/g,'').indexOf(q.replace(/\D/g,''))>=0;}
-    var parts=q.split(/\s+/),fn=(c.first||'').toLowerCase(),ln=(c.last||'').toLowerCase();
-    if(parts.length>=2)return(fn.indexOf(parts[0])>=0&&ln.indexOf(parts[1])>=0)||(fn.indexOf(parts[1])>=0&&ln.indexOf(parts[0])>=0);
-    return fn.indexOf(q)>=0||ln.indexOf(q)>=0||(c.phone||'').indexOf(q)>=0;
-  }).slice(0,12);
-  if(!list.length){dd.innerHTML='<div class="cust-dropdown-item"><span style="color:var(--muted);font-style:italic">No customers found</span></div>';dd.style.display='block';return;}
-  dd.innerHTML=list.map(function(c){return '<div class="cust-dropdown-item" onmousedown="selectCust(\''+c.id+'\')">'+'<div class="cd-name">'+c.first+' '+c.last+'</div>'+(c.phone?'<div class="cd-phone">'+c.phone+'</div>':'')+'</div>';}).join('');
-  dd.style.display='block';
-}
-function hideCustDropdown(){setTimeout(function(){var dd=document.getElementById('cust-dropdown');if(dd)dd.style.display='none';},150);}
-function selectCust(id){
-  var c=CUSTS[id];if(!c)return;
-  document.getElementById('m-cust').value=id;
-  document.getElementById('cust-search-input').value='';
-  document.getElementById('cust-dropdown').style.display='none';
-  document.getElementById('cust-selected-display').innerHTML='<div class="cust-selected-pill">'+c.first+' '+c.last+(c.phone?' &middot; '+c.phone:'')+' <button onmousedown="clearCustSel()" title="Change customer">&#x2715;</button></div>';
-}
-function clearCustSel(){
-  document.getElementById('m-cust').value='';
-  document.getElementById('cust-search-input').value='';
-  document.getElementById('cust-selected-display').innerHTML='';
-  document.getElementById('cust-search-input').focus();
-}
-function setCustSelById(id){
-  if(!id){clearCustSel();return;}
-  selectCust(id);
-}
-function openQuickNewCust(){
-  editCid=null;
-  document.getElementById('cust-mtitle').textContent='New Customer';
-  ['c-first','c-last','c-phone','c-email','c-addr','c-notes'].forEach(function(id){document.getElementById(id).value='';});
-  var q=(document.getElementById('cust-search-input').value||'').trim();
-  if(q&&q.indexOf(' ')>0){var pts=q.split(' ');document.getElementById('c-first').value=pts[0];document.getElementById('c-last').value=pts.slice(1).join(' ');}
-  else if(q){document.getElementById('c-first').value=q;}
-  document.getElementById('cust-modal').classList.add('open');
-}
-
-function orderArr(){return Object.values(ORDERS).sort(function(a,b){if(b.urgent!==a.urgent)return(b.urgent?1:0)-(a.urgent?1:0);var da=a.dateIn||'',db=b.dateIn||'';if(da&&db)return da.localeCompare(db);if(da)return-1;if(db)return 1;return a.woNum-b.woNum;});}
+function orderArr(){return Object.values(ORDERS).sort(function(a,b){if(b.urgent!==a.urgent)return(b.urgent?1:0)-(a.urgent?1:0);return b.woNum-a.woNum;});}
 function custArr(){return Object.values(CUSTS).sort(function(a,b){return(a.last||'').localeCompare(b.last||'');});}
 function custEquip(cid){return EQUIPMENT[cid]||[];}
-function refreshAll(){renderDash();renderBoard();renderOrders();renderHours();renderReminders();renderCustomers();renderPartOrders();}
+function refreshAll(){renderDash();renderBoard();renderOrders();renderHours();renderReminders();renderCustomers();}
 
-function showTab(t){var tabs=['dash','board','orders','hours','reminders','customers','settings'];document.querySelectorAll('.tab').forEach(function(el,i){el.classList.toggle('active',tabs[i]===t);});document.querySelectorAll('.view').forEach(function(el){el.classList.remove('active');});document.getElementById('tab-'+t).classList.add('active');}
+function showTab(t){
+  var tabs=['dash','board','orders','hours','reminders','customers','settings'];
+  document.querySelectorAll('.tab').forEach(function(el,i){el.classList.toggle('active',tabs[i]===t);});
+  document.querySelectorAll('.view').forEach(function(el){el.classList.remove('active');});
+  document.getElementById('tab-'+t).classList.add('active');
+}
+
 function toggleWaitingRow(){document.getElementById('waiting-parts-row').style.display=document.getElementById('m-status').value==='Waiting on Parts'?'block':'none';}
-function updateHrsVariance(){var e=parseFloat(document.getElementById('m-est-hrs').value)||0,a=parseFloat(document.getElementById('m-act-hrs').value)||0,el=document.getElementById('hrs-variance-display');if(e>0&&a>0){var v=a-e,pct=Math.round((v/e)*100);el.style.color=v>0?'#CC0000':'#2d7d1e';el.textContent=(v>0?'+':'')+v.toFixed(2)+'h ('+(pct>0?'+':'')+pct+'%)';}else el.textContent='';}
+function updateHrsVariance(){var e=parseFloat(document.getElementById('m-est-hrs').value)||0,a=parseFloat(document.getElementById('m-act-hrs').value)||0,el=document.getElementById('hrs-variance-display');if(e>0&&a>0){var v=a-e,pct=Math.round((v/e)*100);el.style.color=v>0?'#CC0000':'#2d7d1e';el.textContent=(v>0?'+':'')+v.toFixed(2)+'h ('+(pct>0?'+':'')+pct+'%)';}else{el.textContent='';}}
 document.getElementById('m-est-hrs').addEventListener('input',updateHrsVariance);
 document.getElementById('m-act-hrs').addEventListener('input',updateHrsVariance);
-document.getElementById('eq-warranty-len').addEventListener('change',function(){var v=this.value,d=document.getElementById('eq-date').value||today();if(v&&v!=='custom'&&v){var exp=new Date(d);exp.setDate(exp.getDate()+parseInt(v));document.getElementById('eq-warranty-exp').value=exp.toISOString().slice(0,10);}else if(v==='custom')document.getElementById('eq-warranty-exp').value='';});
-
-function buildReminders(){
-  var reminders=[],now=new Date();
-  custArr().forEach(function(c){
-    var eq=custEquip(c.id);
-    eq.forEach(function(e,i){
-      var months=getIntervalMonths(e.type),lastSvc=lastServiceDate(c.id,e.type);
-      if(lastSvc){var last=new Date(lastSvc),diff=Math.round((now-last)/(864e5*30.44)),overduePct=diff/months;if(overduePct>=0.9){var isOverdue=overduePct>=1;reminders.push({type:isOverdue?'overdue':'due-soon',custId:c.id,eqIdx:i,custName:c.first+' '+c.last,phone:c.phone||'',equip:(e.brand||'')+' '+(e.type||'')+(e.model?' — '+e.model:''),detail:isOverdue?'Overdue by '+(diff-months)+' month'+(diff-months!==1?'s':''):'Due in '+(months-diff)+' month'+(months-diff!==1?'s':''),lastSvc:lastSvc,equipType:e.type});}}
-      else if(e.date){var sold=new Date(e.date),mths=Math.round((now-sold)/(864e5*30.44));if(mths>=months)reminders.push({type:'overdue',custId:c.id,eqIdx:i,custName:c.first+' '+c.last,phone:c.phone||'',equip:(e.brand||'')+' '+(e.type||'')+(e.model?' — '+e.model:''),detail:'No service on record — sold '+mths+' months ago',lastSvc:null,equipType:e.type});}
-      if(e.warrantyExp){var ws=warrantyStatus(e.warrantyExp);if(ws&&ws.cls!=='b-warranty')reminders.push({type:'warranty',custId:c.id,eqIdx:i,custName:c.first+' '+c.last,phone:c.phone||'',equip:(e.brand||'')+' '+(e.type||'')+(e.model?' — '+e.model:''),detail:ws.label+(e.warrantyNotes?' · '+e.warrantyNotes:''),warrantyExp:e.warrantyExp,equipType:e.type});}
-    });
-    var season=getSeason().name,seasonalTypes={Spring:['Mower','Zero Turn','Trimmer','Blower'],Fall:['Chainsaw','Log Splitter','Blower'],Summer:['Pressure Washer','Trimmer'],Winter:['Generator']};
-    (seasonalTypes[season]||[]).forEach(function(t){eq.forEach(function(e,i){if((e.type||'').toLowerCase().indexOf(t.toLowerCase())>=0){var lastSvc=lastServiceDate(c.id,e.type),monthsSince=lastSvc?Math.round((now-new Date(lastSvc))/(864e5*30.44)):999;if(monthsSince>=8&&!reminders.some(function(r){return r.custId===c.id&&r.eqIdx===i&&r.type!=='warranty';}))reminders.push({type:'seasonal',custId:c.id,eqIdx:i,custName:c.first+' '+c.last,phone:c.phone||'',equip:(e.brand||'')+' '+(e.type||'')+(e.model?' — '+e.model:''),detail:season+' season — consider pre-season service outreach',lastSvc:lastSvc,equipType:e.type});}});});
-  });
-  return reminders.sort(function(a,b){return({overdue:0,'due-soon':1,seasonal:2,warranty:3}[a.type]||9)-({overdue:0,'due-soon':1,seasonal:2,warranty:3}[b.type]||9);});
-}
-
-function setRFilter(f,btn){activeRFilter=f;document.querySelectorAll('.rfbtn').forEach(function(b){b.classList.remove('active');});btn.classList.add('active');renderReminders();}
-
-function renderReminders(){
-  var all=buildReminders(),filtered=activeRFilter==='all'?all:all.filter(function(r){return r.type===activeRFilter;});
-  var bdg=document.getElementById('reminder-badge'),cnt=all.filter(function(r){return r.type==='overdue'||r.type==='due-soon';}).length;
-  if(cnt>0){bdg.style.display='';bdg.textContent=cnt;}else bdg.style.display='none';
-  var season=getSeason(),bannerHtml='<div class="season-banner '+season.cls+'"><strong>'+season.name+' Season:</strong> '+season.msg+'</div>';
-  var b1=document.getElementById('reminder-season-banner'),b2=document.getElementById('dash-season-banner');
-  if(b1)b1.innerHTML=bannerHtml;if(b2)b2.innerHTML=bannerHtml;
-  var el=document.getElementById('reminders-list');if(!el)return;
-  if(!filtered.length){el.innerHTML='<div class="empty">No reminders right now — all caught up.</div>';return;}
-  var iconMap={overdue:'!','due-soon':'~',seasonal:'S',warranty:'W'},colorMap={overdue:'var(--red)','due-soon':'#BA7517',seasonal:'#7F77DD',warranty:'#2d7d1e'};
-  el.innerHTML=filtered.map(function(r){return '<div class="reminder-row '+r.type+'"><div style="font-size:16px;font-weight:800;color:'+colorMap[r.type]+';width:20px;flex-shrink:0;margin-top:1px">'+iconMap[r.type]+'</div><div class="reminder-main"><div class="reminder-name">'+r.custName+(r.phone?' <span style="font-weight:400;font-size:12px;color:var(--muted)">'+r.phone+'</span>':'')+'</div><div class="reminder-detail">'+r.equip+'</div><div class="reminder-detail" style="color:'+(r.type==='overdue'?'var(--red)':r.type==='due-soon'?'#BA7517':'var(--gray2)')+'">'+r.detail+'</div>'+(r.lastSvc?'<div class="reminder-meta">Last service: '+r.lastSvc+'</div>':'')+'<div class="reminder-actions"><button class="btn sm primary" onclick="openCustDet(\''+r.custId+'\')">View Customer</button><button class="btn sm" onclick="newWOForCustEquip(\''+r.custId+'\','+r.eqIdx+')">+ Work Order</button></div></div></div>';}).join('');
-}
 
 function renderDash(){
-  var all=orderArr(),open=all.filter(function(o){return o.status!=='Complete';}),urg=open.filter(function(o){return o.urgent;}),parts=open.filter(function(o){return o.status==='Waiting on Parts';}),ready=open.filter(function(o){return o.status==='Ready for Pickup';}),done=all.filter(function(o){return o.status==='Complete';});
-  document.getElementById('s-open').textContent=open.length;document.getElementById('s-urg').textContent=urg.length;document.getElementById('s-parts').textContent=parts.length;document.getElementById('s-ready').textContent=ready.length;document.getElementById('s-done').textContent=done.length;
-  var el=document.getElementById('dash-list');if(!open.length){el.innerHTML='<div class="empty">No active orders.</div>';return;}
-  var dsEl=document.getElementById('dash-search');
-  var q=dsEl?(dsEl.value||'').toLowerCase().trim():'';
-  var filtered=q?open.filter(function(o){var c=CUSTS[o.custId]||{};var txt=((c.first||'')+' '+(c.last||'')+' '+(o.brand||'')+' '+(o.equipType||'')+' '+(o.model||'')+' '+(o.serial||'')+' '+o.woNum+' '+(o.tag||'')).toLowerCase();return txt.indexOf(q)>=0;}):open;
-  if(!filtered.length){el.innerHTML='<div class="empty">No orders match.</div>';return;}
-  el.innerHTML=filtered.map(function(o){return woRow(o,CUSTS[o.custId]||{});}).join('');
+  var all=orderArr(),open=all.filter(function(o){return o.status!=='Complete';}),urg=open.filter(function(o){return o.urgent;}),parts=open.filter(function(o){return o.status==='Waiting on Parts';}),ready=open.filter(function(o){return o.status==='Ready';}),done=all.filter(function(o){return o.status==='Complete';});
+  document.getElementById('s-open').textContent=open.length;document.getElementById('s-urg').textContent=urg.length;
+  document.getElementById('s-parts').textContent=parts.length;document.getElementById('s-ready').textContent=ready.length;document.getElementById('s-done').textContent=done.length;
+  var el=document.getElementById('dash-list');
+  if(!open.length){el.innerHTML='<div class="empty">No active orders.</div>';return;}
+  el.innerHTML=open.map(function(o){return woRow(o,CUSTS[o.custId]||{});}).join('');
 }
 
 function renderBoard(){
   var el=document.getElementById('board-inner');if(!el)return;
   var open=orderArr().filter(function(o){return o.status!=='Complete';});
-  el.innerHTML=['Unassigned'].concat(TECHS).map(function(tech){
-    var jobs=open.filter(function(o){return(o.tech||'Unassigned')===tech;}),totalEstHrs=jobs.reduce(function(s,o){return s+(parseFloat(o.estHrs)||0);},0),overloaded=jobs.length>=4||totalEstHrs>=16;
-    return '<div class="board-col"><div class="board-col-hdr'+(overloaded?' overloaded':'')+'"><span>'+tech+'</span><span class="col-count">'+jobs.length+'</span></div><div class="board-col-body">'+(jobs.length?jobs.map(function(o){var c=CUSTS[o.custId]||{},isW=o.status==='Waiting on Parts';return '<div class="board-card'+(o.urgent?' urgent':isW?' waiting':'')+'" onclick="openDet(\''+o.id+'\')">'+'<div class="bc-wo">#'+o.woNum+'</div><div class="bc-cust">'+(c.first||'')+' '+(c.last||'')+'</div><div class="bc-equip">'+(o.brand||'')+' '+(o.equipType||'')+(o.model?' — '+o.model:'')+'</div><div class="bc-meta">'+badge(o.status||'Intake')+(o.urgent?'<span class="badge b-urgent">!</span>':'')+'</div>'+(o.estHrs?'<div class="bc-hours">Est: '+o.estHrs+'h'+(o.actHrs?' · Act: '+o.actHrs+'h':'')+'</div>':'')+'</div>';}).join(''):'<div class="board-empty">No open orders</div>')+'</div></div>';
+  var allTechs=['Unassigned'].concat(TECHS);
+  el.innerHTML=allTechs.map(function(tech){
+    var jobs=open.filter(function(o){return(o.tech||'Unassigned')===tech;});
+    var totalEstHrs=jobs.reduce(function(s,o){return s+(parseFloat(o.estHrs)||0);},0);
+    var overloaded=jobs.length>=4||totalEstHrs>=16;
+    var cards=jobs.length?jobs.map(function(o){
+      var c=CUSTS[o.custId]||{};var isWaiting=o.status==='Waiting on Parts';
+      return '<div class="board-card'+(o.urgent?' urgent':isWaiting?' waiting':'')+'" onclick="openDet(\''+o.id+'\')">'
+        +'<div class="bc-wo">#'+o.woNum+'</div><div class="bc-cust">'+(c.first||'')+' '+(c.last||'')+'</div>'
+        +'<div class="bc-equip">'+(o.brand||'')+' '+(o.equipType||'')+(o.model?' \u2014 '+o.model:'')+'</div>'
+        +'<div class="bc-meta">'+badge(o.status||'Intake')+(o.urgent?'<span class="badge b-urgent">!</span>':'')+'</div>'
+        +(o.estHrs?'<div class="bc-hours">Est: '+o.estHrs+'h'+(o.actHrs?' &middot; Act: '+o.actHrs+'h':'')+'</div>':'')
+        +'</div>';
+    }).join(''):'<div class="board-empty">No open orders</div>';
+    return '<div class="board-col"><div class="board-col-hdr'+(overloaded?' overloaded':'')+'"><span>'+tech+'</span><span class="col-count">'+jobs.length+'</span></div><div class="board-col-body">'+cards+'</div></div>';
   }).join('');
 }
 
 function renderOrders(){
   var q=(document.getElementById('wo-q').value||'').toLowerCase(),f=document.getElementById('wo-f').value,tf=document.getElementById('wo-tf').value;
-  var list=orderArr().filter(function(o){var c=CUSTS[o.custId]||{},txt=((c.first||'')+' '+(c.last||'')+' '+(o.brand||'')+' '+(o.equipType||'')+' '+(o.model||'')+' '+(o.serial||'')+' '+o.woNum+' '+(o.tag||'')).toLowerCase();return(!q||txt.indexOf(q)>=0)&&(!f||o.status===f)&&(!tf||o.tech===tf);});
-  var el=document.getElementById('wo-list');if(!list.length){el.innerHTML='<div class="empty">No orders found.</div>';return;}
+  var list=orderArr().filter(function(o){var c=CUSTS[o.custId]||{};var txt=((c.first||'')+' '+(c.last||'')+' '+(o.brand||'')+' '+(o.equipType||'')+' '+(o.model||'')+' '+(o.serial||'')+' '+o.woNum).toLowerCase();return(!q||txt.indexOf(q)>=0)&&(!f||o.status===f)&&(!tf||o.tech===tf);});
+  var el=document.getElementById('wo-list');
+  if(!list.length){el.innerHTML='<div class="empty">No orders found.</div>';return;}
   el.innerHTML=list.map(function(o){return woRow(o,CUSTS[o.custId]||{});}).join('');
 }
 
 function renderHours(){
-  var tracked=orderArr().filter(function(o){return o.status==='Complete'&&o.estHrs&&o.actHrs;}),tbody=document.getElementById('hours-body'),emptyEl=document.getElementById('hours-empty');
-  if(!tracked.length){if(tbody)tbody.innerHTML='';if(emptyEl)emptyEl.style.display='';['h-tracked','h-over'].forEach(function(id){document.getElementById(id).textContent='0';});document.getElementById('h-accuracy').textContent='—';return;}
+  var tracked=orderArr().filter(function(o){return o.status==='Complete'&&o.estHrs&&o.actHrs;});
+  var tbody=document.getElementById('hours-body'),emptyEl=document.getElementById('hours-empty');
+  if(!tracked.length){if(tbody)tbody.innerHTML='';if(emptyEl)emptyEl.style.display='';document.getElementById('h-tracked').textContent='0';document.getElementById('h-accuracy').textContent='\u2014';document.getElementById('h-over').textContent='0';return;}
   if(emptyEl)emptyEl.style.display='none';
   var totalVar=0,over=0;tracked.forEach(function(o){var v=(parseFloat(o.actHrs)||0)-(parseFloat(o.estHrs)||0);totalVar+=v/parseFloat(o.estHrs);if(v>0)over++;});
   var avgPct=Math.round((totalVar/tracked.length)*100);
   document.getElementById('h-tracked').textContent=tracked.length;document.getElementById('h-accuracy').textContent=(avgPct>=0?'+':'')+avgPct+'%';document.getElementById('h-over').textContent=over;
-  if(tbody)tbody.innerHTML=tracked.map(function(o){var c=CUSTS[o.custId]||{},est=parseFloat(o.estHrs),act=parseFloat(o.actHrs),v=act-est,pct=Math.round((v/est)*100),isOver=v>0,barW=Math.min(Math.round((act/Math.max(est,act))*80),80);return '<tr onclick="openDet(\''+o.id+'\')" style="cursor:pointer"><td style="font-weight:700;color:var(--red)">#'+o.woNum+'</td><td>'+(c.first||'')+' '+(c.last||'')+'</td><td style="color:var(--gray2);font-size:11px">'+(o.brand||'')+' '+(o.equipType||'')+'</td><td>'+(o.tech||'')+'</td><td>'+est.toFixed(2)+'h</td><td>'+act.toFixed(2)+'h<span class="hrs-bar-wrap"><span class="hrs-bar'+(isOver?' over':'')+'" style="width:'+barW+'px"></span></span></td><td class="'+(isOver?'over-est':'under-est')+'">'+(v>0?'+':'')+v.toFixed(2)+'h ('+(pct>0?'+':'')+pct+'%)</td></tr>';}).join('');
-}
-
-function renderCustomers(){
-  var raw=(document.getElementById('cust-q').value||'').toLowerCase(),isPhone=raw.trim().length>0&&/^[\d\s\-\(\)]+$/.test(raw.trim());
-  var list=custArr().filter(function(c){if(!raw)return true;if(isPhone){var ph=(c.phone||'').replace(/\D/g,''),qq=raw.replace(/\D/g,'');return ph.indexOf(qq)>=0;}var parts=raw.trim().split(/\s+/),fn=(c.first||'').toLowerCase(),ln=(c.last||'').toLowerCase();if(parts.length>=2)return(fn.indexOf(parts[0])>=0&&ln.indexOf(parts[1])>=0)||(fn.indexOf(parts[1])>=0&&ln.indexOf(parts[0])>=0);return fn.indexOf(raw)>=0||ln.indexOf(raw)>=0||(c.phone||'').indexOf(raw)>=0;});
-  var el=document.getElementById('cust-list');if(!list.length){el.innerHTML='<div class="empty">No customers found.</div>';return;}
-  el.innerHTML=list.map(function(c){var wos=orderArr().filter(function(o){return o.custId===c.id;}),open=wos.filter(function(o){return o.status!=='Complete';}).length,eq=custEquip(c.id);return '<div class="card" style="cursor:pointer" onclick="openCustDet(\''+c.id+'\')">'+'<div style="display:flex;align-items:center;justify-content:space-between"><div><strong style="font-size:14px;font-weight:700">'+c.first+' '+c.last+'</strong>'+(c.phone?'<span style="margin-left:10px;font-size:12px;color:var(--muted)">'+c.phone+'</span>':'')+'</div><div style="font-size:12px;color:var(--muted)">'+wos.length+' order'+(wos.length!==1?'s':'')+(open?' &middot; <strong style="color:var(--red)">'+open+' open</strong>':'')+(eq.length?' &middot; '+eq.length+' unit'+(eq.length!==1?'s':''):'')+'</div></div>'+(c.notes?'<div style="font-size:12px;color:var(--gray2);margin-top:3px">'+c.notes+'</div>':'')+(eq.length?'<div style="font-size:11px;color:var(--muted);margin-top:4px">'+eq.slice(0,3).map(function(e){return(e.brand||'')+(e.model?' '+e.model:'');}).join(' &middot; ')+(eq.length>3?' +more':'')+'</div>':'')+'</div>';}).join('');
+  if(tbody){tbody.innerHTML=tracked.map(function(o){var c=CUSTS[o.custId]||{},est=parseFloat(o.estHrs),act=parseFloat(o.actHrs),v=act-est,pct=Math.round((v/est)*100),isOver=v>0,barW=Math.min(Math.round((act/Math.max(est,act))*80),80);return '<tr onclick="openDet(\''+o.id+'\')">'+'<td style="font-weight:700;color:var(--red)">#'+o.woNum+'</td><td>'+(c.first||'')+' '+(c.last||'')+'</td><td style="color:var(--gray2);font-size:11px">'+(o.brand||'')+' '+(o.equipType||'')+'</td><td>'+(o.tech||'')+'</td><td>'+est.toFixed(2)+'h</td><td>'+act.toFixed(2)+'h<span class="hrs-bar-wrap"><span class="hrs-bar'+(isOver?' over':'')+'" style="width:'+barW+'px"></span></span></td><td class="'+(isOver?'over-est':'under-est')+'">'+(v>0?'+':'')+v.toFixed(2)+'h ('+(pct>0?'+':'')+pct+'%)</td></tr>';}).join('');}
 }
 
 function woRow(o,c){
-  var isW=o.status==='Waiting on Parts';
+  var isWaiting=o.status==='Waiting on Parts';
   var custName=(c&&(c.first||c.last))?(c.first||'')+' '+(c.last||''):'—';
   var equip=[o.brand,o.equipType,o.model?'— '+o.model:''].filter(Boolean).join(' ');
-  return '<div class="wo-row'+(o.urgent?' urgent':isW?' waiting':'')+'" onclick="openDet(\''+o.id+'\')">'
+  return '<div class="wo-row'+(o.urgent?' urgent':isWaiting?' waiting':'')+'" onclick="openDet(\''+o.id+'\')">'  
     +'<span class="wo-num">#'+o.woNum+(o.tag?'<br><span style="font-size:10px;color:var(--muted);font-weight:400">Tag: '+o.tag+'</span>':'')+'</span>'
     +'<div class="wo-main">'
     +'<div class="wo-cust">'+custName+(c&&c.phone?'<span style="font-size:11px;font-weight:400;color:var(--muted);margin-left:8px">'+c.phone+'</span>':'')+'</div>'
-    +'<div class="wo-equip">'+equip+(o.serial?' | SN: '+o.serial:'')+(isW&&o.partsWaiting?' · '+o.partsWaiting:'')+'</div>'
+    +'<div class="wo-equip">'+equip+(o.serial?' | SN: '+o.serial:'')+(isWaiting&&o.partsWaiting?' · '+o.partsWaiting:'')+'</div>'
     +(o.dateIn?'<div style="font-size:10px;color:var(--muted);margin-top:1px">In: '+o.dateIn+(o.tech?' · '+o.tech:'')+'</div>':'')
     +'</div>'
     +'<div class="wo-meta">'+(o.urgent?'<span class="badge b-urgent">Urgent</span>':'')+badge(o.status||'Intake')+(o.estHrs?'<span style="font-size:10px;color:var(--muted)">'+o.estHrs+'h</span>':'')+'</div>'
     +'</div>';
 }
 
-function openNewWO(){
-  editWOid=null;
-  var m=document.getElementById('wo-modal');
-  if(!m)return;
-  var ti=document.getElementById('wo-mtitle');if(ti)ti.textContent='New Work Order';
-  var db=document.getElementById('wo-del-btn');if(db)db.style.display='none';
-  populateTechSels();
-  clearCustSel();
-  ['m-tag','m-brand','m-year','m-model','m-product','m-serial','m-engine','m-hours','m-complaint','m-notes','m-estdate','m-dateout','m-parts-waiting','m-est-hrs','m-act-hrs','m-bill-hrs'].forEach(function(id){var el=document.getElementById(id);if(el)el.value='';});
-  var tech=document.getElementById('m-tech');if(tech)tech.value='Unassigned';
-  var etype=document.getElementById('m-etype');if(etype)etype.value='Chainsaw';
-  var status=document.getElementById('m-status');if(status)status.value='Intake';
-  var datein=document.getElementById('m-datein');if(datein)datein.value=today();
-  var urg=document.getElementById('m-urg');if(urg)urg.checked=false;
-  var nts=document.getElementById('m-notes-ts');if(nts)nts.textContent='';
-  var ptb=document.getElementById('pt-body');if(ptb)ptb.innerHTML='';
-  var wr=document.getElementById('waiting-parts-row');if(wr)wr.style.display='none';
-  var hv=document.getElementById('hrs-variance-display');if(hv)hv.textContent='';
-  m.classList.add('open');
+function renderCustomers(){
+  var raw=(document.getElementById('cust-q').value||'').toLowerCase();
+  var isPhone=raw.trim().length>0&&/^[\d\s\-\(\)]+$/.test(raw.trim());
+  var list=custArr().filter(function(c){if(!raw)return true;if(isPhone){var ph=(c.phone||'').replace(/\D/g,''),qq=raw.replace(/\D/g,'');return ph.indexOf(qq)>=0;}var parts=raw.trim().split(/\s+/),fn=(c.first||'').toLowerCase(),ln=(c.last||'').toLowerCase();if(parts.length>=2)return(fn.indexOf(parts[0])>=0&&ln.indexOf(parts[1])>=0)||(fn.indexOf(parts[1])>=0&&ln.indexOf(parts[0])>=0);return fn.indexOf(raw)>=0||ln.indexOf(raw)>=0||(c.phone||'').indexOf(raw)>=0;});
+  var el=document.getElementById('cust-list');
+  if(!list.length){el.innerHTML='<div class="empty">No customers found.</div>';return;}
+  el.innerHTML=list.map(function(c){var wos=orderArr().filter(function(o){return o.custId===c.id;}),open=wos.filter(function(o){return o.status!=='Complete';}).length,eq=custEquip(c.id);return '<div class="card" style="cursor:pointer" onclick="openCustDet(\''+c.id+'\')">'+'<div style="display:flex;align-items:center;justify-content:space-between"><div><strong style="font-size:14px;font-weight:700">'+c.first+' '+c.last+'</strong>'+(c.phone?'<span style="margin-left:10px;font-size:12px;color:var(--muted)">'+c.phone+'</span>':'')+'</div>'+'<div style="font-size:12px;color:var(--muted)">'+wos.length+' order'+(wos.length!==1?'s':'')+(open?' &middot; <strong style="color:var(--red)">'+open+' open</strong>':'')+(eq.length?' &middot; '+eq.length+' unit'+(eq.length!==1?'s':''):'')+'</div></div>'+(c.notes?'<div style="font-size:12px;color:var(--gray2);margin-top:3px">'+c.notes+'</div>':'')+(eq.length?'<div style="font-size:11px;color:var(--muted);margin-top:4px">'+eq.slice(0,3).map(function(e){return(e.brand||'')+(e.model?' '+e.model:'');}).join(' &middot; ')+(eq.length>3?' +more':'')+'</div>':'')+'</div>';}).join('');
 }
 
-function openEditWO(id){var o=ORDERS[id];if(!o)return;editWOid=id;document.getElementById('wo-mtitle').textContent='Edit WO #'+o.woNum;document.getElementById('wo-del-btn').style.display='';populateTechSels();setCustSelById(o.custId||'');document.getElementById('m-tech').value=o.tech||'Unassigned';document.getElementById('m-etype').value=o.equipType||'Chainsaw';document.getElementById('m-brand').value=o.brand||'';document.getElementById('m-year').value=o.year||'';document.getElementById('m-model').value=o.model||'';document.getElementById('m-product').value=o.product||'';document.getElementById('m-serial').value=o.serial||'';document.getElementById('m-engine').value=o.engine||'';document.getElementById('m-hours').value=o.hours||'';document.getElementById('m-complaint').value=o.complaint||'';document.getElementById('m-notes').value=o.notes||'';document.getElementById('m-notes-ts').textContent=o.notesTs?'Last updated: '+o.notesTs:'';document.getElementById('m-status').value=o.status||'Intake';document.getElementById('m-datein').value=o.dateIn||'';document.getElementById('m-estdate').value=o.estDate||'';document.getElementById('m-dateout').value=o.dateOut||'';document.getElementById('m-tag').value=o.tag||'';document.getElementById('m-est-hrs').value=o.estHrs||'';document.getElementById('m-act-hrs').value=o.actHrs||'';document.getElementById('m-bill-hrs').value=o.billHrs||'';document.getElementById('waiting-parts-row').style.display=o.status==='Waiting on Parts'?'block':'none';updateHrsVariance();var pb=document.getElementById('pt-body');pb.innerHTML='';(o.parts||[]).forEach(function(p){appPR(p);});closeM('det-modal');document.getElementById('wo-modal').classList.add('open');}
-
+function openNewWO(){
+  editWOid=null;document.getElementById('wo-mtitle').textContent='New Work Order';document.getElementById('wo-del-btn').style.display='none';
+  populateCustSel();populateTechSels();
+  ['m-cust','m-brand','m-year','m-model','m-serial','m-engine','m-hours','m-complaint','m-notes','m-estdate','m-dateout','m-parts-waiting','m-est-hrs','m-act-hrs','m-bill-hrs'].forEach(function(id){document.getElementById(id).value='';});
+  document.getElementById('m-tech').value='Unassigned';document.getElementById('m-etype').value='Chainsaw';
+  document.getElementById('m-status').value='Intake';document.getElementById('m-datein').value=today();
+  document.getElementById('m-urg').checked=false;document.getElementById('m-notes-ts').textContent='';
+  document.getElementById('pt-body').innerHTML='';document.getElementById('waiting-parts-row').style.display='none';
+  document.getElementById('hrs-variance-display').textContent='';
+  document.getElementById('wo-modal').classList.add('open');
+}
+function openEditWO(id){
+  var o=ORDERS[id];if(!o)return;editWOid=id;
+  document.getElementById('wo-mtitle').textContent='Edit WO #'+o.woNum;document.getElementById('wo-del-btn').style.display='';
+  populateCustSel();populateTechSels();
+  document.getElementById('m-cust').value=o.custId||'';document.getElementById('m-tech').value=o.tech||'Unassigned';
+  document.getElementById('m-etype').value=o.equipType||'Chainsaw';document.getElementById('m-brand').value=o.brand||'';
+  document.getElementById('m-year').value=o.year||'';document.getElementById('m-model').value=o.model||'';
+  document.getElementById('m-serial').value=o.serial||'';document.getElementById('m-engine').value=o.engine||'';
+  document.getElementById('m-hours').value=o.hours||'';document.getElementById('m-complaint').value=o.complaint||'';
+  document.getElementById('m-notes').value=o.notes||'';document.getElementById('m-notes-ts').textContent=o.notesTs?'Last updated: '+o.notesTs:'';
+  document.getElementById('m-status').value=o.status||'Intake';document.getElementById('m-datein').value=o.dateIn||'';
+  document.getElementById('m-estdate').value=o.estDate||'';document.getElementById('m-dateout').value=o.dateOut||'';
+  document.getElementById('m-urg').checked=!!o.urgent;document.getElementById('m-parts-waiting').value=o.partsWaiting||'';
+  document.getElementById('m-est-hrs').value=o.estHrs||'';document.getElementById('m-act-hrs').value=o.actHrs||'';
+  document.getElementById('m-bill-hrs').value=o.billHrs||'';
+  document.getElementById('waiting-parts-row').style.display=o.status==='Waiting on Parts'?'block':'none';
+  updateHrsVariance();
+  var pb=document.getElementById('pt-body');pb.innerHTML='';(o.parts||[]).forEach(function(p){appPR(p);});
+  closeM('det-modal');document.getElementById('wo-modal').classList.add('open');
+}
 function quickStatus(id,s){var o=ORDERS[id];if(!o)return;o.status=s;if(s!=='Waiting on Parts')o.partsWaiting='';writeOrder(o);openDet(id);}
+
 function addPRow(){appPR({desc:'',qty:1,note:''});}
-function appPR(p){var tr=document.createElement('tr');var si='border:1.5px solid var(--silver);border-radius:3px;padding:4px 7px;font-size:13px;background:var(--white);color:var(--dark);width:100%;font-family:Barlow,sans-serif';tr.innerHTML='<td style="width:40%"><input type="text" value="'+(p.desc||'')+'" placeholder="e.g. Air filter, Labor — rebuild" style="'+si+'"></td><td style="width:12%"><input type="number" value="'+(p.qty||1)+'" min="1" style="'+si+'"></td><td style="display:flex;gap:4px;padding:0"><input type="text" value="'+(p.note||'')+'" placeholder="Optional notes..." style="'+si+';flex:1"><button class="btn sm del" onclick="this.closest(\'tr\').remove()" style="padding:3px 8px;flex-shrink:0">&#x2715;</button></td>';document.getElementById('pt-body').appendChild(tr);}
+function appPR(p){var tr=document.createElement('tr');var si='border:1.5px solid var(--silver);border-radius:3px;padding:4px 6px;font-size:12px;background:var(--white);color:var(--dark);width:100%;font-family:Barlow,sans-serif';tr.innerHTML='<td style="width:40%"><input type="text" value="'+(p.desc||'')+'" placeholder="e.g. Air filter, Labor \u2014 rebuild" style="'+si+'"></td><td style="width:12%"><input type="number" value="'+(p.qty||1)+'" min="1" style="'+si+'"></td><td style="display:flex;gap:4px;padding:0"><input type="text" value="'+(p.note||'')+'" placeholder="Optional notes..." style="'+si+';flex:1"><button class="btn sm del" onclick="this.closest(\'tr\').remove()" style="padding:3px 7px;flex-shrink:0">&#x2715;</button></td>';document.getElementById('pt-body').appendChild(tr);}
 function getParts(){var parts=[];document.querySelectorAll('#pt-body tr').forEach(function(r){var ins=r.querySelectorAll('input');if(ins[0]&&ins[0].value.trim())parts.push({desc:ins[0].value,qty:parseFloat(ins[1].value)||1,note:ins[2]?ins[2].value:''});});return parts;}
 
-function saveWO(){var cid=document.getElementById('m-cust').value;if(!cid){alert('Please select a customer.');return;}var prev=editWOid?(ORDERS[editWOid]||{}):{},newN=document.getElementById('m-notes').value,nts=newN!==prev.notes?new Date().toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric',hour:'numeric',minute:'2-digit'}):(prev.notesTs||'');var o={id:editWOid||genId(),woNum:editWOid?(prev.woNum||nextWO++):nextWO++,tag:document.getElementById('m-tag').value.trim(),custId:cid,tech:document.getElementById('m-tech').value,equipType:document.getElementById('m-etype').value,brand:document.getElementById('m-brand').value,year:document.getElementById('m-year').value,model:document.getElementById('m-model').value,product:document.getElementById('m-product').value,serial:document.getElementById('m-serial').value,engine:document.getElementById('m-engine').value,hours:document.getElementById('m-hours').value,complaint:document.getElementById('m-complaint').value,notes:newN,notesTs:nts,status:document.getElementById('m-status').value,dateIn:document.getElementById('m-datein').value,estDate:document.getElementById('m-estdate').value,dateOut:document.getElementById('m-dateout').value,urgent:document.getElementById('m-urg').checked,partsWaiting:document.getElementById('m-parts-waiting').value,estHrs:document.getElementById('m-est-hrs').value,actHrs:document.getElementById('m-act-hrs').value,billHrs:document.getElementById('m-bill-hrs').value,parts:getParts()};writeOrder(o);closeM('wo-modal');}
+function saveWO(){
+  var cid=document.getElementById('m-cust').value;if(!cid){alert('Please select a customer.');return;}
+  var prev=editWOid?(ORDERS[editWOid]||{}):{},newN=document.getElementById('m-notes').value;
+  var nts=newN!==prev.notes?new Date().toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric',hour:'numeric',minute:'2-digit'}):(prev.notesTs||'');
+  var o={id:editWOid||genId(),woNum:editWOid?(prev.woNum||nextWO++):nextWO++,custId:cid,tech:document.getElementById('m-tech').value,equipType:document.getElementById('m-etype').value,brand:document.getElementById('m-brand').value,year:document.getElementById('m-year').value,model:document.getElementById('m-model').value,serial:document.getElementById('m-serial').value,engine:document.getElementById('m-engine').value,hours:document.getElementById('m-hours').value,complaint:document.getElementById('m-complaint').value,notes:newN,notesTs:nts,status:document.getElementById('m-status').value,dateIn:document.getElementById('m-datein').value,estDate:document.getElementById('m-estdate').value,dateOut:document.getElementById('m-dateout').value,urgent:document.getElementById('m-urg').checked,partsWaiting:document.getElementById('m-parts-waiting').value,estHrs:document.getElementById('m-est-hrs').value,actHrs:document.getElementById('m-act-hrs').value,billHrs:document.getElementById('m-bill-hrs').value,parts:getParts()};
+  writeOrder(o);closeM('wo-modal');
+}
 function delWO(){if(!editWOid||!confirm('Delete this work order?'))return;deleteOrder(editWOid);closeM('wo-modal');}
 
 function openNewCust(){editCid=null;document.getElementById('cust-mtitle').textContent='New Customer';['c-first','c-last','c-phone','c-email','c-addr','c-notes'].forEach(function(id){document.getElementById(id).value='';});document.getElementById('cust-modal').classList.add('open');}
-function saveCust(){var first=document.getElementById('c-first').value.trim(),last=document.getElementById('c-last').value.trim();if(!first&&!last){alert('Please enter a name.');return;}var c={id:editCid||genId(),first:first,last:last,phone:document.getElementById('c-phone').value.trim(),email:document.getElementById('c-email').value.trim(),addr:document.getElementById('c-addr').value.trim(),notes:document.getElementById('c-notes').value.trim()};writeCust(c);var woOpen=document.getElementById('wo-modal').classList.contains('open');closeM('cust-modal');if(!editCid&&woOpen){setTimeout(function(){CUSTS[c.id]=c;setCustSelById(c.id);},300);}}
+function saveCust(){var first=document.getElementById('c-first').value.trim(),last=document.getElementById('c-last').value.trim();if(!first&&!last){alert('Please enter a name.');return;}var c={id:editCid||genId(),first:first,last:last,phone:document.getElementById('c-phone').value.trim(),email:document.getElementById('c-email').value.trim(),addr:document.getElementById('c-addr').value.trim(),notes:document.getElementById('c-notes').value.trim()};writeCust(c);closeM('cust-modal');}
 
-function openAddEquip(cid,idx){editEqCid=cid;editEqIdx=idx!==undefined?idx:null;var eq=idx!==undefined?(custEquip(cid)[idx]||{}):{};document.getElementById('eq-mtitle').textContent=idx!==undefined?'Edit Equipment':'Log Equipment / New Unit Sale';document.getElementById('eq-del-btn').style.display=idx!==undefined?'':'none';document.getElementById('eq-type').value=eq.type||'Chainsaw';document.getElementById('eq-brand').value=eq.brand||'';document.getElementById('eq-year').value=eq.year||'';document.getElementById('eq-model').value=eq.model||'';document.getElementById('eq-product').value=eq.product||'';document.getElementById('eq-serial').value=eq.serial||'';document.getElementById('eq-engine').value=eq.engine||'';document.getElementById('eq-date').value=eq.date||today();document.getElementById('eq-rectype').value=eq.rectype||'sale';document.getElementById('eq-warranty-len').value=eq.warrantyLen||'';document.getElementById('eq-warranty-exp').value=eq.warrantyExp||'';document.getElementById('eq-warranty-notes').value=eq.warrantyNotes||'';document.getElementById('eq-notes').value=eq.notes||'';document.getElementById('eq-modal').classList.add('open');}
-function saveEquip(){var eq={type:document.getElementById('eq-type').value,brand:document.getElementById('eq-brand').value,year:document.getElementById('eq-year').value,model:document.getElementById('eq-model').value,product:document.getElementById('eq-product').value,serial:document.getElementById('eq-serial').value,engine:document.getElementById('eq-engine').value,date:document.getElementById('eq-date').value,rectype:document.getElementById('eq-rectype').value,warrantyLen:document.getElementById('eq-warranty-len').value,warrantyExp:document.getElementById('eq-warranty-exp').value,warrantyNotes:document.getElementById('eq-warranty-notes').value,notes:document.getElementById('eq-notes').value};var arr=custEquip(editEqCid).slice();if(editEqIdx!==null)arr[editEqIdx]=eq;else arr.push(eq);writeEquipment(editEqCid,arr);closeM('eq-modal');openCustDet(editEqCid);}
+function openAddEquip(cid,idx){
+  editEqCid=cid;editEqIdx=(idx!==undefined?idx:null);
+  var eq=idx!==undefined?(custEquip(cid)[idx]||{}):{};
+  document.getElementById('eq-mtitle').textContent=idx!==undefined?'Edit Equipment':'Log Equipment / New Unit Sale';
+  document.getElementById('eq-del-btn').style.display=idx!==undefined?'':'none';
+  document.getElementById('eq-type').value=eq.type||'Chainsaw';document.getElementById('eq-brand').value=eq.brand||'';
+  document.getElementById('eq-year').value=eq.year||'';document.getElementById('eq-model').value=eq.model||'';
+  document.getElementById('eq-serial').value=eq.serial||'';document.getElementById('eq-engine').value=eq.engine||'';
+  document.getElementById('eq-date').value=eq.date||today();document.getElementById('eq-rectype').value=eq.rectype||'sale';
+  document.getElementById('eq-warranty-len').value=eq.warrantyLen||'';document.getElementById('eq-warranty-exp').value=eq.warrantyExp||'';
+  document.getElementById('eq-warranty-notes').value=eq.warrantyNotes||'';document.getElementById('eq-notes').value=eq.notes||'';
+  document.getElementById('eq-modal').classList.add('open');
+}
+document.getElementById('eq-warranty-len').addEventListener('change',function(){var v=this.value,d=document.getElementById('eq-date').value||today();if(v&&v!=='custom'&&v!==''){var exp=new Date(d);exp.setDate(exp.getDate()+parseInt(v));document.getElementById('eq-warranty-exp').value=exp.toISOString().slice(0,10);}else if(v==='custom')document.getElementById('eq-warranty-exp').value='';});
+function saveEquip(){var eq={type:document.getElementById('eq-type').value,brand:document.getElementById('eq-brand').value,year:document.getElementById('eq-year').value,model:document.getElementById('eq-model').value,serial:document.getElementById('eq-serial').value,engine:document.getElementById('eq-engine').value,date:document.getElementById('eq-date').value,rectype:document.getElementById('eq-rectype').value,warrantyLen:document.getElementById('eq-warranty-len').value,warrantyExp:document.getElementById('eq-warranty-exp').value,warrantyNotes:document.getElementById('eq-warranty-notes').value,notes:document.getElementById('eq-notes').value};var arr=custEquip(editEqCid).slice();if(editEqIdx!==null){arr[editEqIdx]=eq;}else{arr.push(eq);}writeEquipment(editEqCid,arr);closeM('eq-modal');openCustDet(editEqCid);}
 function delEquip(){if(editEqIdx===null||!confirm('Remove?'))return;var arr=custEquip(editEqCid).slice();arr.splice(editEqIdx,1);writeEquipment(editEqCid,arr);closeM('eq-modal');openCustDet(editEqCid);}
 
 function openContactLog(woid){contactLogWOid=woid;document.getElementById('cl-type').value='Called customer';document.getElementById('cl-note').value='';var now=new Date();now.setMinutes(now.getMinutes()-now.getTimezoneOffset());document.getElementById('cl-dt').value=now.toISOString().slice(0,16);document.getElementById('contact-modal').classList.add('open');}
 function saveContactLog(){var note=document.getElementById('cl-note').value.trim();if(!note){alert('Please enter a note.');return;}var logs=CONTACTLOGS[contactLogWOid]?JSON.parse(JSON.stringify(CONTACTLOGS[contactLogWOid])):[];logs.unshift({type:document.getElementById('cl-type').value,note:note,dt:document.getElementById('cl-dt').value});writeContactLogs(contactLogWOid,logs);closeM('contact-modal');openDet(contactLogWOid);}
 function deleteContactLog(woid,idx){if(!confirm('Delete entry?'))return;var logs=CONTACTLOGS[woid]||[];logs.splice(idx,1);writeContactLogs(woid,logs);openDet(woid);}
-function newWOForCustEquip(cid,eqIdx){var eq=eqIdx!==undefined?custEquip(cid)[eqIdx]:null;openNewWO();setCustSelById(cid);if(eq){document.getElementById('m-etype').value=eq.type||'Chainsaw';document.getElementById('m-brand').value=eq.brand||'';document.getElementById('m-year').value=eq.year||'';document.getElementById('m-model').value=eq.model||'';document.getElementById('m-product').value=eq.product||'';document.getElementById('m-serial').value=eq.serial||'';document.getElementById('m-engine').value=eq.engine||'';}}
+
+function newWOForCustEquip(cid,eqIdx){
+  var eq=custEquip(cid)[eqIdx];openNewWO();
+  document.getElementById('m-cust').value=cid;
+  if(eq){document.getElementById('m-etype').value=eq.type||'Chainsaw';document.getElementById('m-brand').value=eq.brand||'';document.getElementById('m-year').value=eq.year||'';document.getElementById('m-model').value=eq.model||'';document.getElementById('m-serial').value=eq.serial||'';document.getElementById('m-engine').value=eq.engine||'';}
+  closeM('det-modal');
+}
 
 function openDet(id){
   var o=ORDERS[id];if(!o)return;var c=CUSTS[o.custId]||{};
-  var prows=(o.parts||[]).map(function(p,pi){return '<tr><td style="padding:5px 8px;border-bottom:1px solid var(--off)">'+(p.note||'')+'</td><td style="padding:5px 8px;border-bottom:1px solid var(--off);text-align:center">'+p.qty+'</td><td style="padding:5px 8px;border-bottom:1px solid var(--off);color:var(--gray2)">'+p.desc+'</td><td style="padding:3px 4px;border-bottom:1px solid var(--off)"><button onclick="deletePart(\''+id+'\','+pi+')" style="background:none;border:none;cursor:pointer;color:var(--red);font-size:13px;padding:2px 5px;font-weight:700">&#x2715;</button></td></tr>';}).join('');
-  var stats=['Intake','Diagnosing','In Repair','Waiting on Parts','Ready for Pickup','Complete'];
+  var prows=(o.parts||[]).map(function(p){return '<tr><td style="padding:5px 8px;border-bottom:1px solid var(--off)">'+p.desc+'</td><td style="padding:5px 8px;border-bottom:1px solid var(--off);text-align:center">'+p.qty+'</td><td style="padding:5px 8px;border-bottom:1px solid var(--off);color:var(--gray2)">'+(p.note||'')+'</td></tr>';}).join('');
+  var stats=['Intake','Diagnosing','In Repair','Waiting on Parts','Ready','Complete'];
   var sbtns=stats.map(function(s){var isW=s==='Waiting on Parts';return '<button class="sbtn'+(isW?' waiting-btn':'')+(o.status===s?' active':'')+'" onclick="quickStatus(\''+id+'\',\''+s+'\')">'+s+'</button>';}).join('');
-  var eqf=[['Type',o.equipType],['Brand',o.brand],['Year',o.year],['Model',o.model],['Product #',o.product],['Serial #',o.serial],['Engine',o.engine],['Hrs / Condition',o.hours]].filter(function(f){return f[1];});
-  var atts=ATTACHMENTS[id]||[],logs=CONTACTLOGS[id]||[];
+  var eqf=[['Type',o.equipType],['Brand',o.brand],['Year',o.year],['Model',o.model],['Serial #',o.serial],['Engine',o.engine],['Hrs / Condition',o.hours]].filter(function(f){return f[1];});
+  var atts=ATTACHMENTS[id]||[];
   var attHtml=atts.map(function(a,i){var src=a.url||a.data||'';return '<div class="attach-thumb"><img src="'+src+'" onclick="viewImg(\''+id+'\','+i+')" title="'+a.name+'"><button class="rm-att" onclick="removeAtt(\''+id+'\','+i+')">&#x2715;</button></div>';}).join('');
+  var logs=CONTACTLOGS[id]||[];
   var logHtml=logs.length?logs.map(function(l,i){return '<div class="contact-log-entry"><div style="font-weight:600">'+l.type+'</div><div>'+l.note+'</div><div class="cl-meta">'+l.dt+'<button class="btn sm del" onclick="deleteContactLog(\''+id+'\','+i+')" style="margin-left:8px;padding:1px 6px;font-size:10px">remove</button></div></div>';}).join(''):'<div style="font-size:12px;color:var(--muted);font-style:italic;padding:4px 0">No contact logged yet.</div>';
   var wStatus=o.status==='Waiting on Parts'&&o.partsWaiting?'<div style="background:#FAEEDA;border:1.5px solid #EF9F27;border-radius:3px;padding:8px 12px;font-size:12px;color:#633806;margin-bottom:10px"><strong>Waiting on:</strong> '+o.partsWaiting+'</div>':'';
   var est=parseFloat(o.estHrs)||0,act=parseFloat(o.actHrs)||0,bill=parseFloat(o.billHrs)||0;
   var hrsHtml=(est||act||bill)?'<div class="sect-lbl">Hours</div><div class="g3">'+(est?'<div><div class="df-lbl">Estimated</div><div class="df-val">'+est.toFixed(2)+'h</div></div>':'')+(act?'<div><div class="df-lbl">Actual</div><div class="df-val">'+act.toFixed(2)+'h'+(est&&act?'<span style="margin-left:6px;font-size:11px;color:'+(act>est?'var(--red)':'#2d7d1e')+'">'+(act>est?'+':'')+(act-est).toFixed(2)+'h</span>':'')+'</div></div>':'')+(bill?'<div><div class="df-lbl">Billed</div><div class="df-val">'+bill.toFixed(2)+'h</div></div>':'')+'</div>':'';
-  var partsSection='<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px"><div style="font-family:\'Barlow Condensed\',sans-serif;font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)">Parts &amp; Labor</div></div>'
-    +(o.parts&&o.parts.length?'<table style="width:100%;border-collapse:collapse;font-size:12px;margin-bottom:8px"><thead><tr><th style="text-align:left;font-size:10px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);padding:4px 8px;border-bottom:1.5px solid var(--silver)">Part Number</th><th style="text-align:center;font-size:10px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);padding:4px 8px;border-bottom:1.5px solid var(--silver)">Qty</th><th style="text-align:left;font-size:10px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);padding:4px 8px;border-bottom:1.5px solid var(--silver)">Description</th><th style="width:30px;border-bottom:1.5px solid var(--silver)"></th></tr></thead><tbody id="det-parts-tbody-'+id+'">'+prows+'</tbody></table>':'<div id="det-parts-tbody-'+id+'" style="font-size:12px;color:var(--muted);padding:4px 0 8px;font-style:italic">No parts or labor logged yet.</div>')
-    +'<div style="display:flex;gap:6px;flex-wrap:wrap;align-items:flex-end;padding:8px;background:var(--off);border-radius:3px;border:1.5px solid var(--silver)">'
-    +'<div style="flex:1;min-width:90px"><div style="font-size:10px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--muted);margin-bottom:3px">Part Number</div><input type="text" id="ql-note-'+id+'" placeholder="e.g. 1141 200..." style="width:100%;padding:6px 9px;border:1.5px solid var(--silver);border-radius:3px;font-size:13px;font-family:Barlow,sans-serif;background:var(--white);color:var(--dark)"></div>'
-    +'<div style="width:60px"><div style="font-size:10px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--muted);margin-bottom:3px">Qty</div><input type="number" id="ql-qty-'+id+'" value="1" min="1" style="width:100%;padding:6px 9px;border:1.5px solid var(--silver);border-radius:3px;font-size:13px;font-family:Barlow,sans-serif;background:var(--white);color:var(--dark)"></div>'
-    +'<div style="flex:2;min-width:120px"><div style="font-size:10px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--muted);margin-bottom:3px">Description</div><input type="text" id="ql-desc-'+id+'" placeholder="e.g. Air filter, Labor..." style="width:100%;padding:6px 9px;border:1.5px solid var(--silver);border-radius:3px;font-size:13px;font-family:Barlow,sans-serif;background:var(--white);color:var(--dark)"></div>'
-    +'<button class="btn sm primary" onclick="quickAddPart(\''+id+'\')" style="flex-shrink:0;align-self:flex-end">+ Add</button>'
-    +'</div>';
-  document.getElementById('det-body').innerHTML='<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px"><div><div style="font-family:\'Barlow Condensed\',sans-serif;font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)">Work Order #'+o.woNum+(o.tag?' &nbsp;<span style="background:var(--dark);color:#fff;padding:1px 7px;border-radius:2px;font-size:10px">Tag: '+o.tag+'</span>':'')+(o.urgent?' &nbsp;<span class="badge b-urgent">Urgent</span>':'')+'</div><div style="font-size:18px;font-weight:800">'+c.first+' '+c.last+'</div>'+(c.phone?'<div style="font-size:12px;color:var(--muted)">'+c.phone+'</div>':'')+'</div><div style="text-align:right">'+(o.dateIn?'<div style="font-size:11px;color:var(--muted)">In: '+o.dateIn+'</div>':'')+(o.estDate?'<div style="font-size:11px;color:var(--muted)">Est: '+o.estDate+'</div>':'')+(o.dateOut?'<div style="font-size:11px;color:var(--muted)">Done: '+o.dateOut+'</div>':'')+'<div style="font-size:12px;font-weight:700;margin-top:3px">'+(o.tech||'')+'</div></div></div>'+wStatus+'<div class="sect-lbl" style="margin-top:0">Quick Status</div><div class="status-btns">'+sbtns+'</div><hr><div class="sect-lbl">Equipment</div><div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px 14px;margin-bottom:12px">'+eqf.map(function(f){return '<div><div class="df-lbl">'+f[0]+'</div><div class="df-val">'+f[1]+'</div></div>';}).join('')+'</div>'+(o.complaint?'<div style="margin-bottom:8px"><div class="df-lbl">Customer Complaint</div><div class="df-val">'+o.complaint+'</div></div>':'')+(o.notes?'<div style="margin-bottom:8px"><div class="df-lbl">Tech Notes</div><div class="df-val">'+o.notes+'</div>'+(o.notesTs?'<div class="note-ts">Updated: '+o.notesTs+'</div>':'')+'</div>':'')+hrsHtml+'<hr>'+partsSection+'<div class="sect-lbl">Customer Contact Log</div>'+logHtml+'<button class="btn sm outline" onclick="openContactLog(\''+id+'\')" style="margin-top:8px">+ Log Contact</button><div class="sect-lbl">Attachments</div><div id="att-thumbs-'+id+'" style="margin-bottom:6px">'+attHtml+'</div><div class="upload-zone" onclick="document.getElementById(\'att-file-'+id+'\').click()">Tap or click to attach photo</div><input type="file" id="att-file-'+id+'" accept="image/*" style="display:none" onchange="handleAttach(\''+id+'\',this)"><div class="mfoot"><button class="btn" onclick="closeM(\'det-modal\')">Close</button><button class="btn" onclick="openEditWO(\''+id+'\')">Edit</button><button class="btn success" onclick="printWO(\''+id+'\')">Print Work Order</button></div>';
+  document.getElementById('det-body').innerHTML=
+    '<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px"><div><div style="font-family:\'Barlow Condensed\',sans-serif;font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)">Work Order #'+o.woNum+(o.urgent?' &nbsp;<span class="badge b-urgent">Urgent</span>':'')+'</div><div style="font-size:17px;font-weight:800">'+c.first+' '+c.last+'</div>'+(c.phone?'<div style="font-size:12px;color:var(--muted)">'+c.phone+'</div>':'')+'</div><div style="text-align:right">'+(o.dateIn?'<div style="font-size:11px;color:var(--muted)">In: '+o.dateIn+'</div>':'')+(o.estDate?'<div style="font-size:11px;color:var(--muted)">Est: '+o.estDate+'</div>':'')+(o.dateOut?'<div style="font-size:11px;color:var(--muted)">Done: '+o.dateOut+'</div>':'')+'<div style="font-size:12px;font-weight:700;margin-top:3px">'+(o.tech||'')+'</div></div></div>'
+    +wStatus+'<div class="sect-lbl" style="margin-top:0">Quick Status</div><div class="status-btns">'+sbtns+'</div><hr>'
+    +'<div class="sect-lbl">Equipment</div><div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px 14px;margin-bottom:12px">'+eqf.map(function(f){return '<div><div class="df-lbl">'+f[0]+'</div><div class="df-val">'+f[1]+'</div></div>';}).join('')+'</div>'
+    +(o.complaint?'<div style="margin-bottom:8px"><div class="df-lbl">Customer Complaint</div><div class="df-val">'+o.complaint+'</div></div>':'')
+    +(o.notes?'<div style="margin-bottom:8px"><div class="df-lbl">Tech Notes</div><div class="df-val">'+o.notes+'</div>'+(o.notesTs?'<div class="note-ts">Updated: '+o.notesTs+'</div>':'')+'</div>':'')
+    +hrsHtml+'<hr>'
+    +(o.parts&&o.parts.length?'<table style="width:100%;border-collapse:collapse;font-size:12px"><thead><tr><th style="text-align:left;font-size:10px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);padding:4px 8px;border-bottom:1.5px solid var(--silver)">Description</th><th style="text-align:center;font-size:10px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);padding:4px 8px;border-bottom:1.5px solid var(--silver)">Qty</th><th style="text-align:left;font-size:10px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);padding:4px 8px;border-bottom:1.5px solid var(--silver)">Notes</th></tr></thead><tbody>'+prows+'</tbody></table>':'<div style="font-size:12px;color:var(--muted);padding:6px 0;font-style:italic">No parts or labor logged.</div>')
+    +'<div class="sect-lbl">Customer Contact Log</div>'+logHtml
+    +'<button class="btn sm outline" onclick="openContactLog(\''+id+'\')" style="margin-top:8px">+ Log Contact</button>'
+    +'<div class="sect-lbl">Attachments</div><div id="att-thumbs-'+id+'" style="margin-bottom:6px">'+attHtml+'</div>'
+    +'<div class="upload-zone" onclick="document.getElementById(\'att-file-'+id+'\').click()">Tap to attach photo or scan a signed copy</div>'
+    +'<input type="file" id="att-file-'+id+'" accept="image/*" capture="environment" style="display:none" onchange="handleAttach(\''+id+'\',this)">'
+    +'<div class="mfoot"><button class="btn" onclick="closeM(\'det-modal\')">Close</button><button class="btn" onclick="openEditWO(\''+id+'\')">Edit</button><button class="btn success" onclick="printWO(\''+id+'\')">Print Work Order</button></div>';
   document.getElementById('det-modal').classList.add('open');
 }
 
-function quickAddPart(id){
-  var desc=(document.getElementById('ql-desc-'+id).value||'').trim();
-  if(!desc){document.getElementById('ql-desc-'+id).focus();return;}
-  var qty=parseFloat(document.getElementById('ql-qty-'+id).value)||1;
-  var note=document.getElementById('ql-note-'+id).value||'';
-  var o=ORDERS[id];if(!o)return;
-  var parts=o.parts?JSON.parse(JSON.stringify(o.parts)):[];
-  parts.push({desc:desc,qty:qty,note:note});
-  o.parts=parts;
-  writeOrder(o);
-  openDet(id);
-}
 function handleAttach(woid,inp){
   if(!inp.files||!inp.files[0])return;
   var file=inp.files[0];
   var tb=document.getElementById('att-thumbs-'+woid);
-
-  // Show uploading indicator
   var loadDiv=document.createElement('div');
   loadDiv.id='att-loading-'+woid;
   loadDiv.style.cssText='font-size:12px;color:var(--muted);padding:6px 0;font-style:italic';
   loadDiv.textContent='Uploading photo...';
   if(tb)tb.appendChild(loadDiv);
-
   var reader=new FileReader();
   reader.onload=function(e){
     var img=new Image();
     img.onload=function(){
-      // Compress image
       var MAX=1200,canvas=document.createElement('canvas');
       var w=img.width,h=img.height;
       if(w>MAX||h>MAX){if(w>h){h=Math.round(h*(MAX/w));w=MAX;}else{w=Math.round(w*(MAX/h));h=MAX;}}
       canvas.width=w;canvas.height=h;
       canvas.getContext('2d').drawImage(img,0,0,w,h);
-
       canvas.toBlob(function(blob){
         var ts=Date.now();
         var path='attachments/'+woid+'/'+ts+'_'+file.name.replace(/[^a-zA-Z0-9._-]/g,'_');
-
-        if(STORAGE){
-          // Upload to Firebase Storage
-          var ref=STORAGE.ref(path);
-          ref.put(blob).then(function(){
-            return ref.getDownloadURL();
-          }).then(function(url){
-            var atts=ATTACHMENTS[woid]?JSON.parse(JSON.stringify(ATTACHMENTS[woid])):[];
-            var tsStr=new Date().toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
-            atts.push({name:file.name,url:url,path:path,ts:tsStr});
-            writeAttachments(woid,atts);
-            var ld=document.getElementById('att-loading-'+woid);if(ld)ld.remove();
-            if(tb){
-              var i=atts.length-1;
-              var div=document.createElement('div');div.className='attach-thumb';
-              div.innerHTML='<img src="'+url+'" onclick="viewImg(\''+woid+'\','+i+')" title="'+file.name+'"><button class="rm-att" onclick="removeAtt(\''+woid+'\','+i+')">&#x2715;</button>';
-              tb.appendChild(div);
-            }
-          }).catch(function(err){
-            var ld=document.getElementById('att-loading-'+woid);if(ld)ld.textContent='Upload failed: '+err.message;
-          });
-        } else {
-          // Fallback: store as base64 if Storage not available
-          var dataUrl=canvas.toDataURL('image/jpeg',0.75);
-          var atts=ATTACHMENTS[woid]?JSON.parse(JSON.stringify(ATTACHMENTS[woid])):[];
-          var tsStr=new Date().toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
-          atts.push({name:file.name,data:dataUrl,ts:tsStr});
-          writeAttachments(woid,atts);
+        function addThumb(src){
           var ld=document.getElementById('att-loading-'+woid);if(ld)ld.remove();
           if(tb){
-            var i=atts.length-1;
+            var i=(ATTACHMENTS[woid]||[]).length-1;
             var div=document.createElement('div');div.className='attach-thumb';
-            div.innerHTML='<img src="'+dataUrl+'" onclick="viewImg(\''+woid+'\','+i+')" title="'+file.name+'"><button class="rm-att" onclick="removeAtt(\''+woid+'\','+i+')">&#x2715;</button>';
-            tb.appendChild(div);
+            var img2=document.createElement('img');img2.src=src;img2.title=file.name;
+            img2.onclick=function(){viewImg(woid,i);};
+            var btn=document.createElement('button');btn.className='rm-att';btn.innerHTML='&#x2715;';
+            btn.onclick=function(){removeAtt(woid,i);};
+            div.appendChild(img2);div.appendChild(btn);tb.appendChild(div);
           }
+        }
+        if(STORAGE){
+          var ref=STORAGE.ref(path);
+          ref.put(blob).then(function(){return ref.getDownloadURL();}).then(function(url){
+            var atts=ATTACHMENTS[woid]?JSON.parse(JSON.stringify(ATTACHMENTS[woid])):[];
+            atts.push({name:file.name,url:url,path:path,ts:new Date().toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})});
+            writeAttachments(woid,atts);addThumb(url);
+          }).catch(function(err){var ld=document.getElementById('att-loading-'+woid);if(ld)ld.textContent='Upload failed: '+err.message;});
+        } else {
+          var dataUrl=canvas.toDataURL('image/jpeg',0.75);
+          var atts=ATTACHMENTS[woid]?JSON.parse(JSON.stringify(ATTACHMENTS[woid])):[];
+          atts.push({name:file.name,data:dataUrl,ts:new Date().toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})});
+          writeAttachments(woid,atts);addThumb(dataUrl);
         }
       },'image/jpeg',0.75);
     };
     img.src=e.target.result;
   };
-  reader.readAsDataURL(file);
-  inp.value='';
+  reader.readAsDataURL(file);inp.value='';
 }
 function removeAtt(woid,idx){
   if(!confirm('Remove this photo?'))return;
   var atts=ATTACHMENTS[woid]||[];
   var att=atts[idx];
-  // Delete from Storage if it has a path
-  if(att&&att.path&&STORAGE){
-    STORAGE.ref(att.path).delete().catch(function(){});
-  }
+  if(att&&att.path&&STORAGE){STORAGE.ref(att.path).delete().catch(function(){});}
   atts.splice(idx,1);
-  writeAttachments(woid,atts);
-  openDet(woid);
+  writeAttachments(woid,atts);openDet(woid);
 }
 function viewImg(woid,idx){var a=ATTACHMENTS[woid];if(!a||!a[idx])return;var src=a[idx].url||a[idx].data||'';var w=window.open();w.document.write('<img src="'+src+'" style="max-width:100%;height:auto">');}
 
 function openCustDet(id){
   var c=CUSTS[id];if(!c)return;var wos=orderArr().filter(function(o){return o.custId===id;}),eq=custEquip(id);
-  var eqHtml=eq.length?eq.map(function(e,i){var isSale=e.rectype==='sale'||!e.rectype,ws=e.warrantyExp?warrantyStatus(e.warrantyExp):null;return '<div class="equip-card"><div class="eq-badge"><span class="badge '+(isSale?'b-sale':'b-intake')+'">'+(isSale?'Sold by us':'Customer-owned')+'</span>'+(ws?'<span class="badge '+ws.cls+'">'+ws.label+'</span>':'')+'</div><div class="eq-brand">'+(e.brand||'')+' '+(e.type||'')+'</div><div class="eq-detail">'+[e.year?'Year: '+e.year:'',e.model?'Model: '+e.model:'',e.product?'Product #: '+e.product:'',e.serial?'SN: '+e.serial:'',e.engine?'Engine: '+e.engine:''].filter(Boolean).join(' &middot; ')+'</div>'+(e.date?'<div class="eq-detail">'+(isSale?'Sold: ':'Logged: ')+e.date+(e.warrantyExp?' &middot; Warranty exp: '+e.warrantyExp:'')+'</div>':'')+(e.warrantyNotes?'<div class="eq-detail">'+e.warrantyNotes+'</div>':'')+(e.notes?'<div class="eq-detail" style="font-style:italic;margin-top:3px">'+e.notes+'</div>':'')+'<div class="eq-actions"><button class="btn sm" onclick="openAddEquip(\''+id+'\','+i+')">Edit</button><button class="btn sm primary" onclick="newWOForCustEquip(\''+id+'\','+i+')">+ Work Order</button></div></div>';}).join(''):'<div class="empty" style="padding:12px 0">No equipment on record.</div>';
-  document.getElementById('det-body').innerHTML='<div style="font-size:18px;font-weight:800;margin-bottom:4px">'+c.first+' '+c.last+'</div>'+(c.phone?'<div style="font-size:13px;color:var(--muted)">'+c.phone+'</div>':'')+(c.email?'<div style="font-size:13px;color:var(--muted)">'+c.email+'</div>':'')+(c.addr?'<div style="font-size:13px;color:var(--muted)">'+c.addr+'</div>':'')+(c.notes?'<div style="font-size:12px;margin-top:8px;padding:8px;background:var(--off);border-radius:3px">'+c.notes+'</div>':'')+'<div class="sect-lbl">Equipment on File ('+eq.length+')</div>'+eqHtml+'<button class="btn outline sm" onclick="openAddEquip(\''+id+'\')" style="margin-bottom:4px">+ Log Equipment / New Sale</button><div class="sect-lbl">Work Order History ('+wos.length+')</div>'+(wos.length?wos.map(function(o){return woRow(o,c);}).join(''):'<div class="empty" style="padding:12px 0">No orders yet.</div>')+'<div class="mfoot"><button class="btn" onclick="closeM(\'det-modal\')">Close</button><button class="btn" onclick="editCust(\''+id+'\')">Edit Customer</button><button class="btn primary" onclick="closeM(\'det-modal\');newWOForCustEquip(\''+id+'\',undefined)">+ New Order</button></div>';
+  var eqHtml=eq.length?eq.map(function(e,i){var isSale=e.rectype==='sale'||!e.rectype,ws=e.warrantyExp?warrantyStatus(e.warrantyExp):null;return '<div class="equip-card"><div class="eq-badge"><span class="badge '+(isSale?'b-sale':'b-intake')+'">'+(isSale?'Sold by us':'Customer-owned')+'</span>'+(ws?'<span class="badge '+ws.cls+'">'+ws.label+'</span>':'')+'</div><div class="eq-brand">'+(e.brand||'')+' '+(e.type||'')+'</div><div class="eq-detail">'+[e.year?'Year: '+e.year:'',e.model?'Model: '+e.model:'',e.serial?'SN: '+e.serial:'',e.engine?'Engine: '+e.engine:''].filter(Boolean).join(' &middot; ')+'</div>'+(e.date?'<div class="eq-detail">'+(isSale?'Sold: ':'Logged: ')+e.date+(e.warrantyExp?' &middot; Warranty exp: '+e.warrantyExp:'')+'</div>':'')+(e.warrantyNotes?'<div class="eq-detail">'+e.warrantyNotes+'</div>':'')+(e.notes?'<div class="eq-detail" style="font-style:italic;margin-top:3px">'+e.notes+'</div>':'')+'<div class="eq-actions"><button class="btn sm" onclick="openAddEquip(\''+id+'\','+i+')">Edit</button><button class="btn sm primary" onclick="newWOForCustEquip(\''+id+'\','+i+')">+ Work Order</button></div></div>';}).join(''):'<div class="empty" style="padding:12px 0">No equipment on record.</div>';
+  document.getElementById('det-body').innerHTML='<div style="font-size:17px;font-weight:800;margin-bottom:4px">'+c.first+' '+c.last+'</div>'+(c.phone?'<div style="font-size:13px;color:var(--muted)">'+c.phone+'</div>':'')+(c.email?'<div style="font-size:13px;color:var(--muted)">'+c.email+'</div>':'')+(c.addr?'<div style="font-size:13px;color:var(--muted)">'+c.addr+'</div>':'')+(c.notes?'<div style="font-size:12px;margin-top:8px;padding:8px;background:var(--off);border-radius:3px">'+c.notes+'</div>':'')+'<div class="sect-lbl">Equipment on File ('+eq.length+')</div>'+eqHtml+'<button class="btn outline sm" onclick="openAddEquip(\''+id+'\')" style="margin-bottom:4px">+ Log Equipment / New Sale</button><div class="sect-lbl">Work Order History ('+wos.length+')</div>'+(wos.length?wos.map(function(o){return woRow(o,c);}).join(''):'<div class="empty" style="padding:12px 0">No orders yet.</div>')+'<div class="mfoot"><button class="btn" onclick="closeM(\'det-modal\')">Close</button><button class="btn" onclick="editCust(\''+id+'\')">Edit Customer</button><button class="btn primary" onclick="closeM(\'det-modal\');openNewWO();setTimeout(function(){document.getElementById(\'m-cust\').value=\''+id+'\';},50)">+ New Order</button></div>';
   document.getElementById('det-modal').classList.add('open');
 }
 function editCust(id){var c=CUSTS[id];if(!c)return;editCid=id;document.getElementById('cust-mtitle').textContent='Edit Customer';document.getElementById('c-first').value=c.first||'';document.getElementById('c-last').value=c.last||'';document.getElementById('c-phone').value=c.phone||'';document.getElementById('c-email').value=c.email||'';document.getElementById('c-addr').value=c.addr||'';document.getElementById('c-notes').value=c.notes||'';closeM('det-modal');document.getElementById('cust-modal').classList.add('open');}
 
 function printWO(id){
   var o=ORDERS[id];if(!o)return;var c=CUSTS[o.custId]||{};
-  var prows=(o.parts||[]).map(function(p,pi){return '<tr><td style="padding:5px 7px;border-bottom:1px solid #e8e8e8;font-size:11px">'+p.desc+'</td><td style="padding:5px 7px;border-bottom:1px solid #e8e8e8;text-align:center;font-size:11px">'+p.qty+'</td><td style="padding:5px 7px;border-bottom:1px solid #e8e8e8;color:#555;font-size:11px">'+(p.note||'')+'</td></tr>';}).join('');
+  var prows=(o.parts||[]).map(function(p){return '<tr><td style="padding:6px 8px;border-bottom:1px solid #e0e0e0">'+p.desc+'</td><td style="padding:6px 8px;border-bottom:1px solid #e0e0e0;text-align:center">'+p.qty+'</td><td style="padding:6px 8px;border-bottom:1px solid #e0e0e0;color:#555">'+(p.note||'')+'</td></tr>';}).join('');
   var locAddr=(c.addr&&c.addr.toLowerCase().indexOf('harrison')>=0)?'#2 Necessity Ave &middot; Harrison, AR 72601 &middot; (870) 741-3493':'1609 Hwy 62 West &middot; Yellville, AR 72687 &middot; (870) 449-4255';
   var bill=parseFloat(o.billHrs)||0;
-  var eqFields=[['Type',o.equipType],['Brand',o.brand],['Year',o.year],['Model',o.model],['Product #',o.product],['Serial #',o.serial],['Engine',o.engine],['Hrs / Condition',o.hours]].filter(function(f){return f[1];});
-  var html='<!DOCTYPE html><html><head><meta charset="UTF-8">'
-    +'<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700;800&family=Barlow:wght@400;500;600;700&display=swap" rel="stylesheet">'
-    +'<style>'
-    +'*{box-sizing:border-box;margin:0;padding:0}'
-    +'body{font-family:Barlow,Arial,sans-serif;font-size:11px;color:#1a1a1a;background:#fff;padding:0}'
-    +'@page{margin:0.5in 0.6in;size:letter}'
-    +'.logo-wrap{text-align:center;margin-bottom:6px}'
-    +'.logo-main{font-family:Cinzel,serif;font-size:28px;font-weight:700;letter-spacing:.08em;color:#1a1a1a;line-height:1;text-transform:uppercase}'
-    +'.logo-main em{font-style:normal;font-weight:400;letter-spacing:.12em}'
-    +'.logo-rule{display:flex;align-items:center;gap:8px;margin:5px 0 3px}'
-    +'.logo-rule hr{flex:1;border:none;border-top:2px solid #1a1a1a;margin:0}'
-    +'.logo-rule span{font-family:Cinzel,serif;font-size:8px;letter-spacing:.18em;text-transform:uppercase;font-weight:500;white-space:nowrap;color:#1a1a1a}'
-    +'.logo-sub{font-family:Barlow,sans-serif;font-size:9px;color:#555;letter-spacing:.08em;text-transform:uppercase;text-align:center;margin-bottom:2px}'
-    +'.red-bar{height:3px;background:#CC0000;margin-bottom:10px}'
-    +'.wo-meta{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px}'
-    +'.wo-num{font-family:Cinzel,serif;font-size:22px;font-weight:700;color:#CC0000;line-height:1}'
-    +'.wo-num-lbl{font-size:8px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:#888;margin-bottom:2px}'
-    +'.meta-right{text-align:right;font-size:10px;color:#555}'
-    +'.section-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}'
-    +'.box{background:#f6f4f1;border-radius:2px;padding:9px 11px}'
-    +'.box-lbl{font-size:8px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#888;margin-bottom:5px}'
-    +'.box-name{font-size:13px;font-weight:700;margin-bottom:2px}'
-    +'.box-detail{font-size:10px;color:#555;margin-bottom:1px}'
-    +'.eq-row{display:flex;gap:6px;font-size:10px;margin-bottom:2px}'
-    +'.eq-lbl{color:#888;min-width:60px}'
-    +'.eq-val{font-weight:600}'
-    +'.field-block{margin-bottom:8px}'
-    +'.field-lbl{font-size:8px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#888;margin-bottom:3px}'
-    +'.field-val{font-size:11px;padding:6px 9px;background:#f6f4f1;border-radius:2px;line-height:1.5}'
-    +'table{width:100%;border-collapse:collapse}'
-    +'thead tr{background:#1a1a1a;color:#fff}'
-    +'th{padding:5px 7px;text-align:left;font-size:8px;letter-spacing:.08em;text-transform:uppercase;font-weight:600}'
-    +'.sig-grid{display:grid;grid-template-columns:1fr 1fr;gap:40px;margin-top:12px;padding-top:10px;border-top:1px solid #e0e0e0}'
-    +'.sig-lbl{font-size:8px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#888;margin-bottom:22px}'
-    +'.sig-line{border-bottom:1px solid #1a1a1a;margin-bottom:3px}'
-    +'.sig-sub{font-size:8px;color:#888}'
-    +'.thank-you{text-align:center;margin-top:10px;padding-top:8px;border-top:1px solid #e0e0e0}'
-    +'.thank-you strong{font-size:11px;color:#CC0000}'
-    +'.thank-you div{font-size:9px;color:#888;margin-top:2px}'
-    +'</style></head><body>'
-    +'<div class="logo-wrap" style="text-align:center;margin-bottom:8px"><div style="font-family:Cinzel,serif;font-size:26px;font-weight:700;letter-spacing:.08em;color:#1a1a1a;line-height:1;text-transform:uppercase">Miller <span style="font-weight:400">Hardware</span></div><div style="display:flex;align-items:center;gap:8px;margin:4px 0 3px"><hr style="flex:1;border:none;border-top:1.5px solid #1a1a1a;margin:0"><span style="font-family:Cinzel,serif;font-size:8px;letter-spacing:.16em;text-transform:uppercase;font-weight:500;white-space:nowrap">Company, Inc. &mdash; Est. 1931</span><hr style="flex:1;border:none;border-top:1.5px solid #1a1a1a;margin:0"></div><div style="font-size:9px;color:#555;letter-spacing:.08em;text-transform:uppercase;font-family:Arial,sans-serif">True Value Dealer &mdash; Harrison &amp; Yellville, Arkansas</div></div>'
-    +'<div class="red-bar"></div>'
-    +'<div class="wo-meta">'
-    +'<div><div class="wo-num-lbl">Work Order</div><div class="wo-num">#'+o.woNum+'</div></div>'
-    +'<div class="meta-right">'
-    +(o.dateIn?'<div>Date In: '+o.dateIn+'</div>':'')
-    +(o.dateOut?'<div>Completed: '+o.dateOut+'</div>':'')
-    +'<div>Tech: '+(o.tech||'—')+'</div>'
-    +(bill?'<div>Labor: '+bill.toFixed(2)+' hrs</div>':'')
-    +'<div style="margin-top:3px"><span style="display:inline-block;padding:2px 8px;border-radius:2px;font-size:8px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;background:'+(o.status==='Complete'?'#e8e8e8':'#eaf3de')+';color:'+(o.status==='Complete'?'#444':'#1a5c0a')+'">'+o.status+'</span></div>'
-    +'</div></div>'
-    +'<div class="section-grid">'
-    +'<div class="box"><div class="box-lbl">Customer</div>'
-    +'<div class="box-name">'+c.first+' '+c.last+'</div>'
-    +(c.phone?'<div class="box-detail">'+c.phone+'</div>':'')
-    +(c.email?'<div class="box-detail">'+c.email+'</div>':'')
-    +(c.addr?'<div class="box-detail">'+c.addr+'</div>':'')
-    +'</div>'
-    +'<div class="box"><div class="box-lbl">Equipment</div>'
-    +eqFields.map(function(f){return '<div class="eq-row"><span class="eq-lbl">'+f[0]+'</span><span class="eq-val">'+f[1]+'</span></div>';}).join('')
-    +'</div></div>'
-    +(o.complaint?'<div class="field-block"><div class="field-lbl">Customer Complaint</div><div class="field-val">'+o.complaint+'</div></div>':'')
-    +(o.notes?'<div class="field-block"><div class="field-lbl">Tech Notes</div><div class="field-val">'+o.notes+'</div></div>':'')
-    +(o.parts&&o.parts.length?'<div class="field-block"><div class="field-lbl">Parts &amp; Labor</div>'
-    +'<table><thead><tr><th style="width:45%">Description</th><th style="width:12%;text-align:center">Qty</th><th>Notes</th></tr></thead>'
-    +'<tbody>'+prows+'</tbody></table></div>':'')
-    +'<div class="sig-grid">'
-    +'<div><div class="sig-lbl">Customer Signature</div><div class="sig-line"></div><div class="sig-sub">Signature &amp; Date — Equipment Received in Good Order</div></div>'
-    +'<div><div class="sig-lbl">Authorized By</div><div class="sig-line"></div><div class="sig-sub">Miller Hardware Technician</div></div>'
-    +'</div>'
-    +'<div class="thank-you"><strong>Thank you for your business!</strong>'
-    +'<div>Miller Hardware Company &mdash; Serving Arkansas Since 1931</div>'
-    +'<div>'+locAddr+'</div>'
-    +'</div>'
-    +'</body></html>';
-  var pw=window.open('','_blank','width=800,height=700');
-  pw.document.write(html);
-  pw.document.close();
-  pw.onload=function(){pw.focus();pw.print();};
+  var html='<div style="font-family:Barlow,Arial,sans-serif;max-width:760px;margin:0 auto;padding:32px 40px;color:#1a1a1a"><div style="display:flex;justify-content:space-between;align-items:flex-start;border-bottom:3px solid #1a1a1a;padding-bottom:16px;margin-bottom:20px"><div><div style="font-size:28px;font-weight:800;line-height:1">MILLER <span style="color:#1a1a1a">HARDWARE</span></div><div style="font-size:11px;color:#888;margin-top:2px;text-transform:uppercase;letter-spacing:.04em">Saw Shop &mdash; True Value Dealer</div><div style="font-size:11px;color:#555;margin-top:4px">'+locAddr+'</div></div><div style="text-align:right"><div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#888">Work Order</div><div style="font-size:26px;font-weight:800;color:#1a1a1a">#'+o.woNum+'</div>'+(o.dateIn?'<div style="font-size:11px;color:#555">Date In: '+o.dateIn+'</div>':'')+(o.dateOut?'<div style="font-size:11px;color:#555">Completed: '+o.dateOut+'</div>':'')+'<div style="font-size:11px;color:#555">Tech: '+(o.tech||'\u2014')+'</div>'+(bill?'<div style="font-size:11px;color:#555">Labor: '+bill.toFixed(2)+' hrs</div>':'')+'<div style="margin-top:4px"><span style="display:inline-block;padding:3px 10px;border-radius:2px;font-size:10px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;background:#e8e8e8;color:#444">'+o.status+'</span></div></div></div>'
+  +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:18px"><div style="background:#f6f4f1;border-radius:3px;padding:14px"><div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#888;margin-bottom:6px">Customer</div><div style="font-size:15px;font-weight:700">'+c.first+' '+c.last+'</div>'+(c.phone?'<div style="font-size:12px;color:#555;margin-top:2px">'+c.phone+'</div>':'')+(c.email?'<div style="font-size:12px;color:#555">'+c.email+'</div>':'')+(c.addr?'<div style="font-size:12px;color:#555">'+c.addr+'</div>':'')+'</div><div style="background:#f6f4f1;border-radius:3px;padding:14px"><div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#888;margin-bottom:6px">Equipment</div>'+[['Type',o.equipType],['Brand',o.brand],['Year',o.year],['Model',o.model],['Serial #',o.serial],['Engine',o.engine],['Hrs / Condition',o.hours]].filter(function(f){return f[1];}).map(function(f){return '<div style="display:flex;gap:8px;font-size:12px;margin-bottom:2px"><span style="color:#888;min-width:72px">'+f[0]+'</span><span style="font-weight:600">'+f[1]+'</span></div>';}).join('')+'</div></div>'
+  +(o.complaint?'<div style="margin-bottom:14px"><div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#888;margin-bottom:4px">Customer Complaint</div><div style="font-size:13px;padding:8px 12px;background:#f6f4f1;border-radius:3px">'+o.complaint+'</div></div>':'')
+  +(o.notes?'<div style="margin-bottom:14px"><div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#888;margin-bottom:4px">Tech Notes</div><div style="font-size:13px;padding:8px 12px;background:#f6f4f1;border-radius:3px">'+o.notes+'</div></div>':'')
+  +(o.parts&&o.parts.length?'<div style="margin-bottom:14px"><div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#888;margin-bottom:6px">Parts &amp; Labor</div><table style="width:100%;border-collapse:collapse;font-size:13px"><thead><tr style="background:#1a1a1a;color:#fff"><th style="padding:7px 8px;text-align:left;font-size:10px;letter-spacing:.05em;text-transform:uppercase">Description</th><th style="padding:7px 8px;text-align:center;font-size:10px;letter-spacing:.05em;text-transform:uppercase;width:60px">Qty</th><th style="padding:7px 8px;text-align:left;font-size:10px;letter-spacing:.05em;text-transform:uppercase">Notes</th></tr></thead><tbody>'+prows+'</tbody></table></div>':'')
+  +'<div style="margin-top:28px;padding-top:16px;border-top:1.5px solid #e0e0e0"><div style="display:grid;grid-template-columns:1fr 1fr;gap:40px"><div><div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#888;margin-bottom:28px">Customer Signature</div><div style="border-bottom:1.5px solid #1a1a1a;margin-bottom:4px"></div><div style="font-size:10px;color:#888">Signature &amp; Date \u2014 Equipment Received in Good Order</div></div><div><div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#888;margin-bottom:28px">Authorized By</div><div style="border-bottom:1.5px solid #1a1a1a;margin-bottom:4px"></div><div style="font-size:10px;color:#888">Miller Hardware Technician</div></div></div></div>'
+  +'<div style="text-align:center;margin-top:24px;padding-top:16px;border-top:1.5px solid #e0e0e0"><div style="font-size:12px;font-weight:600;color:#1a1a1a">Thank you for your business!</div><div style="font-size:11px;color:#888;margin-top:3px">Miller Hardware Company &mdash; Serving Arkansas Since 1931</div><div style="font-size:11px;color:#888">Harrison: (870) 741-3493 &middot; Yellville: (870) 449-4255</div></div></div>';
+  var pa=document.getElementById('print-area');pa.innerHTML=html;pa.style.display='block';
+  setTimeout(function(){window.print();setTimeout(function(){pa.style.display='none';},500);},100);
 }
 
 function exportCSV(type){
   var rows,fn;
-  if(type==='orders'){rows=[['WO#','Tag #','Customer','Phone','Type','Brand','Year','Model','Product #','Serial','Engine','Hours','Status','Parts Waiting','Tech','Date In','Est Date','Date Out','Urgent','Est Hrs','Actual Hrs','Billed Hrs','Complaint','Notes']];orderArr().forEach(function(o){var c=CUSTS[o.custId]||{};rows.push([o.woNum,o.tag||'',(c.first||'')+' '+(c.last||''),c.phone||'',o.equipType||'',o.brand||'',o.year||'',o.model||'',o.product||'',o.serial||'',o.engine||'',o.hours||'',o.status||'',o.partsWaiting||'',o.tech||'',o.dateIn||'',o.estDate||'',o.dateOut||'',o.urgent?'Yes':'No',o.estHrs||'',o.actHrs||'',o.billHrs||'','"'+(o.complaint||'').replace(/"/g,"''")+'"','"'+(o.notes||'').replace(/"/g,"''")+'"']);});fn='sawshop-orders-'+today()+'.csv';}
+  if(type==='orders'){rows=[['WO#','Customer','Phone','Type','Brand','Year','Model','Serial','Engine','Hours','Status','Parts Waiting','Tech','Date In','Est Date','Date Out','Urgent','Est Hrs','Actual Hrs','Billed Hrs','Complaint','Notes']];orderArr().forEach(function(o){var c=CUSTS[o.custId]||{};rows.push([o.woNum,(c.first||'')+' '+(c.last||''),c.phone||'',o.equipType||'',o.brand||'',o.year||'',o.model||'',o.serial||'',o.engine||'',o.hours||'',o.status||'',o.partsWaiting||'',o.tech||'',o.dateIn||'',o.estDate||'',o.dateOut||'',o.urgent?'Yes':'No',o.estHrs||'',o.actHrs||'',o.billHrs||'','"'+(o.complaint||'').replace(/"/g,"''")+'"','"'+(o.notes||'').replace(/"/g,"''")+'"']);});fn='sawshop-orders-'+today()+'.csv';}
   else if(type==='customers'){rows=[['First','Last','Phone','Email','Address','Notes']];custArr().forEach(function(c){rows.push([c.first||'',c.last||'',c.phone||'',c.email||'',c.addr||'','"'+(c.notes||'').replace(/"/g,"''")+'"']);});fn='sawshop-customers-'+today()+'.csv';}
-  else if(type==='equipment'){rows=[['Customer','Phone','Type','Brand','Year','Model','Product #','Serial','Engine','Date','Record Type','Warranty Exp','Warranty Notes','Notes']];custArr().forEach(function(c){custEquip(c.id).forEach(function(e){rows.push([(c.first||'')+' '+(c.last||''),c.phone||'',e.type||'',e.brand||'',e.year||'',e.model||'',e.product||'',e.serial||'',e.engine||'',e.date||'',e.rectype||'sale',e.warrantyExp||'',e.warrantyNotes||'','"'+(e.notes||'').replace(/"/g,"''")+'"']);});});fn='sawshop-equipment-'+today()+'.csv';}
-  else if(type==='hours'){rows=[['WO#','Customer','Tech','Equipment','Est Hrs','Actual Hrs','Billed Hrs','Variance Hrs','Variance %']];orderArr().filter(function(o){return o.status==='Complete'&&(o.estHrs||o.actHrs);}).forEach(function(o){var c=CUSTS[o.custId]||{},est=parseFloat(o.estHrs)||0,act=parseFloat(o.actHrs)||0,v=act-est,pct=est?Math.round((v/est)*100):0;rows.push([o.woNum,o.tag||'',(c.first||'')+' '+(c.last||''),o.tech||'',(o.brand||'')+' '+(o.equipType||''),est||'',act||'',o.billHrs||'',v?v.toFixed(2):'',pct?pct+'%':'']);});fn='sawshop-hours-'+today()+'.csv';}
-  else{rows=[['Customer','Phone','Equipment','Reminder Type','Detail','Last Service']];buildReminders().forEach(function(r){rows.push([r.custName,r.phone,r.equip,r.type,r.detail.replace(/<[^>]*>/g,''),r.lastSvc||'']);});fn='sawshop-reminders-'+today()+'.csv';}
-  var csv=rows.map(function(r){return r.join(',');}).join('\n');
+  else if(type==='equipment'){rows=[['Customer','Phone','Type','Brand','Year','Model','Serial','Engine','Date','Record Type','Warranty Exp','Warranty Notes','Notes']];custArr().forEach(function(c){custEquip(c.id).forEach(function(e){rows.push([(c.first||'')+' '+(c.last||''),c.phone||'',e.type||'',e.brand||'',e.year||'',e.model||'',e.serial||'',e.engine||'',e.date||'',e.rectype||'sale',e.warrantyExp||'',e.warrantyNotes||'','"'+(e.notes||'').replace(/"/g,"''")+'"']);});});fn='sawshop-equipment-'+today()+'.csv';}
+  else if(type==='hours'){rows=[['WO#','Customer','Tech','Equipment','Est Hrs','Actual Hrs','Billed Hrs','Variance Hrs','Variance %']];orderArr().filter(function(o){return o.status==='Complete'&&(o.estHrs||o.actHrs);}).forEach(function(o){var c=CUSTS[o.custId]||{},est=parseFloat(o.estHrs)||0,act=parseFloat(o.actHrs)||0,v=act-est,pct=est?Math.round((v/est)*100):0;rows.push([o.woNum,(c.first||'')+' '+(c.last||''),o.tech||'',(o.brand||'')+' '+(o.equipType||''),est||'',act||'',o.billHrs||'',v?v.toFixed(2):'',pct?pct+'%':'']);});fn='sawshop-hours-'+today()+'.csv';}
+  else{rows=[['Customer','Phone','Equipment','Type','Detail','Last Service']];buildReminders().forEach(function(r){rows.push([r.custName,r.phone,r.equip,r.type,r.detail.replace(/<[^>]*>/g,''),r.lastSvc||'']);});fn='sawshop-reminders-'+today()+'.csv';}
+  var csv=rows.map(function(r){return r.join(',');}).join('\
+');
   dl('data:text/csv;charset=utf-8,'+encodeURIComponent(csv),fn);
 }
-function exportJSON(){dl('data:application/json;charset=utf-8,'+encodeURIComponent(JSON.stringify({exported:new Date().toISOString(),orders:ORDERS,customers:CUSTS,techs:TECHS,equipment:EQUIPMENT,contactlogs:CONTACTLOGS,svcIntervals:SVC_INTERVALS},null,2)),'sawshop-backup-'+today()+'.json');}
+function exportJSON(){dl('data:application/json;charset=utf-8,'+encodeURIComponent(JSON.stringify({exported:new Date().toISOString(),orders:ORDERS,customers:CUSTS,techs:TECHS,equipment:EQUIPMENT,attachments:ATTACHMENTS,contactlogs:CONTACTLOGS,svcIntervals:SVC_INTERVALS},null,2)),'sawshop-backup-'+today()+'.json');}
 function dl(href,name){var a=document.createElement('a');a.href=href;a.download=name;a.click();}
-
-function deletePart(woid, idx){
-  if(!confirm('Remove this part?'))return;
-  var o=ORDERS[woid];if(!o||!o.parts)return;
-  o.parts.splice(idx,1);
-  writeOrder(o);
-  openDet(woid);
-}
+function saveFB(){var raw=document.getElementById('fb-cfg').value.trim();if(!raw)return;try{var cl=raw.replace(/(\w+)\s*:/g,'"$1":').replace(/'/g,'"');if(cl.indexOf('{')!==0)cl=cl.substring(cl.indexOf('{'));JSON.parse(cl);}catch(e){document.getElementById('fb-msg').textContent='Could not parse config.';return;}localStorage.setItem('fb_config_raw',raw);document.getElementById('fb-msg').style.color='#1a5c0a';document.getElementById('fb-msg').textContent='Saved \u2014 reload to connect.';}
+function clearFB(){localStorage.removeItem('fb_config_raw');document.getElementById('fb-cfg').value='';document.getElementById('fb-msg').textContent='Cleared.';}
 function closeM(id){document.getElementById(id).classList.remove('open');}
 document.querySelectorAll('.modal-bg').forEach(function(el){el.addEventListener('click',function(e){if(e.target===el)el.classList.remove('open');});});
-
-// Init
-initFirebase();
+initFB();
 </script>
-
-</body>
-</html>
