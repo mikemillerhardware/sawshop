@@ -1,4 +1,5 @@
 
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700;800&family=Barlow+Condensed:wght@600;700;800&display=swap');
 *{box-sizing:border-box;margin:0;padding:0}
@@ -174,6 +175,66 @@ hr{border:none;border-top:1.5px solid var(--silver);margin:12px 0}
 .svc-interval-row{display:flex;align-items:center;gap:10px;padding:8px 12px;background:var(--off);border-radius:3px;margin-bottom:6px;font-size:15px;flex-wrap:wrap}
 .svc-interval-row strong{min-width:120px}
 
+
+/* ── MOBILE ──────────────────────────────────────────── */
+@media(max-width:540px){
+  body{font-size:16px}
+  .view{padding:10px}
+  .topbar{padding:6px 10px}
+  .topbar-brand{font-size:15px}
+  .navbar{padding:0 8px;min-height:44px;gap:4px}
+  .tabs{height:44px;gap:1px}
+  .tab{padding:0 8px;font-size:12px}
+  /* Hide + New Work Order button in navbar on mobile — use FAB instead */
+  .navbar > button.primary{display:none}
+  .stat-row{grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
+  .stat{padding:8px 10px}
+  .stat .val{font-size:17px}
+  .stat .lbl{font-size:10px}
+  /* Parts-to-order grid goes single column */
+  .po-grid{grid-template-columns:1fr !important}
+  .g2,.g3,.g4{grid-template-columns:1fr}
+  .modal{padding:14px;border-radius:0;width:100vw;max-width:100vw;margin:0}
+  .modal-bg{padding:0;align-items:flex-start}
+  .modal-bg.open{display:flex;flex-direction:column}
+  .det-modal-inner{border-radius:0;width:100vw}
+  .mfoot{position:sticky;bottom:0;background:var(--white);padding:10px 14px;margin:0 -14px -14px;border-top:1.5px solid var(--silver)}
+  .hours-table{font-size:11px}
+  .hours-table th,.hours-table td{padding:4px 5px}
+  .board-col{width:180px}
+  .srow{gap:5px}
+  .srow input,.srow select{font-size:14px;padding:6px 8px}
+  .wo-cust{font-size:14px}
+  .wo-equip{font-size:12px}
+  .sect-lbl{font-size:11px}
+  .status-btns{gap:4px}
+  .sbtn{padding:6px 8px;font-size:12px}
+  /* Bigger tap targets */
+  .btn{padding:9px 14px;font-size:14px}
+  .btn.sm{padding:6px 11px;font-size:13px}
+  .f input,.f select,.f textarea{font-size:16px;padding:9px 10px}
+  .f label{font-size:12px}
+}
+
+/* FAB — floating + New Work Order button for mobile */
+.fab{
+  display:none;
+  position:fixed;
+  bottom:20px;right:16px;
+  width:56px;height:56px;
+  border-radius:50%;
+  background:var(--red);
+  color:#fff;
+  font-size:28px;font-weight:300;line-height:1;
+  border:none;cursor:pointer;
+  box-shadow:0 4px 12px rgba(0,0,0,0.3);
+  z-index:90;
+  align-items:center;justify-content:center;
+}
+@media(max-width:540px){
+  .fab{display:flex}
+}
+
 @media print{body *{visibility:hidden}#print-area,#print-area *{visibility:visible}#print-area{position:fixed;left:0;top:0;width:100%;background:#fff}}
 </style>
 
@@ -210,7 +271,7 @@ hr{border:none;border-top:1.5px solid var(--silver);margin:12px 0}
     <div id="dash-season-banner"></div>
     <div style="font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-bottom:8px">Active Orders</div>
     <div id="dash-list"><div class="empty">Loading...</div></div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:16px">
+    <div class="po-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:16px">
       <div class="card">
         <div class="card-hdr" style="display:flex;justify-content:space-between;align-items:center">
           Stihl Parts to Order
@@ -321,6 +382,7 @@ hr{border:none;border-top:1.5px solid var(--silver);margin:12px 0}
   </div>
 </div>
 
+<button class="fab" onclick="openNewWO()" aria-label="New Work Order">+</button>
 <!-- WORK ORDER MODAL -->
 <div class="modal-bg" id="wo-modal">
 <div class="modal">
