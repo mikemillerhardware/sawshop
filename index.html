@@ -826,7 +826,8 @@ function initFB(){
     try{
       if(!firebase.apps.length)firebase.initializeApp(c);
       DB=firebase.database();if(c.storageBucket)STORAGE=firebase.storage();
-      setSP('ok','Live sync on');
+      loadLocal();boot();
+      DB.ref('.info/connected').on('value',function(snap){setSP(snap.val()?'ok':'warn',snap.val()?'Live sync on':'Reconnecting...');});
       DB.ref('orders').on('value',function(s){ORDERS={};nextWO=1001;s.forEach(function(ch){var v=ch.val();ORDERS[ch.key]=v;if(v.woNum>=nextWO)nextWO=v.woNum+1;});refreshAll();});
       DB.ref('customers').on('value',function(s){CUSTS={};s.forEach(function(ch){CUSTS[ch.key]=ch.val();});renderCustomers();populateCustSel();renderDash();renderOrders();});
       DB.ref('techs').on('value',function(s){var t=s.val();if(t&&Array.isArray(t))TECHS=t;renderTechs();populateTechSels();});
