@@ -67,6 +67,7 @@ body{font-family:'Barlow',sans-serif;font-size:16px;color:var(--dark);background
 .b-waiting{background:#FAEEDA;color:#633806;border:1px solid #EF9F27}
 .b-ready{background:#eaf3de;color:#1a5c0a}
 .b-complete{background:#e8e8e8;color:#444}
+.b-pickedup{background:#1a1a1a;color:#fff}
 .b-urgent{background:var(--red);color:#fff}
 .b-sale{background:#1a1a1a;color:#fff}
 .b-warranty{background:#eaf3de;color:#1a5c0a}
@@ -316,7 +317,7 @@ hr{border:none;border-top:1.5px solid var(--silver);margin:12px 0}
       <select id="wo-f" onchange="renderOrders()" style="min-width:160px">
         <option value="">All Statuses</option>
         <option>Intake</option><option>Diagnosing</option><option>In Repair</option>
-        <option>Waiting on Parts</option><option>Ready</option><option>Complete</option>
+        <option>Waiting on Parts</option><option>Ready</option><option>Complete</option><option>Picked Up</option>
       </select>
       <select id="wo-tf" onchange="renderOrders()" style="min-width:120px"><option value="">All Techs</option></select>
     </div>
@@ -427,7 +428,16 @@ hr{border:none;border-top:1.5px solid var(--silver);margin:12px 0}
   <div class="g2">
     <div class="f"><label>Customer</label>
       <div style="display:flex;gap:6px;align-items:flex-start">
-        <select id="m-cust" style="flex:1"><option value="">-- Select Customer --</option></select>
+        <div style="flex:1;position:relative">
+          <input type="text" id="m-cust-search" placeholder="Search by name or phone..." oninput="custSearch()" autocomplete="off"
+            style="width:100%;padding:9px 10px;border:1.5px solid var(--silver);border-radius:3px;font-size:16px;font-family:Barlow,sans-serif;background:var(--white);color:var(--dark)">
+          <div id="m-cust-results" style="display:none;position:absolute;left:0;right:0;top:100%;background:var(--white);border:1.5px solid var(--silver);border-top:none;border-radius:0 0 3px 3px;max-height:180px;overflow-y:auto;z-index:300;font-size:14px"></div>
+          <input type="hidden" id="m-cust">
+          <div id="m-cust-selected" style="display:none;font-size:13px;color:var(--gray2);padding:4px 0;display:flex;align-items:center;gap:6px">
+            <span id="m-cust-selected-label" style="font-weight:600"></span>
+            <button type="button" onclick="custClear()" style="background:none;border:none;cursor:pointer;color:var(--red);font-size:15px;font-weight:700;padding:0 2px">&#x2715;</button>
+          </div>
+        </div>
         <button class="btn sm" onclick="openNewCustFromWO()" style="white-space:nowrap;flex-shrink:0;margin-top:1px">+ New</button>
       </div>
     </div>
@@ -482,7 +492,7 @@ hr{border:none;border-top:1.5px solid var(--silver);margin:12px 0}
     <div class="f"><label>Status</label>
       <select id="m-status" onchange="toggleWaitingRow()">
         <option>Intake</option><option>Diagnosing</option><option>In Repair</option>
-        <option>Waiting on Parts</option><option>Ready</option><option>Complete</option>
+        <option>Waiting on Parts</option><option>Ready</option><option>Complete</option><option>Picked Up</option>
       </select>
     </div>
     <div class="f"><label>Est. Completion</label><input type="date" id="m-estdate"></div>
@@ -659,7 +669,7 @@ var editWOid=null,editCid=null,editEqCid=null,editEqIdx=null,contactLogWOid=null
 var activeRFilter='all';
 var SVC_INTERVALS={chainsaw:12,mower:12,generator:24,trimmer:18,other:18};
 
-function bc(s){return{'Intake':'b-intake','Diagnosing':'b-diag','In Repair':'b-repair','Waiting on Parts':'b-waiting','Ready':'b-ready','Complete':'b-complete'}[s]||'b-intake';}
+function bc(s){return{'Intake':'b-intake','Diagnosing':'b-diag','In Repair':'b-repair','Waiting on Parts':'b-waiting','Ready':'b-ready','Complete':'b-complete','Picked Up':'b-pickedup'}[s]||'b-intake';}
 function badge(s){return '<span class="badge '+bc(s)+'">'+s+'</span>';}
 function setSP(st,t){var p=document.getElementById('sync-pill');p.className='sync-pill '+st;p.querySelector('.dot').className='dot '+(st==='ok'?'g':st==='err'?'r':'a');document.getElementById('sync-txt').textContent=t;}
 function genId(){return Date.now().toString(36)+Math.random().toString(36).slice(2,5);}
@@ -870,7 +880,8 @@ function addTech(){var n=document.getElementById('new-tech').value.trim();if(!n|
 function removeTech(n){if(!confirm('Remove '+n+'?'))return;TECHS=TECHS.filter(function(t){return t!==n;});writeTechs();renderTechs();populateTechSels();}
 function renderTechs(){var el=document.getElementById('tech-chips');if(!el)return;el.innerHTML=TECHS.map(function(t){return '<span class="tech-chip">'+t+'<button onclick="removeTech(\''+t+'\')">&#x2715;</button></span>';}).join('');}
 function populateTechSels(){['m-tech','wo-tf'].forEach(function(id){var sel=document.getElementById(id);if(!sel)return;var cur=sel.value;sel.innerHTML=id==='m-tech'?'<option>Unassigned</option>':'<option value="">All Techs</option>';TECHS.forEach(function(t){var o=document.createElement('option');o.value=t;o.textContent=t;sel.appendChild(o);});if(cur)sel.value=cur;});}
-function populateCustSel(){var sel=document.getElementById('m-cust');if(!sel)return;var cur=sel.value;sel.innerHTML='<option value="">-- Select Customer --</option>';custArr().forEach(function(c){var o=document.createElement('option');o.value=c.id;o.textContent=c.first+' '+c.last+(c.phone?' ('+c.phone+')':'');sel.appendChild(o);});if(cur)sel.value=cur;}
+function populateCustSel(){/* replaced by custSearch */}
+function populateCustSelLegacy(){var sel=document.getElementById('m-cust');if(!sel||sel.tagName!=='SELECT')return;var cur=sel.value;sel.innerHTML='<option value="">-- Select Customer --</option>';custArr().forEach(function(c){var o=document.createElement('option');o.value=c.id;o.textContent=c.first+' '+c.last+(c.phone?' ('+c.phone+')':'');sel.appendChild(o);});if(cur)sel.value=cur;}
 
 function orderArr(){return Object.values(ORDERS).sort(function(a,b){if(b.urgent!==a.urgent)return(b.urgent?1:0)-(a.urgent?1:0);return b.woNum-a.woNum;});}
 function custArr(){return Object.values(CUSTS).sort(function(a,b){return(a.last||'').localeCompare(b.last||'');});}
@@ -902,7 +913,7 @@ function renderDash(){
 
 function renderBoard(){
   var el=document.getElementById('board-inner');if(!el)return;
-  var open=orderArr().filter(function(o){return o.status!=='Complete';});
+  var open=orderArr().filter(function(o){return o.status!=='Complete'&&o.status!=='Picked Up';});
   var allTechs=['Unassigned'].concat(TECHS);
   el.innerHTML=allTechs.map(function(tech){
     var jobs=open.filter(function(o){return(o.tech||'Unassigned')===tech;});
@@ -930,7 +941,7 @@ function renderOrders(){
 }
 
 function renderHours(){
-  var tracked=orderArr().filter(function(o){return o.status==='Complete'&&o.estHrs&&o.actHrs;});
+  var tracked=orderArr().filter(function(o){return (o.status==='Complete'||o.status==='Picked Up')&&o.estHrs&&o.actHrs;});
   var tbody=document.getElementById('hours-body'),emptyEl=document.getElementById('hours-empty');
   if(!tracked.length){if(tbody)tbody.innerHTML='';if(emptyEl)emptyEl.style.display='';document.getElementById('h-tracked').textContent='0';document.getElementById('h-accuracy').textContent='—';document.getElementById('h-over').textContent='0';return;}
   if(emptyEl)emptyEl.style.display='none';
@@ -967,7 +978,7 @@ function renderCustomers(){
 function openNewWO(){
   editWOid=null;document.getElementById('wo-mtitle').textContent='New Work Order';document.getElementById('wo-del-btn').style.display='none';
   populateCustSel();populateTechSels();
-  ['m-cust','m-brand','m-year','m-product','m-model','m-serial','m-engine','m-hours','m-complaint','m-notes','m-estdate','m-dateout','m-parts-waiting','m-est-hrs','m-act-hrs','m-bill-hrs'].forEach(function(id){document.getElementById(id).value='';});
+  ['m-brand','m-year','m-product','m-model','m-serial','m-engine','m-hours','m-complaint','m-notes','m-estdate','m-dateout','m-parts-waiting','m-est-hrs','m-act-hrs','m-bill-hrs'].forEach(function(id){document.getElementById(id).value='';});custClear();
   document.getElementById('m-tech').value='Unassigned';document.getElementById('m-etype').value='Chainsaw';
   document.getElementById('m-status').value='Intake';document.getElementById('m-datein').value=today();
   document.getElementById('m-urg').checked=false;document.getElementById('m-deposit').checked=false;document.getElementById('m-paid').checked=false;document.getElementById('m-notes-ts').textContent='';
@@ -979,7 +990,7 @@ function openEditWO(id){
   var o=ORDERS[id];if(!o)return;editWOid=id;
   document.getElementById('wo-mtitle').textContent='Edit WO #'+o.woNum;document.getElementById('wo-del-btn').style.display='';
   populateCustSel();populateTechSels();
-  document.getElementById('m-cust').value=o.custId||'';document.getElementById('m-tech').value=o.tech||'Unassigned';
+  setCustById(o.custId||'');document.getElementById('m-tech').value=o.tech||'Unassigned';
   document.getElementById('m-etype').value=o.equipType||'Chainsaw';document.getElementById('m-brand').value=o.brand||'';
   document.getElementById('m-year').value=o.year||'';document.getElementById('m-product').value=o.product||'';document.getElementById('m-model').value=o.model||'';
   document.getElementById('m-serial').value=o.serial||'';document.getElementById('m-engine').value=o.engine||'';
@@ -1018,7 +1029,7 @@ function saveCust(){
   var woOpen=document.getElementById('wo-modal').classList.contains('open');
   var isNew=!editCid;
   writeCust(c);closeM('cust-modal');
-  if(isNew&&woOpen){setTimeout(function(){CUSTS[c.id]=c;populateCustSel();document.getElementById('m-cust').value=c.id;},300);}
+  if(isNew&&woOpen){setTimeout(function(){CUSTS[c.id]=c;custSelect(c.id);},300);}
 }
 function openNewCustFromWO(){
   editCid=null;
@@ -1050,7 +1061,7 @@ function deleteContactLog(woid,idx){if(!confirm('Delete entry?'))return;var logs
 
 function newWOForCustEquip(cid,eqIdx){
   var eq=custEquip(cid)[eqIdx];openNewWO();
-  document.getElementById('m-cust').value=cid;
+  setTimeout(function(){setCustById(cid);},50);
   if(eq){document.getElementById('m-etype').value=eq.type||'Chainsaw';document.getElementById('m-brand').value=eq.brand||'';document.getElementById('m-year').value=eq.year||'';document.getElementById('m-product').value=eq.product||'';document.getElementById('m-model').value=eq.model||'';document.getElementById('m-serial').value=eq.serial||'';document.getElementById('m-engine').value=eq.engine||'';}
   closeM('det-modal');
 }
@@ -1058,7 +1069,7 @@ function newWOForCustEquip(cid,eqIdx){
 function openDet(id){
   var o=ORDERS[id];if(!o)return;var c=CUSTS[o.custId]||{};
   var prows=(o.parts||[]).map(function(p,pi){return '<tr><td style="padding:5px 8px;border-bottom:1px solid var(--off)">'+p.desc+'</td><td style="padding:5px 8px;border-bottom:1px solid var(--off);text-align:center">'+p.qty+'</td><td style="padding:5px 8px;border-bottom:1px solid var(--off);color:var(--gray2)">'+(p.note||'')+'</td><td style="padding:3px 4px;border-bottom:1px solid var(--off)"><button onclick="deletePart(\''+id+'\','+pi+')" style="background:none;border:none;cursor:pointer;color:var(--red);font-size:13px;padding:2px 5px;font-weight:700">&#x2715;</button></td></tr>';}).join('');
-  var stats=['Intake','Diagnosing','In Repair','Waiting on Parts','Ready','Complete'];
+  var stats=['Intake','Diagnosing','In Repair','Waiting on Parts','Ready','Complete','Picked Up'];
   var sbtns=stats.map(function(s){var isW=s==='Waiting on Parts';return '<button class="sbtn'+(isW?' waiting-btn':'')+(o.status===s?' active':'')+'" onclick="quickStatus(\''+id+'\',\''+s+'\')">'+s+'</button>';}).join('');
   var eqf=[['Type',o.equipType],['Brand',o.brand],['Year',o.year],['Product #',o.product],['Model',o.model],['Serial #',o.serial],['Engine',o.engine],['Hrs / Condition',o.hours]].filter(function(f){return f[1];});
   var atts=ATTACHMENTS[id]||[];
@@ -1156,7 +1167,7 @@ function viewImg(woid,idx){var a=ATTACHMENTS[woid];if(!a||!a[idx])return;var src
 function openCustDet(id){
   var c=CUSTS[id];if(!c)return;var wos=orderArr().filter(function(o){return o.custId===id;}),eq=custEquip(id);
   var eqHtml=eq.length?eq.map(function(e,i){var isSale=e.rectype==='sale'||!e.rectype,ws=e.warrantyExp?warrantyStatus(e.warrantyExp):null;return '<div class="equip-card"><div class="eq-badge"><span class="badge '+(isSale?'b-sale':'b-intake')+'">'+(isSale?'Sold by us':'Customer-owned')+'</span>'+(ws?'<span class="badge '+ws.cls+'">'+ws.label+'</span>':'')+'</div><div class="eq-brand">'+(e.brand||'')+' '+(e.type||'')+'</div><div class="eq-detail">'+[e.year?'Year: '+e.year:'',e.product?'Product: '+e.product:'',e.model?'Model: '+e.model:'',e.serial?'SN: '+e.serial:'',e.engine?'Engine: '+e.engine:''].filter(Boolean).join(' &middot; ')+'</div>'+(e.date?'<div class="eq-detail">'+(isSale?'Sold: ':'Logged: ')+e.date+(e.warrantyExp?' &middot; Warranty exp: '+e.warrantyExp:'')+'</div>':'')+(e.warrantyNotes?'<div class="eq-detail">'+e.warrantyNotes+'</div>':'')+(e.notes?'<div class="eq-detail" style="font-style:italic;margin-top:3px">'+e.notes+'</div>':'')+'<div class="eq-actions"><button class="btn sm" onclick="openAddEquip(\''+id+'\','+i+')">Edit</button><button class="btn sm primary" onclick="newWOForCustEquip(\''+id+'\','+i+')">+ Work Order</button></div></div>';}).join(''):'<div class="empty" style="padding:12px 0">No equipment on record.</div>';
-  document.getElementById('det-body').innerHTML='<div style="font-size:17px;font-weight:800;margin-bottom:4px">'+c.first+' '+c.last+'</div>'+(c.phone?'<div style="font-size:13px;color:var(--muted)">'+c.phone+'</div>':'')+(c.email?'<div style="font-size:13px;color:var(--muted)">'+c.email+'</div>':'')+(c.addr?'<div style="font-size:13px;color:var(--muted)">'+c.addr+'</div>':'')+(c.notes?'<div style="font-size:12px;margin-top:8px;padding:8px;background:var(--off);border-radius:3px">'+c.notes+'</div>':'')+'<div class="sect-lbl">Equipment on File ('+eq.length+')</div>'+eqHtml+'<button class="btn outline sm" onclick="openAddEquip(\''+id+'\')" style="margin-bottom:4px">+ Log Equipment / New Sale</button><div class="sect-lbl">Work Order History ('+wos.length+')</div>'+(wos.length?wos.map(function(o){return woRow(o,c);}).join(''):'<div class="empty" style="padding:12px 0">No orders yet.</div>')+'<div class="mfoot"><button class="btn" onclick="closeM(\'det-modal\')">Close</button><button class="btn" onclick="editCust(\''+id+'\')">Edit Customer</button><button class="btn primary" onclick="closeM(\'det-modal\');openNewWO();setTimeout(function(){document.getElementById(\'m-cust\').value=\''+id+'\';},50)">+ New Order</button></div>';
+  document.getElementById('det-body').innerHTML='<div style="font-size:17px;font-weight:800;margin-bottom:4px">'+c.first+' '+c.last+'</div>'+(c.phone?'<div style="font-size:13px;color:var(--muted)">'+c.phone+'</div>':'')+(c.email?'<div style="font-size:13px;color:var(--muted)">'+c.email+'</div>':'')+(c.addr?'<div style="font-size:13px;color:var(--muted)">'+c.addr+'</div>':'')+(c.notes?'<div style="font-size:12px;margin-top:8px;padding:8px;background:var(--off);border-radius:3px">'+c.notes+'</div>':'')+'<div class="sect-lbl">Equipment on File ('+eq.length+')</div>'+eqHtml+'<button class="btn outline sm" onclick="openAddEquip(\''+id+'\')" style="margin-bottom:4px">+ Log Equipment / New Sale</button><div class="sect-lbl">Work Order History ('+wos.length+')</div>'+(wos.length?wos.map(function(o){return woRow(o,c);}).join(''):'<div class="empty" style="padding:12px 0">No orders yet.</div>')+'<div class="mfoot"><button class="btn" onclick="closeM(\'det-modal\')">Close</button><button class="btn" onclick="editCust(\''+id+'\')">Edit Customer</button><button class="btn primary" onclick="closeM(\'det-modal\');openNewWO();setTimeout(function(){setCustById(\''+id+'\');},100)">+ New Order</button></div>';
   document.getElementById('det-modal').classList.add('open');
 }
 function editCust(id){var c=CUSTS[id];if(!c)return;editCid=id;document.getElementById('cust-mtitle').textContent='Edit Customer';document.getElementById('c-first').value=c.first||'';document.getElementById('c-last').value=c.last||'';document.getElementById('c-phone').value=c.phone||'';document.getElementById('c-email').value=c.email||'';document.getElementById('c-addr').value=c.addr||'';document.getElementById('c-notes').value=c.notes||'';closeM('det-modal');document.getElementById('cust-modal').classList.add('open');}
@@ -1194,6 +1205,53 @@ function saveFB(){var raw=document.getElementById('fb-cfg').value.trim();if(!raw
 function clearFB(){localStorage.removeItem('fb_config_raw');document.getElementById('fb-cfg').value='';document.getElementById('fb-msg').textContent='Cleared.';}
 function clearFBAndReload(){localStorage.removeItem('fb_config_raw');location.reload();}
 function closeM(id){document.getElementById(id).classList.remove('open');}
+function custSearch(){
+  var q=(document.getElementById('m-cust-search').value||'').toLowerCase().trim();
+  var res=document.getElementById('m-cust-results');
+  if(!q){res.style.display='none';return;}
+  var isPhone=/^[\d\s\-\(\)]+$/.test(q)&&q.replace(/\D/g,'').length>=3;
+  var matches=custArr().filter(function(c){
+    if(isPhone){return (c.phone||'').replace(/\D/g,'').indexOf(q.replace(/\D/g,''))>=0;}
+    var fn=(c.first||'').toLowerCase(),ln=(c.last||'').toLowerCase();
+    var parts=q.split(/\s+/);
+    if(parts.length>=2)return(fn.indexOf(parts[0])>=0&&ln.indexOf(parts[1])>=0)||(fn.indexOf(parts[1])>=0&&ln.indexOf(parts[0])>=0);
+    return fn.indexOf(q)>=0||ln.indexOf(q)>=0||(c.phone||'').indexOf(q)>=0;
+  }).slice(0,8);
+  if(!matches.length){res.innerHTML='<div style="padding:8px 10px;color:var(--muted);font-style:italic">No customers found</div>';res.style.display='block';return;}
+  res.innerHTML='';
+  matches.forEach(function(c){
+    var div=document.createElement('div');
+    div.style.cssText='padding:9px 12px;cursor:pointer;border-bottom:1px solid var(--off)';
+    div.innerHTML='<strong>'+c.first+' '+c.last+'</strong>'+(c.phone?' <span style="color:var(--muted);font-size:12px">'+c.phone+'</span>':'');
+    div.onmouseover=function(){this.style.background='var(--off)';};
+    div.onmouseout=function(){this.style.background='';};
+    div.onclick=function(){custSelect(c.id);};
+    res.appendChild(div);
+  });
+  res.style.display='block';
+}
+function custSelect(cid){
+  var c=CUSTS[cid];if(!c)return;
+  document.getElementById('m-cust').value=cid;
+  document.getElementById('m-cust-search').value='';
+  document.getElementById('m-cust-results').style.display='none';
+  document.getElementById('m-cust-selected-label').textContent=c.first+' '+c.last+(c.phone?' — '+c.phone:'');
+  document.getElementById('m-cust-selected').style.display='flex';
+}
+function custClear(){
+  document.getElementById('m-cust').value='';
+  document.getElementById('m-cust-search').value='';
+  document.getElementById('m-cust-results').style.display='none';
+  document.getElementById('m-cust-selected').style.display='none';
+  document.getElementById('m-cust-selected-label').textContent='';
+}
+function setCustById(cid){
+  if(!cid){custClear();return;}
+  // Wait for CUSTS to be populated if needed
+  if(CUSTS[cid]){custSelect(cid);}
+  else{setTimeout(function(){if(CUSTS[cid])custSelect(cid);},500);}
+}
+
 document.querySelectorAll('.modal-bg').forEach(function(el){el.addEventListener('click',function(e){if(e.target===el)el.classList.remove('open');});});
 function quickAddPart(woid){
   var desc=document.getElementById('ql-note-'+woid).value.trim();
@@ -1355,7 +1413,7 @@ function loadAgeInputs(){
 function renderPickup(){
   var el=document.getElementById('pickup-list');if(!el)return;
   var list=orderArr().filter(function(o){
-    return o.status==='Ready' || o.status==='Complete';
+    return o.status==='Ready';
   });
   if(!list.length){el.innerHTML='<div class="empty">No orders ready for pickup.</div>';return;}
   el.innerHTML='';
@@ -1463,6 +1521,53 @@ function renderDaily(){
     return row;
   });
 }
+function custSearch(){
+  var q=(document.getElementById('m-cust-search').value||'').toLowerCase().trim();
+  var res=document.getElementById('m-cust-results');
+  if(!q){res.style.display='none';return;}
+  var isPhone=/^[\d\s\-\(\)]+$/.test(q)&&q.replace(/\D/g,'').length>=3;
+  var matches=custArr().filter(function(c){
+    if(isPhone){return (c.phone||'').replace(/\D/g,'').indexOf(q.replace(/\D/g,''))>=0;}
+    var fn=(c.first||'').toLowerCase(),ln=(c.last||'').toLowerCase();
+    var parts=q.split(/\s+/);
+    if(parts.length>=2)return(fn.indexOf(parts[0])>=0&&ln.indexOf(parts[1])>=0)||(fn.indexOf(parts[1])>=0&&ln.indexOf(parts[0])>=0);
+    return fn.indexOf(q)>=0||ln.indexOf(q)>=0||(c.phone||'').indexOf(q)>=0;
+  }).slice(0,8);
+  if(!matches.length){res.innerHTML='<div style="padding:8px 10px;color:var(--muted);font-style:italic">No customers found</div>';res.style.display='block';return;}
+  res.innerHTML='';
+  matches.forEach(function(c){
+    var div=document.createElement('div');
+    div.style.cssText='padding:9px 12px;cursor:pointer;border-bottom:1px solid var(--off)';
+    div.innerHTML='<strong>'+c.first+' '+c.last+'</strong>'+(c.phone?' <span style="color:var(--muted);font-size:12px">'+c.phone+'</span>':'');
+    div.onmouseover=function(){this.style.background='var(--off)';};
+    div.onmouseout=function(){this.style.background='';};
+    div.onclick=function(){custSelect(c.id);};
+    res.appendChild(div);
+  });
+  res.style.display='block';
+}
+function custSelect(cid){
+  var c=CUSTS[cid];if(!c)return;
+  document.getElementById('m-cust').value=cid;
+  document.getElementById('m-cust-search').value='';
+  document.getElementById('m-cust-results').style.display='none';
+  document.getElementById('m-cust-selected-label').textContent=c.first+' '+c.last+(c.phone?' — '+c.phone:'');
+  document.getElementById('m-cust-selected').style.display='flex';
+}
+function custClear(){
+  document.getElementById('m-cust').value='';
+  document.getElementById('m-cust-search').value='';
+  document.getElementById('m-cust-results').style.display='none';
+  document.getElementById('m-cust-selected').style.display='none';
+  document.getElementById('m-cust-selected-label').textContent='';
+}
+function setCustById(cid){
+  if(!cid){custClear();return;}
+  // Wait for CUSTS to be populated if needed
+  if(CUSTS[cid]){custSelect(cid);}
+  else{setTimeout(function(){if(CUSTS[cid])custSelect(cid);},500);}
+}
+
 document.querySelectorAll('.modal-bg').forEach(function(el){el.addEventListener('click',function(e){if(e.target===el)el.classList.remove('open');});});
 initFB();
 </script>
