@@ -235,6 +235,17 @@ hr{border:none;border-top:1.5px solid var(--silver);margin:12px 0}
   .fab{display:flex}
 }
 
+
+.wo-age-warn{border-left:4px solid #BA7517 !important}
+.wo-age-old{border-left:4px solid var(--red) !important}
+.b-deposit{background:#eaf3de;color:#1a5c0a;font-size:10px;font-weight:700;padding:2px 7px;border-radius:2px;letter-spacing:.04em;text-transform:uppercase;display:inline-block}
+.b-paid{background:#1a1a1a;color:#fff;font-size:10px;font-weight:700;padding:2px 7px;border-radius:2px;letter-spacing:.04em;text-transform:uppercase;display:inline-block}
+.pickup-row{display:flex;align-items:flex-start;gap:12px;padding:10px 12px;border:1.5px solid var(--silver);border-radius:3px;margin-bottom:7px;background:var(--white);cursor:pointer}
+.pickup-row:hover{border-color:var(--red)}
+.daily-section{background:var(--white);border:1.5px solid var(--silver);border-radius:3px;padding:14px;margin-bottom:12px}
+.daily-hdr{font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-bottom:10px;padding-bottom:6px;border-bottom:1.5px solid var(--silver);display:flex;justify-content:space-between;align-items:center}
+.cust-alert{background:#FAEEDA;border:1.5px solid #EF9F27;border-radius:3px;padding:6px 10px;font-size:12px;color:#633806;margin-bottom:10px;display:flex;align-items:center;gap:7px}
+
 @media print{body *{visibility:hidden}#print-area,#print-area *{visibility:visible}#print-area{position:fixed;left:0;top:0;width:100%;background:#fff}}
 </style>
 
@@ -255,6 +266,8 @@ hr{border:none;border-top:1.5px solid var(--silver);margin:12px 0}
       <div class="tab" onclick="showTab('hours')">Hours</div>
       <div class="tab" onclick="showTab('reminders')">Reminders <span class="tab-badge" id="reminder-badge" style="display:none">0</span></div>
       <div class="tab" onclick="showTab('customers')">Customers</div>
+      <div class="tab" onclick="showTab('pickup')">📞 Pickup Calls</div>
+      <div class="tab" onclick="showTab('daily')">Morning Report</div>
       <div class="tab" onclick="showTab('settings')">Settings</div>
     </div>
     <button class="btn primary" onclick="openNewWO()">+ New Work Order</button>
@@ -349,6 +362,15 @@ hr{border:none;border-top:1.5px solid var(--silver);margin:12px 0}
     <div id="cust-list"><div class="empty">Loading...</div></div>
   </div>
 
+  <div class="view" id="tab-pickup">
+    <div style="font-size:13px;color:var(--muted);margin-bottom:12px">All orders marked Ready for Pickup or Complete but not yet picked up. Tap a phone number to call.</div>
+    <div id="pickup-list"><div class="empty">Loading...</div></div>
+  </div>
+
+  <div class="view" id="tab-daily">
+    <div id="daily-report"><div class="empty">Loading...</div></div>
+  </div>
+
   <div class="view" id="tab-settings">
     <div class="card">
       <div class="card-hdr">Technician Management</div>
@@ -367,6 +389,15 @@ hr{border:none;border-top:1.5px solid var(--silver);margin:12px 0}
         <button class="btn sm primary" onclick="saveFB()">Connect</button>
       </div>
       <div id="fb-msg" style="font-size:12px;margin-top:5px;color:var(--muted)"></div>
+    </div>
+    <div class="card">
+      <div class="card-hdr">Work Order Age Warnings</div>
+      <div style="font-size:13px;color:var(--gray2);margin-bottom:10px">Orders sitting longer than these thresholds are highlighted in the work order list — amber for warning, red for overdue.</div>
+      <div style="display:flex;gap:16px;flex-wrap:wrap;align-items:center">
+        <label style="font-size:13px;font-weight:600">Amber warning after <input type="number" id="age-warn-days" value="7" min="1" max="60" style="width:55px;padding:4px 8px;border:1.5px solid var(--silver);border-radius:3px;font-size:13px;margin:0 4px"> days</label>
+        <label style="font-size:13px;font-weight:600">Red alert after <input type="number" id="age-old-days" value="14" min="1" max="90" style="width:55px;padding:4px 8px;border:1.5px solid var(--silver);border-radius:3px;font-size:13px;margin:0 4px"> days</label>
+        <button class="btn sm primary" onclick="saveAgeSettings()">Save</button>
+      </div>
     </div>
     <div class="card">
       <div class="card-hdr">Export &amp; Backup</div>
@@ -432,6 +463,14 @@ hr{border:none;border-top:1.5px solid var(--silver);margin:12px 0}
   </div>
   <div id="waiting-parts-row" style="display:none;margin-bottom:10px">
     <div class="f"><label>Parts Being Waited On</label><input type="text" id="m-parts-waiting" placeholder="e.g. Carburetor kit — ordered from Stihl 4/8"></div>
+  </div>
+  <div class="g2" style="margin-bottom:10px">
+    <label style="display:flex;align-items:center;gap:7px;font-size:14px;font-weight:600;cursor:pointer">
+      <input type="checkbox" id="m-deposit" style="width:16px;height:16px;accent-color:var(--red)"> Deposit Taken
+    </label>
+    <label style="display:flex;align-items:center;gap:7px;font-size:14px;font-weight:600;cursor:pointer">
+      <input type="checkbox" id="m-paid" style="width:16px;height:16px;accent-color:var(--red)"> Paid in Full
+    </label>
   </div>
   <div class="g3">
     <div class="f"><label>Status</label>
@@ -583,6 +622,9 @@ hr{border:none;border-top:1.5px solid var(--silver);margin:12px 0}
   </div>
   <div class="f"><label>For Equipment</label><input type="text" id="po-equip" placeholder="Auto-fills from WO, or type manually"></div>
   <div class="f"><label>Notes</label><input type="text" id="po-notes" placeholder="e.g. Customer approved, ordered 4/10"></div>
+  <label style="display:flex;align-items:center;gap:7px;font-size:14px;font-weight:600;cursor:pointer;margin-bottom:12px">
+    <input type="checkbox" id="po-paid" style="width:16px;height:16px;accent-color:var(--red)"> Parts Paid For
+  </label>
   <div class="mfoot">
     <button class="btn" onclick="closeM('part-order-modal')">Cancel</button>
     <button class="btn primary" onclick="savePartOrder()">Add to List</button>
@@ -742,9 +784,10 @@ function loadLocal(){
     ORDERS=d.orders||{};CUSTS=d.customers||{};TECHS=d.techs||['Michael','Tech 2','Tech 3'];
     EQUIPMENT=d.equipment||{};ATTACHMENTS=d.attachments||{};CONTACTLOGS=d.contactlogs||{};nextWO=d.nextWO||1001;
     if(d.svcIntervals)SVC_INTERVALS=d.svcIntervals;
+    if(d.settings)SETTINGS=Object.assign(SETTINGS,d.settings);
   }catch(e){}
 }
-function saveLocal(){try{localStorage.setItem('sawshop_v8',JSON.stringify({orders:ORDERS,customers:CUSTS,techs:TECHS,equipment:EQUIPMENT,attachments:ATTACHMENTS,contactlogs:CONTACTLOGS,nextWO:nextWO,svcIntervals:SVC_INTERVALS}));}catch(e){}}
+function saveLocal(){try{localStorage.setItem('sawshop_v8',JSON.stringify({orders:ORDERS,customers:CUSTS,techs:TECHS,equipment:EQUIPMENT,attachments:ATTACHMENTS,contactlogs:CONTACTLOGS,nextWO:nextWO,svcIntervals:SVC_INTERVALS,settings:SETTINGS}));}catch(e){}}
 
 function saveIntervals(){
   SVC_INTERVALS={
@@ -790,6 +833,7 @@ function initFB(){
       DB.ref('equipment').on('value',function(s){EQUIPMENT={};s.forEach(function(ch){EQUIPMENT[ch.key]=ch.val();});renderReminders();});
       DB.ref('attachments').on('value',function(s){ATTACHMENTS={};s.forEach(function(ch){ATTACHMENTS[ch.key]=ch.val();});});
       DB.ref('contactlogs').on('value',function(s){CONTACTLOGS={};s.forEach(function(ch){CONTACTLOGS[ch.key]=ch.val();});});
+      DB.ref('settings').once('value',function(s){var v=s.val();if(v){SETTINGS=Object.assign(SETTINGS,v);}loadAgeInputs();});
       DB.ref('partorders').on('value',function(s){var v=s.val();if(v){PARTORDERS=v;if(!PARTORDERS.stihl)PARTORDERS.stihl=[];if(!PARTORDERS.other)PARTORDERS.other=[];}renderDash();});
     }catch(e){setSP('err','FB error');loadLocal();boot();}
   }
@@ -797,7 +841,7 @@ function initFB(){
   if(typeof firebase!=='undefined'){go();return;}
   loadSDK(['https://cdn.jsdelivr.net/npm/firebase@9.23.0/firebase-app-compat.min.js','https://cdn.jsdelivr.net/npm/firebase@9.23.0/firebase-database-compat.min.js','https://cdn.jsdelivr.net/npm/firebase@9.23.0/firebase-storage-compat.min.js'],go);
 }
-function boot(){refreshAll();renderTechs();populateTechSels();populateCustSel();renderReminders();loadIntervalInputs();renderPartOrders();}
+function boot(){refreshAll();renderTechs();populateTechSels();populateCustSel();renderReminders();loadIntervalInputs();renderPartOrders();loadAgeInputs();}
 
 function loadIntervalInputs(){
   document.getElementById('si-chainsaw').value=SVC_INTERVALS.chainsaw;
@@ -825,13 +869,15 @@ function populateCustSel(){var sel=document.getElementById('m-cust');if(!sel)ret
 function orderArr(){return Object.values(ORDERS).sort(function(a,b){if(b.urgent!==a.urgent)return(b.urgent?1:0)-(a.urgent?1:0);return b.woNum-a.woNum;});}
 function custArr(){return Object.values(CUSTS).sort(function(a,b){return(a.last||'').localeCompare(b.last||'');});}
 function custEquip(cid){return EQUIPMENT[cid]||[];}
-function refreshAll(){renderDash();renderBoard();renderOrders();renderHours();renderReminders();renderCustomers();renderPartOrders();}
+function refreshAll(){renderDash();renderBoard();renderOrders();renderHours();renderReminders();renderCustomers();renderPartOrders();renderPickup();renderDaily();}
 
 function showTab(t){
-  var tabs=['dash','board','orders','hours','reminders','customers','settings'];
+  var tabs=['dash','board','orders','hours','reminders','customers','pickup','daily','settings'];
   document.querySelectorAll('.tab').forEach(function(el,i){el.classList.toggle('active',tabs[i]===t);});
   document.querySelectorAll('.view').forEach(function(el){el.classList.remove('active');});
   document.getElementById('tab-'+t).classList.add('active');
+  if(t==='pickup')renderPickup();
+  if(t==='daily')renderDaily();
 }
 
 function toggleWaitingRow(){document.getElementById('waiting-parts-row').style.display=document.getElementById('m-status').value==='Waiting on Parts'?'block':'none';}
@@ -918,7 +964,7 @@ function openNewWO(){
   ['m-cust','m-brand','m-year','m-product','m-model','m-serial','m-engine','m-hours','m-complaint','m-notes','m-estdate','m-dateout','m-parts-waiting','m-est-hrs','m-act-hrs','m-bill-hrs'].forEach(function(id){document.getElementById(id).value='';});
   document.getElementById('m-tech').value='Unassigned';document.getElementById('m-etype').value='Chainsaw';
   document.getElementById('m-status').value='Intake';document.getElementById('m-datein').value=today();
-  document.getElementById('m-urg').checked=false;document.getElementById('m-notes-ts').textContent='';
+  document.getElementById('m-urg').checked=false;document.getElementById('m-deposit').checked=false;document.getElementById('m-paid').checked=false;document.getElementById('m-notes-ts').textContent='';
   document.getElementById('pt-body').innerHTML='';document.getElementById('waiting-parts-row').style.display='none';
   document.getElementById('hrs-variance-display').textContent='';
   document.getElementById('wo-modal').classList.add('open');
@@ -935,7 +981,7 @@ function openEditWO(id){
   document.getElementById('m-notes').value=o.notes||'';document.getElementById('m-notes-ts').textContent=o.notesTs?'Last updated: '+o.notesTs:'';
   document.getElementById('m-status').value=o.status||'Intake';document.getElementById('m-datein').value=o.dateIn||'';
   document.getElementById('m-estdate').value=o.estDate||'';document.getElementById('m-dateout').value=o.dateOut||'';
-  document.getElementById('m-urg').checked=!!o.urgent;document.getElementById('m-parts-waiting').value=o.partsWaiting||'';
+  document.getElementById('m-urg').checked=!!o.urgent;document.getElementById('m-deposit').checked=!!o.deposit;document.getElementById('m-paid').checked=!!o.paid;document.getElementById('m-parts-waiting').value=o.partsWaiting||'';
   document.getElementById('m-est-hrs').value=o.estHrs||'';document.getElementById('m-act-hrs').value=o.actHrs||'';
   document.getElementById('m-bill-hrs').value=o.billHrs||'';
   document.getElementById('waiting-parts-row').style.display=o.status==='Waiting on Parts'?'block':'none';
@@ -953,7 +999,7 @@ function saveWO(){
   var cid=document.getElementById('m-cust').value;if(!cid){alert('Please select a customer.');return;}
   var prev=editWOid?(ORDERS[editWOid]||{}):{},newN=document.getElementById('m-notes').value;
   var nts=newN!==prev.notes?new Date().toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric',hour:'numeric',minute:'2-digit'}):(prev.notesTs||'');
-  var o={id:editWOid||genId(),woNum:editWOid?(prev.woNum||nextWO++):nextWO++,custId:cid,tech:document.getElementById('m-tech').value,equipType:document.getElementById('m-etype').value,brand:document.getElementById('m-brand').value,year:document.getElementById('m-year').value,product:document.getElementById('m-product').value,model:document.getElementById('m-model').value,serial:document.getElementById('m-serial').value,engine:document.getElementById('m-engine').value,hours:document.getElementById('m-hours').value,complaint:document.getElementById('m-complaint').value,notes:newN,notesTs:nts,status:document.getElementById('m-status').value,dateIn:document.getElementById('m-datein').value,estDate:document.getElementById('m-estdate').value,dateOut:document.getElementById('m-dateout').value,urgent:document.getElementById('m-urg').checked,partsWaiting:document.getElementById('m-parts-waiting').value,estHrs:document.getElementById('m-est-hrs').value,actHrs:document.getElementById('m-act-hrs').value,billHrs:document.getElementById('m-bill-hrs').value,parts:getParts()};
+  var o={id:editWOid||genId(),woNum:editWOid?(prev.woNum||nextWO++):nextWO++,custId:cid,tech:document.getElementById('m-tech').value,equipType:document.getElementById('m-etype').value,brand:document.getElementById('m-brand').value,year:document.getElementById('m-year').value,product:document.getElementById('m-product').value,model:document.getElementById('m-model').value,serial:document.getElementById('m-serial').value,engine:document.getElementById('m-engine').value,hours:document.getElementById('m-hours').value,complaint:document.getElementById('m-complaint').value,notes:newN,notesTs:nts,status:document.getElementById('m-status').value,dateIn:document.getElementById('m-datein').value,estDate:document.getElementById('m-estdate').value,dateOut:document.getElementById('m-dateout').value,urgent:document.getElementById('m-urg').checked,deposit:document.getElementById('m-deposit').checked,paid:document.getElementById('m-paid').checked,partsWaiting:document.getElementById('m-parts-waiting').value,estHrs:document.getElementById('m-est-hrs').value,actHrs:document.getElementById('m-act-hrs').value,billHrs:document.getElementById('m-bill-hrs').value,parts:getParts()};
   writeOrder(o);closeM('wo-modal');
 }
 function delWO(){if(!editWOid||!confirm('Delete this work order?'))return;deleteOrder(editWOid);closeM('wo-modal');}
@@ -1035,7 +1081,7 @@ function openDet(id){
     +'<div class="sect-lbl">Attachments</div><div id="att-thumbs-'+id+'" style="margin-bottom:6px">'+attHtml+'</div>'
     +'<div class="upload-zone" onclick="document.getElementById(\'att-file-'+id+'\').click()">Tap to attach photo or scan a signed copy</div>'
     +'<input type="file" id="att-file-'+id+'" accept="image/*" capture="environment" style="display:none" onchange="handleAttach(\''+id+'\',this)">'
-    +'<div class="mfoot"><button class="btn" onclick="closeM(\'det-modal\')">Close</button><button class="btn" onclick="openEditWO(\''+id+'\')">Edit</button><button class="btn amber" style="padding:4px 10px;font-size:12px" onclick="openPartOrder(\'stihl\',\''+id+'\')">+ Stihl Part</button><button class="btn amber" style="padding:4px 10px;font-size:12px" onclick="openPartOrder(\'other\',\''+id+'\')">+ Other Part</button><button class="btn success" onclick="printWO(\''+id+'\')">Print Work Order</button></div>';
+    +'<div style="padding:8px 0 4px;font-size:12px;display:flex;gap:8px;flex-wrap:wrap">'+(o.paid?'<span class="b-paid">Paid in Full</span>':o.deposit?'<span class="b-deposit">Deposit Taken</span>':'<span style="color:var(--muted)">No payment recorded</span>')+'</div>'+'<div class="mfoot"><button class="btn" onclick="closeM(\'det-modal\')">Close</button><button class="btn" onclick="openEditWO(\''+id+'\')">Edit</button><button class="btn amber" style="padding:4px 10px;font-size:12px" onclick="openPartOrder(\'stihl\',\''+id+'\')">+ Stihl Part</button><button class="btn amber" style="padding:4px 10px;font-size:12px" onclick="openPartOrder(\'other\',\''+id+'\')">+ Other Part</button><button class="btn success" onclick="printWO(\''+id+'\')">Print Work Order</button></div>';
   document.getElementById('det-modal').classList.add('open');
 }
 
@@ -1164,7 +1210,7 @@ function openPartOrder(cat,preWoid){
   _poCategory=cat;
   document.getElementById('po-mtitle').textContent='Add to '+(cat==='stihl'?'Stihl':'Other')+' Parts List';
   ['po-desc','po-equip','po-notes'].forEach(function(id){document.getElementById(id).value='';});
-  document.getElementById('po-qty').value='1';
+  document.getElementById('po-qty').value='1';document.getElementById('po-paid').checked=false;
   // Reset WO search
   document.getElementById('po-wo-search').value='';
   document.getElementById('po-wo-results').style.display='none';
@@ -1228,7 +1274,7 @@ function savePartOrder(){
     equip:document.getElementById('po-equip').value.trim(),
     notes:document.getElementById('po-notes').value.trim(),
     woId:woid||null,woNum:woNum||null,
-    ordered:false,received:false,added:today()};
+    ordered:false,received:false,paid:document.getElementById('po-paid').checked,added:today()};
   if(!PARTORDERS[_poCategory])PARTORDERS[_poCategory]=[];
   PARTORDERS[_poCategory].push(item);
   writePartOrders();closeM('part-order-modal');renderPartOrders();
@@ -1268,17 +1314,145 @@ function renderPartOrders(){
       bOrd.textContent=p.ordered?'✓ Ordered':'Order';
       bOrd.onclick=(function(c,idx){return function(){togglePOFlag(c,idx,'ordered');};})(cat,i);
       var bRec=document.createElement('button');
-      bRec.className='btn sm success';bRec.textContent='Received';
+      bRec.className='btn sm'+(p.received?' success':'');
+      bRec.textContent=p.received?'✓ In':'Received';
       bRec.onclick=(function(c,idx){return function(){togglePOFlag(c,idx,'received');};})(cat,i);
+      var bPaid=document.createElement('button');
+      bPaid.className='btn sm'+(p.paid?' success':'');
+      bPaid.textContent=p.paid?'✓ Paid':'Paid';
+      bPaid.onclick=(function(c,idx){return function(){togglePOFlag(c,idx,'paid');};})(cat,i);
       var bDel=document.createElement('button');
       bDel.className='btn sm del';bDel.textContent='✕';
       bDel.onclick=(function(c,idx){return function(){deletePO(c,idx);};})(cat,i);
-      btns.appendChild(bOrd);btns.appendChild(bRec);btns.appendChild(bDel);
+      btns.appendChild(bOrd);btns.appendChild(bRec);btns.appendChild(bPaid);btns.appendChild(bDel);
       row.appendChild(info);row.appendChild(btns);
       el.appendChild(row);
     });
     if(el.innerHTML==='')el.innerHTML='<div class="empty" style="padding:10px 0">None pending</div>';
   });
 }
-initFB();
-</script>
+var SETTINGS={ageWarnDays:7,ageOldDays:14};
+
+function saveAgeSettings(){
+  SETTINGS.ageWarnDays=parseInt(document.getElementById('age-warn-days').value)||7;
+  SETTINGS.ageOldDays=parseInt(document.getElementById('age-old-days').value)||14;
+  if(DB){DB.ref('settings').set(SETTINGS);}else{saveLocal();}
+  renderOrders();renderDash();
+}
+function loadAgeInputs(){
+  var w=document.getElementById('age-warn-days'),o=document.getElementById('age-old-days');
+  if(w)w.value=SETTINGS.ageWarnDays;
+  if(o)o.value=SETTINGS.ageOldDays;
+}
+
+function renderPickup(){
+  var el=document.getElementById('pickup-list');if(!el)return;
+  var list=orderArr().filter(function(o){
+    return o.status==='Ready' || o.status==='Complete';
+  });
+  if(!list.length){el.innerHTML='<div class="empty">No orders ready for pickup.</div>';return;}
+  el.innerHTML='';
+  list.forEach(function(o){
+    var c=CUSTS[o.custId]||{};
+    var row=document.createElement('div');
+    row.className='pickup-row';
+    row.onclick=function(){openDet(o.id);};
+    var info=document.createElement('div');
+    info.style.flex='1';
+    info.innerHTML='<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">'
+      +'<span style="font-weight:700;font-size:15px">'+(c.first||'')+' '+(c.last||'')+'</span>'
+      +(c.phone?'<a href="tel:'+c.phone+'" onclick="event.stopPropagation()" style="color:var(--red);font-weight:700;font-size:14px;text-decoration:none">📞 '+c.phone+'</a>':'')
+      +'</div>'
+      +'<div style="font-size:12px;color:var(--gray2);margin-top:3px">#'+o.woNum+' &middot; '+(o.brand||'')+' '+(o.equipType||'')+(o.model?' — '+o.model:'')+'</div>'
+      +(o.dateIn?'<div style="font-size:11px;color:var(--muted)">In: '+o.dateIn+'</div>':'');
+    var meta=document.createElement('div');
+    meta.style.cssText='display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex-shrink:0';
+    meta.innerHTML='<span class="badge '+(o.status==='Ready'?'b-ready':'b-complete')+'">'+o.status+'</span>'
+      +(o.paid?'<span class="b-paid">Paid</span>':o.deposit?'<span class="b-deposit">Deposit</span>':'<span style="font-size:11px;color:var(--muted)">No payment</span>');
+    row.appendChild(info);row.appendChild(meta);
+    el.appendChild(row);
+  });
+}
+
+function renderDaily(){
+  var el=document.getElementById('daily-report');if(!el)return;
+  var now=new Date();
+  var todayStr=today();
+  var all=orderArr();
+  var open=all.filter(function(o){return o.status!=='Complete';});
+  var ready=open.filter(function(o){return o.status==='Ready';});
+  var overdue=open.filter(function(o){return o.estDate&&o.estDate<todayStr&&o.status!=='Ready';});
+  var old=open.filter(function(o){if(!o.dateIn)return false;return Math.floor((now-new Date(o.dateIn))/(1000*60*60*24))>=SETTINGS.ageOldDays;});
+  var partsIn=[];
+  ['stihl','other'].forEach(function(cat){(PARTORDERS[cat]||[]).forEach(function(p,i){if(p.received)partsIn.push({cat:cat,idx:i,p:p});});});
+  var waiting=open.filter(function(o){return o.status==='Waiting on Parts';});
+
+  el.innerHTML='<div style="font-size:13px;font-weight:700;color:var(--muted);margin-bottom:12px;text-transform:uppercase;letter-spacing:.06em">Morning Report — '+new Date().toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'})+'</div>';
+
+  function makeSection(title,titleColor,items,renderFn){
+    var sec=document.createElement('div');sec.className='daily-section';
+    var hdr=document.createElement('div');hdr.className='daily-hdr';
+    if(titleColor)hdr.style.color=titleColor;
+    hdr.innerHTML='<span>'+title+' ('+items.length+')</span>';
+    sec.appendChild(hdr);
+    if(!items.length){var none=document.createElement('div');none.style.cssText='font-size:13px;color:var(--muted);font-style:italic';none.textContent='None';sec.appendChild(none);}
+    else{items.forEach(function(item){var row=renderFn(item);if(row)sec.appendChild(row);});}
+    el.appendChild(sec);
+  }
+
+  // Ready for pickup
+  makeSection('Ready for Pickup','',ready,function(o){
+    var c=CUSTS[o.custId]||{};
+    var row=document.createElement('div');
+    row.style.cssText='display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid var(--off)';
+    row.innerHTML='<div style="cursor:pointer"><strong>#'+o.woNum+'</strong> '+(c.first||'')+' '+(c.last||'')+' — '+(o.brand||'')+' '+(o.equipType||'')+'</div>'
+      +(c.phone?'<a href="tel:'+c.phone+'" style="color:var(--red);font-weight:700;font-size:13px;text-decoration:none">📞 '+c.phone+'</a>':'');
+    row.querySelector('div').onclick=function(){openDet(o.id);};
+    return row;
+  });
+
+  // Parts in
+  makeSection('Parts In / Received','',partsIn,function(item){
+    var p=item.p;var wo=p.woId&&ORDERS[p.woId]?ORDERS[p.woId]:null;var c=wo&&CUSTS[wo.custId]?CUSTS[wo.custId]:{};
+    var row=document.createElement('div');
+    row.style.cssText='padding:6px 0;border-bottom:1px solid var(--off)';
+    row.innerHTML='<strong>'+p.desc+'</strong>'+(p.qty>1?' ×'+p.qty:'')
+      +(wo?'<span style="font-size:12px;color:var(--muted);margin-left:8px">→ WO #'+wo.woNum+' '+(c.first||'')+' '+(c.last||'')+'</span>':'')
+      +(p.paid?'<span class="b-paid" style="margin-left:6px">Paid</span>':'<span style="font-size:11px;color:var(--red);margin-left:6px;font-weight:600">$ Unpaid</span>');
+    if(wo){row.style.cursor='pointer';row.onclick=function(){openDet(wo.id);};}
+    return row;
+  });
+
+  // Overdue
+  makeSection('Past Estimated Date','var(--red)',overdue,function(o){
+    var c=CUSTS[o.custId]||{};
+    var days=Math.floor((now-new Date(o.estDate))/(1000*60*60*24));
+    var row=document.createElement('div');
+    row.style.cssText='display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid var(--off);cursor:pointer';
+    row.innerHTML='<div><strong>#'+o.woNum+'</strong> '+(c.first||'')+' '+(c.last||'')+' — '+(o.brand||'')+' '+(o.equipType||'')+'<span style="color:var(--red);font-size:11px;margin-left:6px">'+days+'d overdue</span></div>'+badge(o.status||'Intake');
+    row.onclick=function(){openDet(o.id);};
+    return row;
+  });
+
+  // Old jobs
+  makeSection('Jobs Sitting '+SETTINGS.ageOldDays+'+ Days','#BA7517',old,function(o){
+    var c=CUSTS[o.custId]||{};
+    var days=Math.floor((now-new Date(o.dateIn))/(1000*60*60*24));
+    var row=document.createElement('div');
+    row.style.cssText='display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid var(--off);cursor:pointer';
+    row.innerHTML='<div><strong>#'+o.woNum+'</strong> '+(c.first||'')+' '+(c.last||'')+' — '+(o.brand||'')+' '+(o.equipType||'')+'<span style="color:#BA7517;font-size:11px;margin-left:6px">'+days+' days</span></div>'+badge(o.status||'Intake');
+    row.onclick=function(){openDet(o.id);};
+    return row;
+  });
+
+  // Waiting on parts
+  makeSection('Waiting on Parts','',waiting,function(o){
+    var c=CUSTS[o.custId]||{};
+    var row=document.createElement('div');
+    row.style.cssText='padding:6px 0;border-bottom:1px solid var(--off);cursor:pointer';
+    row.innerHTML='<strong>#'+o.woNum+'</strong> '+(c.first||'')+' '+(c.last||'')+' — '+(o.brand||'')+' '+(o.equipType||'')
+      +(o.partsWaiting?'<div style="font-size:12px;color:var(--muted)">'+o.partsWaiting+'</div>':'');
+    row.onclick=function(){openDet(o.id);};
+    return row;
+  });
+}
