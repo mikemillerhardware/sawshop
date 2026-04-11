@@ -175,7 +175,7 @@ hr{border:none;border-top:1.5px solid var(--silver);margin:12px 0}
 @media print{body *{visibility:hidden}#print-area,#print-area *{visibility:visible}#print-area{position:fixed;left:0;top:0;width:100%;background:#fff}}
 </style>
 
-<h2 class="sr-only">Miller Hardware Saw Shop \u2014 work order system v8</h2>
+<h2 class="sr-only">Miller Hardware Saw Shop — work order system v8</h2>
 <div class="app">
   <div class="topbar">
     <div class="topbar-brand">MILLER <span>HARDWARE</span> <span style="font-size:12px;font-weight:600;color:#aaa;letter-spacing:.06em">SAW SHOP</span></div>
@@ -199,11 +199,11 @@ hr{border:none;border-top:1.5px solid var(--silver);margin:12px 0}
 
   <div class="view active" id="tab-dash">
     <div class="stat-row">
-      <div class="stat"><div class="lbl">Open Orders</div><div class="val" id="s-open">\u2014</div></div>
-      <div class="stat urg"><div class="lbl">Priority</div><div class="val" id="s-urg">\u2014</div></div>
-      <div class="stat parts-stat"><div class="lbl">Waiting on Parts</div><div class="val" id="s-parts">\u2014</div></div>
-      <div class="stat"><div class="lbl">Ready for Pickup</div><div class="val" id="s-ready">\u2014</div></div>
-      <div class="stat"><div class="lbl">Completed</div><div class="val" id="s-done">\u2014</div></div>
+      <div class="stat"><div class="lbl">Open Orders</div><div class="val" id="s-open">—</div></div>
+      <div class="stat urg"><div class="lbl">Priority</div><div class="val" id="s-urg">—</div></div>
+      <div class="stat parts-stat"><div class="lbl">Waiting on Parts</div><div class="val" id="s-parts">—</div></div>
+      <div class="stat"><div class="lbl">Ready for Pickup</div><div class="val" id="s-ready">—</div></div>
+      <div class="stat"><div class="lbl">Completed</div><div class="val" id="s-done">—</div></div>
     </div>
     <div id="dash-season-banner"></div>
     <div style="font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-bottom:8px">Active Orders</div>
@@ -230,9 +230,9 @@ hr{border:none;border-top:1.5px solid var(--silver);margin:12px 0}
 
   <div class="view" id="tab-hours">
     <div class="hours-summary">
-      <div class="hours-stat"><div class="lbl">Completed orders tracked</div><div class="val" id="h-tracked">\u2014</div></div>
-      <div class="hours-stat good"><div class="lbl">Avg accuracy (est vs actual)</div><div class="val" id="h-accuracy">\u2014</div></div>
-      <div class="hours-stat over"><div class="lbl">Jobs over estimate</div><div class="val" id="h-over">\u2014</div></div>
+      <div class="hours-stat"><div class="lbl">Completed orders tracked</div><div class="val" id="h-tracked">—</div></div>
+      <div class="hours-stat good"><div class="lbl">Avg accuracy (est vs actual)</div><div class="val" id="h-accuracy">—</div></div>
+      <div class="hours-stat over"><div class="lbl">Jobs over estimate</div><div class="val" id="h-over">—</div></div>
     </div>
     <table class="hours-table" id="hours-table-el">
       <thead><tr><th>WO#</th><th>Customer</th><th>Equipment</th><th>Tech</th><th>Est. hrs</th><th>Actual hrs</th><th>Variance</th></tr></thead>
@@ -318,8 +318,8 @@ hr{border:none;border-top:1.5px solid var(--silver);margin:12px 0}
   <div class="g3">
     <div class="f"><label>Equipment Type</label>
       <select id="m-etype">
-        <option>Chainsaw</option><option>Trimmer / Weedeater</option><option>Mower \u2014 Push</option>
-        <option>Mower \u2014 Riding</option><option>Zero Turn Mower</option><option>Blower</option>
+        <option>Chainsaw</option><option>Trimmer / Weedeater</option><option>Mower — Push</option>
+        <option>Mower — Riding</option><option>Zero Turn Mower</option><option>Blower</option>
         <option>Generator</option><option>Pressure Washer</option><option>Hedge Trimmer</option>
         <option>Tiller / Cultivator</option><option>Edger</option><option>Log Splitter</option>
         <option>Auger</option><option>Other</option>
@@ -345,7 +345,7 @@ hr{border:none;border-top:1.5px solid var(--silver);margin:12px 0}
     <div class="note-ts" id="m-notes-ts"></div>
   </div>
   <div id="waiting-parts-row" style="display:none;margin-bottom:10px">
-    <div class="f"><label>Parts Being Waited On</label><input type="text" id="m-parts-waiting" placeholder="e.g. Carburetor kit \u2014 ordered from Stihl 4/8"></div>
+    <div class="f"><label>Parts Being Waited On</label><input type="text" id="m-parts-waiting" placeholder="e.g. Carburetor kit — ordered from Stihl 4/8"></div>
   </div>
   <div class="g3">
     <div class="f"><label>Status</label>
@@ -411,8 +411,8 @@ hr{border:none;border-top:1.5px solid var(--silver);margin:12px 0}
   <div class="g3">
     <div class="f"><label>Equipment Type</label>
       <select id="eq-type">
-        <option>Chainsaw</option><option>Trimmer / Weedeater</option><option>Mower \u2014 Push</option>
-        <option>Mower \u2014 Riding</option><option>Zero Turn Mower</option><option>Blower</option>
+        <option>Chainsaw</option><option>Trimmer / Weedeater</option><option>Mower — Push</option>
+        <option>Mower — Riding</option><option>Zero Turn Mower</option><option>Blower</option>
         <option>Generator</option><option>Pressure Washer</option><option>Hedge Trimmer</option>
         <option>Tiller / Cultivator</option><option>Edger</option><option>Log Splitter</option>
         <option>Auger</option><option>Other</option>
@@ -430,8 +430,8 @@ hr{border:none;border-top:1.5px solid var(--silver);margin:12px 0}
     <div class="f"><label>Date Sold / Acquired</label><input type="date" id="eq-date"></div>
     <div class="f"><label>Record Type</label>
       <select id="eq-rectype">
-        <option value="sale">New unit sale \u2014 sold by Miller Hardware</option>
-        <option value="existing">Customer-owned \u2014 logging for service records</option>
+        <option value="sale">New unit sale — sold by Miller Hardware</option>
+        <option value="existing">Customer-owned — logging for service records</option>
       </select>
     </div>
   </div>
@@ -499,10 +499,10 @@ function warrantyStatus(expDate){if(!expDate)return null;var exp=new Date(expDat
 
 function getSeason(){
   var m=new Date().getMonth();
-  if(m>=2&&m<=4)return{name:'Spring',cls:'spring',msg:'Spring rush season \u2014 mowers, trimmers, and chainsaws. Great time to reach out to overdue customers.'};
-  if(m>=5&&m<=7)return{name:'Summer',cls:'summer',msg:'Summer season \u2014 zero turns, trimmers, and pressure washers in heavy use.'};
-  if(m>=8&&m<=10)return{name:'Fall',cls:'fall',msg:'Fall season \u2014 chainsaws, log splitters, and leaf blowers. Remind customers to service before the season peaks.'};
-  return{name:'Winter',cls:'winter',msg:'Winter season \u2014 good time to service generators and equipment stored over summer.'};
+  if(m>=2&&m<=4)return{name:'Spring',cls:'spring',msg:'Spring rush season — mowers, trimmers, and chainsaws. Great time to reach out to overdue customers.'};
+  if(m>=5&&m<=7)return{name:'Summer',cls:'summer',msg:'Summer season — zero turns, trimmers, and pressure washers in heavy use.'};
+  if(m>=8&&m<=10)return{name:'Fall',cls:'fall',msg:'Fall season — chainsaws, log splitters, and leaf blowers. Remind customers to service before the season peaks.'};
+  return{name:'Winter',cls:'winter',msg:'Winter season — good time to service generators and equipment stored over summer.'};
 }
 
 function getIntervalMonths(equipType){
@@ -537,7 +537,7 @@ function buildReminders(){
           var isOverdue=overduePct>=1;
           reminders.push({type:isOverdue?'overdue':'due-soon',custId:c.id,eqIdx:i,
             custName:c.first+' '+c.last,phone:c.phone||'',
-            equip:(e.brand||'')+' '+(e.type||'')+(e.model?' \u2014 '+e.model:''),
+            equip:(e.brand||'')+' '+(e.type||'')+(e.model?' — '+e.model:''),
             detail:isOverdue?'Overdue for service by '+(diff-months)+' month'+(diff-months!==1?'s':''):'Due for service in '+(months-diff)+' month'+(months-diff!==1?'s':''),
             lastSvc:lastSvc,months:months,overduePct:overduePct,equipType:e.type});
         }
@@ -546,8 +546,8 @@ function buildReminders(){
         if(mths>=months){
           reminders.push({type:'overdue',custId:c.id,eqIdx:i,
             custName:c.first+' '+c.last,phone:c.phone||'',
-            equip:(e.brand||'')+' '+(e.type||'')+(e.model?' \u2014 '+e.model:''),
-            detail:'No service on record \u2014 sold '+mths+' months ago',
+            equip:(e.brand||'')+' '+(e.type||'')+(e.model?' — '+e.model:''),
+            detail:'No service on record — sold '+mths+' months ago',
             lastSvc:null,months:months,overduePct:mths/months,equipType:e.type});
         }
       }
@@ -556,7 +556,7 @@ function buildReminders(){
         if(ws&&(ws.cls==='b-warranty-exp'||ws.cls==='b-warranty-soon')){
           reminders.push({type:'warranty',custId:c.id,eqIdx:i,
             custName:c.first+' '+c.last,phone:c.phone||'',
-            equip:(e.brand||'')+' '+(e.type||'')+(e.model?' \u2014 '+e.model:''),
+            equip:(e.brand||'')+' '+(e.type||'')+(e.model?' — '+e.model:''),
             detail:ws.label+(e.warrantyNotes?' &middot; '+e.warrantyNotes:''),
             warrantyExp:e.warrantyExp,equipType:e.type});
         }
@@ -575,8 +575,8 @@ function buildReminders(){
           if(!alreadyIn){
             reminders.push({type:'seasonal',custId:c.id,eqIdx:i,
               custName:c.first+' '+c.last,phone:c.phone||'',
-              equip:(e.brand||'')+' '+(e.type||'')+(e.model?' \u2014 '+e.model:''),
-              detail:season+' season \u2014 consider reaching out for pre-season service',
+              equip:(e.brand||'')+' '+(e.type||'')+(e.model?' — '+e.model:''),
+              detail:season+' season — consider reaching out for pre-season service',
               lastSvc:lastSvc,equipType:e.type});
           }
         }
@@ -606,7 +606,7 @@ function renderReminders(){
   if(b1)b1.innerHTML=bannerHtml;if(b2)b2.innerHTML=bannerHtml;
   var el=document.getElementById('reminders-list');
   if(!el)return;
-  if(!filtered.length){el.innerHTML='<div class="empty">No reminders right now \u2014 you\'re all caught up.</div>';return;}
+  if(!filtered.length){el.innerHTML='<div class="empty">No reminders right now — you\'re all caught up.</div>';return;}
   el.innerHTML=filtered.map(function(r){
     var icon=r.type==='overdue'?'!':r.type==='due-soon'?'~':r.type==='seasonal'?'S':'W';
     var iconColor=r.type==='overdue'?'var(--red)':r.type==='due-soon'?'#BA7517':r.type==='seasonal'?'#7F77DD':'#2d7d1e';
@@ -658,12 +658,12 @@ function saveIntervals(){
 function initFB(){
   var raw=null;try{raw=localStorage.getItem('fb_config_raw');}catch(e){}
   var cfgEl=document.getElementById('fb-cfg');if(raw&&cfgEl)cfgEl.value=raw;
-  if(!raw){
-    // Use baked-in Firebase config
-    raw = JSON.stringify(FB_BAKED);
-  }
   var c=null;
-  try{var cl=raw.trim().replace(/(\w+)\s*:/g,'"$1":').replace(/'/g,'"');if(cl.indexOf('{')!==0)cl=cl.substring(cl.indexOf('{'));c=JSON.parse(cl);}catch(e){}
+  if(!raw){
+    c=FB_BAKED;
+  } else {
+    try{var cl=raw.trim().replace(/(\w+)\s*:/g,'"$1":').replace(/'/g,'"');if(cl.indexOf('{')!==0)cl=cl.substring(cl.indexOf('{'));c=JSON.parse(cl);}catch(e){}
+  }
   if(!c||!c.databaseURL){setSP('err','Bad config');loadLocal();boot();return;}
   setSP('warn','Connecting...');
   function go(){
@@ -745,7 +745,7 @@ function renderBoard(){
       var c=CUSTS[o.custId]||{};var isWaiting=o.status==='Waiting on Parts';
       return '<div class="board-card'+(o.urgent?' urgent':isWaiting?' waiting':'')+'" onclick="openDet(\''+o.id+'\')">'
         +'<div class="bc-wo">#'+o.woNum+'</div><div class="bc-cust">'+(c.first||'')+' '+(c.last||'')+'</div>'
-        +'<div class="bc-equip">'+(o.brand||'')+' '+(o.equipType||'')+(o.model?' \u2014 '+o.model:'')+'</div>'
+        +'<div class="bc-equip">'+(o.brand||'')+' '+(o.equipType||'')+(o.model?' — '+o.model:'')+'</div>'
         +'<div class="bc-meta">'+badge(o.status||'Intake')+(o.urgent?'<span class="badge b-urgent">!</span>':'')+'</div>'
         +(o.estHrs?'<div class="bc-hours">Est: '+o.estHrs+'h'+(o.actHrs?' &middot; Act: '+o.actHrs+'h':'')+'</div>':'')
         +'</div>';
@@ -765,7 +765,7 @@ function renderOrders(){
 function renderHours(){
   var tracked=orderArr().filter(function(o){return o.status==='Complete'&&o.estHrs&&o.actHrs;});
   var tbody=document.getElementById('hours-body'),emptyEl=document.getElementById('hours-empty');
-  if(!tracked.length){if(tbody)tbody.innerHTML='';if(emptyEl)emptyEl.style.display='';document.getElementById('h-tracked').textContent='0';document.getElementById('h-accuracy').textContent='\u2014';document.getElementById('h-over').textContent='0';return;}
+  if(!tracked.length){if(tbody)tbody.innerHTML='';if(emptyEl)emptyEl.style.display='';document.getElementById('h-tracked').textContent='0';document.getElementById('h-accuracy').textContent='—';document.getElementById('h-over').textContent='0';return;}
   if(emptyEl)emptyEl.style.display='none';
   var totalVar=0,over=0;tracked.forEach(function(o){var v=(parseFloat(o.actHrs)||0)-(parseFloat(o.estHrs)||0);totalVar+=v/parseFloat(o.estHrs);if(v>0)over++;});
   var avgPct=Math.round((totalVar/tracked.length)*100);
@@ -831,7 +831,7 @@ function openEditWO(id){
 function quickStatus(id,s){var o=ORDERS[id];if(!o)return;o.status=s;if(s!=='Waiting on Parts')o.partsWaiting='';writeOrder(o);openDet(id);}
 
 function addPRow(){appPR({desc:'',qty:1,note:''});}
-function appPR(p){var tr=document.createElement('tr');var si='border:1.5px solid var(--silver);border-radius:3px;padding:4px 6px;font-size:12px;background:var(--white);color:var(--dark);width:100%;font-family:Barlow,sans-serif';tr.innerHTML='<td style="width:40%"><input type="text" value="'+(p.desc||'')+'" placeholder="e.g. Air filter, Labor \u2014 rebuild" style="'+si+'"></td><td style="width:12%"><input type="number" value="'+(p.qty||1)+'" min="1" style="'+si+'"></td><td style="display:flex;gap:4px;padding:0"><input type="text" value="'+(p.note||'')+'" placeholder="Optional notes..." style="'+si+';flex:1"><button class="btn sm del" onclick="this.closest(\'tr\').remove()" style="padding:3px 7px;flex-shrink:0">&#x2715;</button></td>';document.getElementById('pt-body').appendChild(tr);}
+function appPR(p){var tr=document.createElement('tr');var si='border:1.5px solid var(--silver);border-radius:3px;padding:4px 6px;font-size:12px;background:var(--white);color:var(--dark);width:100%;font-family:Barlow,sans-serif';tr.innerHTML='<td style="width:40%"><input type="text" value="'+(p.desc||'')+'" placeholder="e.g. Air filter, Labor — rebuild" style="'+si+'"></td><td style="width:12%"><input type="number" value="'+(p.qty||1)+'" min="1" style="'+si+'"></td><td style="display:flex;gap:4px;padding:0"><input type="text" value="'+(p.note||'')+'" placeholder="Optional notes..." style="'+si+';flex:1"><button class="btn sm del" onclick="this.closest(\'tr\').remove()" style="padding:3px 7px;flex-shrink:0">&#x2715;</button></td>';document.getElementById('pt-body').appendChild(tr);}
 function getParts(){var parts=[];document.querySelectorAll('#pt-body tr').forEach(function(r){var ins=r.querySelectorAll('input');if(ins[0]&&ins[0].value.trim())parts.push({desc:ins[0].value,qty:parseFloat(ins[1].value)||1,note:ins[2]?ins[2].value:''});});return parts;}
 
 function saveWO(){
@@ -979,12 +979,12 @@ function printWO(id){
   var prows=(o.parts||[]).map(function(p){return '<tr><td style="padding:6px 8px;border-bottom:1px solid #e0e0e0">'+p.desc+'</td><td style="padding:6px 8px;border-bottom:1px solid #e0e0e0;text-align:center">'+p.qty+'</td><td style="padding:6px 8px;border-bottom:1px solid #e0e0e0;color:#555">'+(p.note||'')+'</td></tr>';}).join('');
   var locAddr=(c.addr&&c.addr.toLowerCase().indexOf('harrison')>=0)?'#2 Necessity Ave &middot; Harrison, AR 72601 &middot; (870) 741-3493':'1609 Hwy 62 West &middot; Yellville, AR 72687 &middot; (870) 449-4255';
   var bill=parseFloat(o.billHrs)||0;
-  var html='<div style="font-family:Barlow,Arial,sans-serif;max-width:760px;margin:0 auto;padding:32px 40px;color:#1a1a1a"><div style="display:flex;justify-content:space-between;align-items:flex-start;border-bottom:3px solid #1a1a1a;padding-bottom:16px;margin-bottom:20px"><div><div style="font-size:28px;font-weight:800;line-height:1">MILLER <span style="color:#1a1a1a">HARDWARE</span></div><div style="font-size:11px;color:#888;margin-top:2px;text-transform:uppercase;letter-spacing:.04em">Saw Shop &mdash; True Value Dealer</div><div style="font-size:11px;color:#555;margin-top:4px">'+locAddr+'</div></div><div style="text-align:right"><div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#888">Work Order</div><div style="font-size:26px;font-weight:800;color:#1a1a1a">#'+o.woNum+'</div>'+(o.dateIn?'<div style="font-size:11px;color:#555">Date In: '+o.dateIn+'</div>':'')+(o.dateOut?'<div style="font-size:11px;color:#555">Completed: '+o.dateOut+'</div>':'')+'<div style="font-size:11px;color:#555">Tech: '+(o.tech||'\u2014')+'</div>'+(bill?'<div style="font-size:11px;color:#555">Labor: '+bill.toFixed(2)+' hrs</div>':'')+'<div style="margin-top:4px"><span style="display:inline-block;padding:3px 10px;border-radius:2px;font-size:10px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;background:#e8e8e8;color:#444">'+o.status+'</span></div></div></div>'
+  var html='<div style="font-family:Barlow,Arial,sans-serif;max-width:760px;margin:0 auto;padding:32px 40px;color:#1a1a1a"><div style="display:flex;justify-content:space-between;align-items:flex-start;border-bottom:3px solid #1a1a1a;padding-bottom:16px;margin-bottom:20px"><div><div style="font-size:28px;font-weight:800;line-height:1">MILLER <span style="color:#1a1a1a">HARDWARE</span></div><div style="font-size:11px;color:#888;margin-top:2px;text-transform:uppercase;letter-spacing:.04em">Saw Shop &mdash; True Value Dealer</div><div style="font-size:11px;color:#555;margin-top:4px">'+locAddr+'</div></div><div style="text-align:right"><div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#888">Work Order</div><div style="font-size:26px;font-weight:800;color:#1a1a1a">#'+o.woNum+'</div>'+(o.dateIn?'<div style="font-size:11px;color:#555">Date In: '+o.dateIn+'</div>':'')+(o.dateOut?'<div style="font-size:11px;color:#555">Completed: '+o.dateOut+'</div>':'')+'<div style="font-size:11px;color:#555">Tech: '+(o.tech||'—')+'</div>'+(bill?'<div style="font-size:11px;color:#555">Labor: '+bill.toFixed(2)+' hrs</div>':'')+'<div style="margin-top:4px"><span style="display:inline-block;padding:3px 10px;border-radius:2px;font-size:10px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;background:#e8e8e8;color:#444">'+o.status+'</span></div></div></div>'
   +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:18px"><div style="background:#f6f4f1;border-radius:3px;padding:14px"><div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#888;margin-bottom:6px">Customer</div><div style="font-size:15px;font-weight:700">'+c.first+' '+c.last+'</div>'+(c.phone?'<div style="font-size:12px;color:#555;margin-top:2px">'+c.phone+'</div>':'')+(c.email?'<div style="font-size:12px;color:#555">'+c.email+'</div>':'')+(c.addr?'<div style="font-size:12px;color:#555">'+c.addr+'</div>':'')+'</div><div style="background:#f6f4f1;border-radius:3px;padding:14px"><div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#888;margin-bottom:6px">Equipment</div>'+[['Type',o.equipType],['Brand',o.brand],['Year',o.year],['Model',o.model],['Serial #',o.serial],['Engine',o.engine],['Hrs / Condition',o.hours]].filter(function(f){return f[1];}).map(function(f){return '<div style="display:flex;gap:8px;font-size:12px;margin-bottom:2px"><span style="color:#888;min-width:72px">'+f[0]+'</span><span style="font-weight:600">'+f[1]+'</span></div>';}).join('')+'</div></div>'
   +(o.complaint?'<div style="margin-bottom:14px"><div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#888;margin-bottom:4px">Customer Complaint</div><div style="font-size:13px;padding:8px 12px;background:#f6f4f1;border-radius:3px">'+o.complaint+'</div></div>':'')
   +(o.notes?'<div style="margin-bottom:14px"><div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#888;margin-bottom:4px">Tech Notes</div><div style="font-size:13px;padding:8px 12px;background:#f6f4f1;border-radius:3px">'+o.notes+'</div></div>':'')
   +(o.parts&&o.parts.length?'<div style="margin-bottom:14px"><div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#888;margin-bottom:6px">Parts &amp; Labor</div><table style="width:100%;border-collapse:collapse;font-size:13px"><thead><tr style="background:#1a1a1a;color:#fff"><th style="padding:7px 8px;text-align:left;font-size:10px;letter-spacing:.05em;text-transform:uppercase">Description</th><th style="padding:7px 8px;text-align:center;font-size:10px;letter-spacing:.05em;text-transform:uppercase;width:60px">Qty</th><th style="padding:7px 8px;text-align:left;font-size:10px;letter-spacing:.05em;text-transform:uppercase">Notes</th></tr></thead><tbody>'+prows+'</tbody></table></div>':'')
-  +'<div style="margin-top:28px;padding-top:16px;border-top:1.5px solid #e0e0e0"><div style="display:grid;grid-template-columns:1fr 1fr;gap:40px"><div><div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#888;margin-bottom:28px">Customer Signature</div><div style="border-bottom:1.5px solid #1a1a1a;margin-bottom:4px"></div><div style="font-size:10px;color:#888">Signature &amp; Date \u2014 Equipment Received in Good Order</div></div><div><div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#888;margin-bottom:28px">Authorized By</div><div style="border-bottom:1.5px solid #1a1a1a;margin-bottom:4px"></div><div style="font-size:10px;color:#888">Miller Hardware Technician</div></div></div></div>'
+  +'<div style="margin-top:28px;padding-top:16px;border-top:1.5px solid #e0e0e0"><div style="display:grid;grid-template-columns:1fr 1fr;gap:40px"><div><div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#888;margin-bottom:28px">Customer Signature</div><div style="border-bottom:1.5px solid #1a1a1a;margin-bottom:4px"></div><div style="font-size:10px;color:#888">Signature &amp; Date — Equipment Received in Good Order</div></div><div><div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#888;margin-bottom:28px">Authorized By</div><div style="border-bottom:1.5px solid #1a1a1a;margin-bottom:4px"></div><div style="font-size:10px;color:#888">Miller Hardware Technician</div></div></div></div>'
   +'<div style="text-align:center;margin-top:24px;padding-top:16px;border-top:1.5px solid #e0e0e0"><div style="font-size:12px;font-weight:600;color:#1a1a1a">Thank you for your business!</div><div style="font-size:11px;color:#888;margin-top:3px">Miller Hardware Company &mdash; Serving Arkansas Since 1931</div><div style="font-size:11px;color:#888">Harrison: (870) 741-3493 &middot; Yellville: (870) 449-4255</div></div></div>';
   var pa=document.getElementById('print-area');pa.innerHTML=html;pa.style.display='block';
   setTimeout(function(){window.print();setTimeout(function(){pa.style.display='none';},500);},100);
@@ -1003,7 +1003,7 @@ function exportCSV(type){
 }
 function exportJSON(){dl('data:application/json;charset=utf-8,'+encodeURIComponent(JSON.stringify({exported:new Date().toISOString(),orders:ORDERS,customers:CUSTS,techs:TECHS,equipment:EQUIPMENT,attachments:ATTACHMENTS,contactlogs:CONTACTLOGS,svcIntervals:SVC_INTERVALS},null,2)),'sawshop-backup-'+today()+'.json');}
 function dl(href,name){var a=document.createElement('a');a.href=href;a.download=name;a.click();}
-function saveFB(){var raw=document.getElementById('fb-cfg').value.trim();if(!raw)return;try{var cl=raw.replace(/(\w+)\s*:/g,'"$1":').replace(/'/g,'"');if(cl.indexOf('{')!==0)cl=cl.substring(cl.indexOf('{'));JSON.parse(cl);}catch(e){document.getElementById('fb-msg').textContent='Could not parse config.';return;}localStorage.setItem('fb_config_raw',raw);document.getElementById('fb-msg').style.color='#1a5c0a';document.getElementById('fb-msg').textContent='Saved \u2014 reload to connect.';}
+function saveFB(){var raw=document.getElementById('fb-cfg').value.trim();if(!raw)return;try{var cl=raw.replace(/(\w+)\s*:/g,'"$1":').replace(/'/g,'"');if(cl.indexOf('{')!==0)cl=cl.substring(cl.indexOf('{'));JSON.parse(cl);}catch(e){document.getElementById('fb-msg').textContent='Could not parse config.';return;}localStorage.setItem('fb_config_raw',raw);document.getElementById('fb-msg').style.color='#1a5c0a';document.getElementById('fb-msg').textContent='Saved — reload to connect.';}
 function clearFB(){localStorage.removeItem('fb_config_raw');document.getElementById('fb-cfg').value='';document.getElementById('fb-msg').textContent='Cleared.';}
 function closeM(id){document.getElementById(id).classList.remove('open');}
 document.querySelectorAll('.modal-bg').forEach(function(el){el.addEventListener('click',function(e){if(e.target===el)el.classList.remove('open');});});
