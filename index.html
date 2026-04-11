@@ -81,8 +81,10 @@ body{font-family:'Barlow',sans-serif;font-size:16px;color:var(--dark);background
 .f input,.f select,.f textarea{width:100%;padding:7px 9px;border:1.5px solid var(--silver);border-radius:3px;font-size:15px;background:var(--white);color:var(--dark);font-family:'Barlow',sans-serif}
 .f input:focus,.f select:focus,.f textarea:focus{outline:none;border-color:var(--red)}
 .f textarea{min-height:52px;resize:vertical}
-.modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:100;align-items:flex-start;justify-content:center;padding:20px;overflow-y:auto}
+.modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:200;align-items:flex-start;justify-content:center;padding:20px;overflow-y:auto}
 .modal-bg.open{display:flex}
+#wo-modal{z-index:210}
+#cust-modal,#eq-modal,#contact-modal{z-index:220}
 .modal{background:var(--white);border-radius:3px;border-top:4px solid var(--red);padding:20px;width:min(97vw,640px);margin:auto}
 .modal-title{font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:800;margin-bottom:16px}
 .mfoot{display:flex;gap:7px;justify-content:flex-end;margin-top:14px;padding-top:12px;border-top:1.5px solid var(--silver);flex-wrap:wrap}
@@ -208,6 +210,22 @@ hr{border:none;border-top:1.5px solid var(--silver);margin:12px 0}
     <div id="dash-season-banner"></div>
     <div style="font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-bottom:8px">Active Orders</div>
     <div id="dash-list"><div class="empty">Loading...</div></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:16px">
+      <div class="card">
+        <div class="card-hdr" style="display:flex;justify-content:space-between;align-items:center">
+          Stihl Parts to Order
+          <button class="btn sm primary" onclick="openPartOrder('stihl')">+ Add</button>
+        </div>
+        <div id="po-stihl-list"><div class="empty" style="padding:10px 0">None pending</div></div>
+      </div>
+      <div class="card">
+        <div class="card-hdr" style="display:flex;justify-content:space-between;align-items:center">
+          Other Parts to Order
+          <button class="btn sm primary" onclick="openPartOrder('other')">+ Add</button>
+        </div>
+        <div id="po-other-list"><div class="empty" style="padding:10px 0">None pending</div></div>
+      </div>
+    </div>
   </div>
 
   <div class="view" id="tab-board">
@@ -308,7 +326,12 @@ hr{border:none;border-top:1.5px solid var(--silver);margin:12px 0}
 <div class="modal">
   <div class="modal-title" id="wo-mtitle">New Work Order</div>
   <div class="g2">
-    <div class="f"><label>Customer</label><select id="m-cust"><option value="">-- Select Customer --</option></select></div>
+    <div class="f"><label>Customer</label>
+      <div style="display:flex;gap:6px;align-items:flex-start">
+        <select id="m-cust" style="flex:1"><option value="">-- Select Customer --</option></select>
+        <button class="btn sm" onclick="openNewCustFromWO()" style="white-space:nowrap;flex-shrink:0;margin-top:1px">+ New</button>
+      </div>
+    </div>
     <div class="f"><label>Assigned Tech</label><select id="m-tech"><option>Unassigned</option></select></div>
   </div>
   <label style="display:flex;align-items:center;gap:7px;font-size:13px;font-weight:600;cursor:pointer;margin-bottom:12px">
@@ -476,6 +499,23 @@ hr{border:none;border-top:1.5px solid var(--silver);margin:12px 0}
 </div>
 </div>
 
+
+<!-- PART ORDER MODAL -->
+<div class="modal-bg" id="part-order-modal">
+<div class="modal">
+  <div class="modal-title" id="po-mtitle">Add Part to Order</div>
+  <div class="f"><label>Part # / Description</label><input type="text" id="po-desc" placeholder="e.g. 1141 120 1603, Carburetor kit"></div>
+  <div class="g2">
+    <div class="f"><label>Qty</label><input type="number" id="po-qty" value="1" min="1"></div>
+    <div class="f"><label>For Equipment (optional)</label><input type="text" id="po-equip" placeholder="e.g. MS 271 SN:12345"></div>
+  </div>
+  <div class="f"><label>Notes</label><input type="text" id="po-notes" placeholder="e.g. WO #1005, customer called 4/10"></div>
+  <div class="mfoot">
+    <button class="btn" onclick="closeM('part-order-modal')">Cancel</button>
+    <button class="btn primary" onclick="savePartOrder()">Add to List</button>
+  </div>
+</div>
+</div>
 <!-- DETAIL MODAL -->
 <div class="modal-bg" id="det-modal">
 <div class="modal" id="det-body"></div>
@@ -484,7 +524,7 @@ hr{border:none;border-top:1.5px solid var(--silver);margin:12px 0}
 <div id="print-area" style="display:none"></div>
 
 <script>
-var DB=null,STORAGE=null,ORDERS={},CUSTS={},TECHS=['Michael','Tech 2','Tech 3'],EQUIPMENT={},ATTACHMENTS={},CONTACTLOGS={};
+var DB=null,STORAGE=null,ORDERS={},CUSTS={},TECHS=['Michael','Tech 2','Tech 3'],EQUIPMENT={},ATTACHMENTS={},CONTACTLOGS={},PARTORDERS={stihl:[],other:[]};
 var editWOid=null,editCid=null,editEqCid=null,editEqIdx=null,contactLogWOid=null,nextWO=1001;
 var activeRFilter='all';
 var SVC_INTERVALS={chainsaw:12,mower:12,generator:24,trimmer:18,other:18};
@@ -677,13 +717,14 @@ function initFB(){
       DB.ref('equipment').on('value',function(s){EQUIPMENT={};s.forEach(function(ch){EQUIPMENT[ch.key]=ch.val();});renderReminders();});
       DB.ref('attachments').on('value',function(s){ATTACHMENTS={};s.forEach(function(ch){ATTACHMENTS[ch.key]=ch.val();});});
       DB.ref('contactlogs').on('value',function(s){CONTACTLOGS={};s.forEach(function(ch){CONTACTLOGS[ch.key]=ch.val();});});
+      DB.ref('partorders').on('value',function(s){var v=s.val();if(v){PARTORDERS=v;if(!PARTORDERS.stihl)PARTORDERS.stihl=[];if(!PARTORDERS.other)PARTORDERS.other=[];}renderDash();});
     }catch(e){setSP('err','FB error');loadLocal();boot();}
   }
   function loadSDK(urls,cb){if(!urls.length){cb();return;}var s=document.createElement('script');s.src=urls[0];s.onload=function(){loadSDK(urls.slice(1),cb);};s.onerror=function(){setSP('err','Load failed');loadLocal();boot();};document.head.appendChild(s);}
   if(typeof firebase!=='undefined'){go();return;}
   loadSDK(['https://cdn.jsdelivr.net/npm/firebase@9.23.0/firebase-app-compat.min.js','https://cdn.jsdelivr.net/npm/firebase@9.23.0/firebase-database-compat.min.js','https://cdn.jsdelivr.net/npm/firebase@9.23.0/firebase-storage-compat.min.js'],go);
 }
-function boot(){refreshAll();renderTechs();populateTechSels();populateCustSel();renderReminders();loadIntervalInputs();}
+function boot(){refreshAll();renderTechs();populateTechSels();populateCustSel();renderReminders();loadIntervalInputs();renderPartOrders();}
 
 function loadIntervalInputs(){
   document.getElementById('si-chainsaw').value=SVC_INTERVALS.chainsaw;
@@ -700,6 +741,7 @@ function writeTechs(){if(DB){DB.ref('techs').set(TECHS);}else{saveLocal();}}
 function writeEquipment(cid,eq){if(DB){DB.ref('equipment/'+cid).set(eq);}else{EQUIPMENT[cid]=eq;saveLocal();renderReminders();}}
 function writeAttachments(woid,atts){if(DB){DB.ref('attachments/'+woid).set(atts);}else{ATTACHMENTS[woid]=atts;saveLocal();}}
 function writeContactLogs(woid,logs){if(DB){DB.ref('contactlogs/'+woid).set(logs);}else{CONTACTLOGS[woid]=logs;saveLocal();}}
+function writePartOrders(){if(DB){DB.ref('partorders').set(PARTORDERS);}else{saveLocal();}}
 
 function addTech(){var n=document.getElementById('new-tech').value.trim();if(!n||TECHS.indexOf(n)>=0)return;TECHS.push(n);writeTechs();renderTechs();populateTechSels();document.getElementById('new-tech').value='';}
 function removeTech(n){if(!confirm('Remove '+n+'?'))return;TECHS=TECHS.filter(function(t){return t!==n;});writeTechs();renderTechs();populateTechSels();}
@@ -710,7 +752,7 @@ function populateCustSel(){var sel=document.getElementById('m-cust');if(!sel)ret
 function orderArr(){return Object.values(ORDERS).sort(function(a,b){if(b.urgent!==a.urgent)return(b.urgent?1:0)-(a.urgent?1:0);return b.woNum-a.woNum;});}
 function custArr(){return Object.values(CUSTS).sort(function(a,b){return(a.last||'').localeCompare(b.last||'');});}
 function custEquip(cid){return EQUIPMENT[cid]||[];}
-function refreshAll(){renderDash();renderBoard();renderOrders();renderHours();renderReminders();renderCustomers();}
+function refreshAll(){renderDash();renderBoard();renderOrders();renderHours();renderReminders();renderCustomers();renderPartOrders();}
 
 function showTab(t){
   var tabs=['dash','board','orders','hours','reminders','customers','settings'];
@@ -844,7 +886,21 @@ function saveWO(){
 function delWO(){if(!editWOid||!confirm('Delete this work order?'))return;deleteOrder(editWOid);closeM('wo-modal');}
 
 function openNewCust(){editCid=null;document.getElementById('cust-mtitle').textContent='New Customer';['c-first','c-last','c-phone','c-email','c-addr','c-notes'].forEach(function(id){document.getElementById(id).value='';});document.getElementById('cust-modal').classList.add('open');}
-function saveCust(){var first=document.getElementById('c-first').value.trim(),last=document.getElementById('c-last').value.trim();if(!first&&!last){alert('Please enter a name.');return;}var c={id:editCid||genId(),first:first,last:last,phone:document.getElementById('c-phone').value.trim(),email:document.getElementById('c-email').value.trim(),addr:document.getElementById('c-addr').value.trim(),notes:document.getElementById('c-notes').value.trim()};writeCust(c);closeM('cust-modal');}
+function saveCust(){
+  var first=document.getElementById('c-first').value.trim(),last=document.getElementById('c-last').value.trim();
+  if(!first&&!last){alert('Please enter a name.');return;}
+  var c={id:editCid||genId(),first:first,last:last,phone:document.getElementById('c-phone').value.trim(),email:document.getElementById('c-email').value.trim(),addr:document.getElementById('c-addr').value.trim(),notes:document.getElementById('c-notes').value.trim()};
+  var woOpen=document.getElementById('wo-modal').classList.contains('open');
+  var isNew=!editCid;
+  writeCust(c);closeM('cust-modal');
+  if(isNew&&woOpen){setTimeout(function(){CUSTS[c.id]=c;populateCustSel();document.getElementById('m-cust').value=c.id;},300);}
+}
+function openNewCustFromWO(){
+  editCid=null;
+  document.getElementById('cust-mtitle').textContent='New Customer';
+  ['c-first','c-last','c-phone','c-email','c-addr','c-notes'].forEach(function(id){document.getElementById(id).value='';});
+  document.getElementById('cust-modal').classList.add('open');
+}
 
 function openAddEquip(cid,idx){
   editEqCid=cid;editEqIdx=(idx!==undefined?idx:null);
@@ -876,7 +932,7 @@ function newWOForCustEquip(cid,eqIdx){
 
 function openDet(id){
   var o=ORDERS[id];if(!o)return;var c=CUSTS[o.custId]||{};
-  var prows=(o.parts||[]).map(function(p){return '<tr><td style="padding:5px 8px;border-bottom:1px solid var(--off)">'+p.desc+'</td><td style="padding:5px 8px;border-bottom:1px solid var(--off);text-align:center">'+p.qty+'</td><td style="padding:5px 8px;border-bottom:1px solid var(--off);color:var(--gray2)">'+(p.note||'')+'</td></tr>';}).join('');
+  var prows=(o.parts||[]).map(function(p,pi){return '<tr><td style="padding:5px 8px;border-bottom:1px solid var(--off)">'+p.desc+'</td><td style="padding:5px 8px;border-bottom:1px solid var(--off);text-align:center">'+p.qty+'</td><td style="padding:5px 8px;border-bottom:1px solid var(--off);color:var(--gray2)">'+(p.note||'')+'</td><td style="padding:3px 4px;border-bottom:1px solid var(--off)"><button onclick="deletePart(\''+id+'\','+pi+')" style="background:none;border:none;cursor:pointer;color:var(--red);font-size:13px;padding:2px 5px;font-weight:700">&#x2715;</button></td></tr>';}).join('');
   var stats=['Intake','Diagnosing','In Repair','Waiting on Parts','Ready','Complete'];
   var sbtns=stats.map(function(s){var isW=s==='Waiting on Parts';return '<button class="sbtn'+(isW?' waiting-btn':'')+(o.status===s?' active':'')+'" onclick="quickStatus(\''+id+'\',\''+s+'\')">'+s+'</button>';}).join('');
   var eqf=[['Type',o.equipType],['Brand',o.brand],['Year',o.year],['Model',o.model],['Serial #',o.serial],['Engine',o.engine],['Hrs / Condition',o.hours]].filter(function(f){return f[1];});
@@ -894,7 +950,13 @@ function openDet(id){
     +(o.complaint?'<div style="margin-bottom:8px"><div class="df-lbl">Customer Complaint</div><div class="df-val">'+o.complaint+'</div></div>':'')
     +(o.notes?'<div style="margin-bottom:8px"><div class="df-lbl">Tech Notes</div><div class="df-val">'+o.notes+'</div>'+(o.notesTs?'<div class="note-ts">Updated: '+o.notesTs+'</div>':'')+'</div>':'')
     +hrsHtml+'<hr>'
-    +(o.parts&&o.parts.length?'<table style="width:100%;border-collapse:collapse;font-size:12px"><thead><tr><th style="text-align:left;font-size:10px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);padding:4px 8px;border-bottom:1.5px solid var(--silver)">Description</th><th style="text-align:center;font-size:10px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);padding:4px 8px;border-bottom:1.5px solid var(--silver)">Qty</th><th style="text-align:left;font-size:10px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);padding:4px 8px;border-bottom:1.5px solid var(--silver)">Notes</th></tr></thead><tbody>'+prows+'</tbody></table>':'<div style="font-size:12px;color:var(--muted);padding:6px 0;font-style:italic">No parts or labor logged.</div>')
+    +(o.parts&&o.parts.length?'<table style="width:100%;border-collapse:collapse;font-size:12px"><thead><tr><th style="text-align:left;font-size:10px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);padding:4px 8px;border-bottom:1.5px solid var(--silver)">Description</th><th style="text-align:center;font-size:10px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);padding:4px 8px;border-bottom:1.5px solid var(--silver)">Qty</th><th style="text-align:left;font-size:10px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);padding:4px 8px;border-bottom:1.5px solid var(--silver)">Notes</th></tr></thead><tbody>'+prows+'</tbody></table>':'<div style="font-size:12px;color:var(--muted);padding:6px 0;font-style:italic">No parts or labor logged.</div>'
+    +'<div id="det-parts-tbody-'+id+'" style="display:none"></div>'
+    +'<div style="display:flex;gap:6px;flex-wrap:wrap;align-items:flex-end;padding:8px;background:var(--off);border-radius:3px;border:1.5px solid var(--silver);margin-top:6px">'
+    +'<div style="flex:2;min-width:120px"><div style="font-size:10px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--muted);margin-bottom:3px">Part # / Description</div><input type="text" id="ql-note-'+id+'" placeholder="e.g. Air filter, Labor..." style="width:100%;padding:6px 9px;border:1.5px solid var(--silver);border-radius:3px;font-size:13px;font-family:Barlow,sans-serif;background:var(--white);color:var(--dark)"></div>'
+    +'<div style="width:60px"><div style="font-size:10px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--muted);margin-bottom:3px">Qty</div><input type="number" id="ql-qty-'+id+'" value="1" min="1" style="width:100%;padding:6px 9px;border:1.5px solid var(--silver);border-radius:3px;font-size:13px;font-family:Barlow,sans-serif;background:var(--white);color:var(--dark)"></div>'
+    +'<button class="btn sm primary" onclick="quickAddPart(\''+id+'\')" style="align-self:flex-end">+ Add Part</button>'
+    +'</div>')
     +'<div class="sect-lbl">Customer Contact Log</div>'+logHtml
     +'<button class="btn sm outline" onclick="openContactLog(\''+id+'\')" style="margin-top:8px">+ Log Contact</button>'
     +'<div class="sect-lbl">Attachments</div><div id="att-thumbs-'+id+'" style="margin-bottom:6px">'+attHtml+'</div>'
@@ -1007,5 +1069,82 @@ function saveFB(){var raw=document.getElementById('fb-cfg').value.trim();if(!raw
 function clearFB(){localStorage.removeItem('fb_config_raw');document.getElementById('fb-cfg').value='';document.getElementById('fb-msg').textContent='Cleared.';}
 function closeM(id){document.getElementById(id).classList.remove('open');}
 document.querySelectorAll('.modal-bg').forEach(function(el){el.addEventListener('click',function(e){if(e.target===el)el.classList.remove('open');});});
+function quickAddPart(woid){
+  var desc=document.getElementById('ql-note-'+woid).value.trim();
+  if(!desc){alert('Enter a description.');return;}
+  var qty=parseFloat(document.getElementById('ql-qty-'+woid).value)||1;
+  var o=ORDERS[woid];if(!o)return;
+  var parts=(o.parts||[]).slice();
+  parts.push({desc:desc,qty:qty,note:''});
+  o.parts=parts;writeOrder(o);
+  document.getElementById('ql-note-'+woid).value='';
+  document.getElementById('ql-qty-'+woid).value='1';
+  openDet(woid);
+}
+function deletePart(woid,idx){
+  var o=ORDERS[woid];if(!o)return;
+  var parts=(o.parts||[]).slice();parts.splice(idx,1);
+  o.parts=parts;writeOrder(o);openDet(woid);
+}
+var _poCategory=null;
+function openPartOrder(cat){
+  _poCategory=cat;
+  document.getElementById('po-mtitle').textContent='Add to '+(cat==='stihl'?'Stihl':'Other')+' Parts List';
+  ['po-desc','po-equip','po-notes'].forEach(function(id){document.getElementById(id).value='';});
+  document.getElementById('po-qty').value='1';
+  document.getElementById('part-order-modal').classList.add('open');
+}
+function savePartOrder(){
+  var desc=document.getElementById('po-desc').value.trim();
+  if(!desc){alert('Enter a part description.');return;}
+  var item={desc:desc,qty:parseInt(document.getElementById('po-qty').value)||1,equip:document.getElementById('po-equip').value.trim(),notes:document.getElementById('po-notes').value.trim(),ordered:false,received:false,added:today()};
+  if(!PARTORDERS[_poCategory])PARTORDERS[_poCategory]=[];
+  PARTORDERS[_poCategory].push(item);
+  writePartOrders();closeM('part-order-modal');renderPartOrders();
+}
+function togglePOFlag(cat,idx,flag){
+  if(!PARTORDERS[cat]||!PARTORDERS[cat][idx])return;
+  PARTORDERS[cat][idx][flag]=!PARTORDERS[cat][idx][flag];
+  if(flag==='received'&&PARTORDERS[cat][idx].received)PARTORDERS[cat][idx].ordered=true;
+  writePartOrders();renderPartOrders();
+}
+function deletePO(cat,idx){
+  if(!confirm('Remove this part from the list?'))return;
+  PARTORDERS[cat].splice(idx,1);
+  writePartOrders();renderPartOrders();
+}
+function renderPartOrders(){
+  ['stihl','other'].forEach(function(cat){
+    var el=document.getElementById('po-'+cat+'-list');if(!el)return;
+    var list=PARTORDERS[cat]||[];
+    var pending=list.filter(function(p){return!p.received;});
+    if(!pending.length){el.innerHTML='<div class="empty" style="padding:10px 0">None pending</div>';return;}
+    el.innerHTML='';
+    list.forEach(function(p,i){
+      if(p.received)return;
+      var row=document.createElement('div');
+      row.style.cssText='display:flex;align-items:flex-start;gap:8px;padding:7px 0;border-bottom:1px solid var(--off)';
+      var info=document.createElement('div');info.style.cssText='flex:1;min-width:0';
+      info.innerHTML='<div style="font-size:13px;font-weight:600">'+p.desc+(p.qty>1?' <span style="color:var(--muted)">×'+p.qty+'</span>':'')+'</div>'
+        +(p.equip?'<div style="font-size:11px;color:var(--muted)">'+p.equip+'</div>':'')
+        +(p.notes?'<span style="font-size:11px;color:var(--muted)">'+p.notes+'</span>':'');
+      var btns=document.createElement('div');btns.style.cssText='display:flex;gap:5px;flex-shrink:0';
+      var bOrd=document.createElement('button');
+      bOrd.className='btn sm'+(p.ordered?' primary':'');
+      bOrd.textContent=p.ordered?'✓ Ordered':'Order';
+      bOrd.onclick=(function(c,idx){return function(){togglePOFlag(c,idx,'ordered');};})(cat,i);
+      var bRec=document.createElement('button');
+      bRec.className='btn sm success';bRec.textContent='Received';
+      bRec.onclick=(function(c,idx){return function(){togglePOFlag(c,idx,'received');};})(cat,i);
+      var bDel=document.createElement('button');
+      bDel.className='btn sm del';bDel.textContent='✕';
+      bDel.onclick=(function(c,idx){return function(){deletePO(c,idx);};})(cat,i);
+      btns.appendChild(bOrd);btns.appendChild(bRec);btns.appendChild(bDel);
+      row.appendChild(info);row.appendChild(btns);
+      el.appendChild(row);
+    });
+    if(el.innerHTML==='')el.innerHTML='<div class="empty" style="padding:10px 0">None pending</div>';
+  });
+}
 initFB();
 </script>
