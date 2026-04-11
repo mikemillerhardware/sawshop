@@ -385,11 +385,14 @@ hr{border:none;border-top:1.5px solid var(--silver);margin:12px 0}
     </div>
     <div class="card">
       <div class="card-hdr">Firebase Cloud Sync</div>
-      <div style="font-size:13px;color:var(--gray2);margin-bottom:8px">Paste your Firebase config to enable live sync across all devices.</div>
+      <div style="font-size:13px;color:var(--gray2);margin-bottom:8px">Firebase config is baked in — the app connects automatically. If you're having trouble connecting, click <strong>Clear Saved Config</strong> to remove any old config stored in this browser, then reload.</div>
+      <div style="display:flex;gap:7px;flex-wrap:wrap;margin-bottom:8px">
+        <button class="btn sm del" onclick="clearFBAndReload()">Clear Saved Config &amp; Reload</button>
+      </div>
+      <div style="font-size:12px;color:var(--muted);margin-bottom:8px">— or paste a different config below to override —</div>
       <textarea id="fb-cfg" style="width:100%;min-height:72px;padding:8px;border:1.5px solid var(--silver);border-radius:3px;font-family:monospace;font-size:12px;background:var(--off);color:var(--dark)" placeholder='{ apiKey: "...", databaseURL: "...", storageBucket: "...", ... }'></textarea>
       <div style="display:flex;gap:7px;margin-top:8px;justify-content:flex-end">
-        <button class="btn sm del" onclick="clearFB()">Clear</button>
-        <button class="btn sm primary" onclick="saveFB()">Connect</button>
+        <button class="btn sm primary" onclick="saveFB()">Use This Config</button>
       </div>
       <div id="fb-msg" style="font-size:12px;margin-top:5px;color:var(--muted)"></div>
     </div>
@@ -642,6 +645,15 @@ hr{border:none;border-top:1.5px solid var(--silver);margin:12px 0}
 <div id="print-area" style="display:none"></div>
 
 <script>
+var FB_BAKED = {
+  apiKey: "AIzaSyDNEl1mXtNLGN0nsvr1lZi7SJzsiypJFLM",
+  authDomain: "millersawshop-f716a.firebaseapp.com",
+  databaseURL: "https://millersawshop-f716a-default-rtdb.firebaseio.com",
+  projectId: "millersawshop-f716a",
+  storageBucket: "millersawshop-f716a.firebasestorage.app",
+  messagingSenderId: "187757043776",
+  appId: "1:187757043776:web:a0cce22b59172da8db7fa5"
+};
 var DB=null,STORAGE=null,ORDERS={},CUSTS={},TECHS=['Michael','Tech 2','Tech 3'],EQUIPMENT={},ATTACHMENTS={},CONTACTLOGS={},PARTORDERS={stihl:[],other:[]};
 var editWOid=null,editCid=null,editEqCid=null,editEqIdx=null,contactLogWOid=null,nextWO=1001;
 var activeRFilter='all';
@@ -804,26 +816,14 @@ function saveIntervals(){
 }
 
 
-  var FB_BAKED = {
-    apiKey: "AIzaSyDNEl1mXtNLGN0nsvr1lZi7SJzsiypJFLM",
-    authDomain: "millersawshop-f716a.firebaseapp.com",
-    databaseURL: "https://millersawshop-f716a-default-rtdb.firebaseio.com",
-    projectId: "millersawshop-f716a",
-    storageBucket: "millersawshop-f716a.firebasestorage.app",
-    messagingSenderId: "187757043776",
-    appId: "1:187757043776:web:a0cce22b59172da8db7fa5"
-  };
-
 function initFB(){
-  var raw=null;try{raw=localStorage.getItem('fb_config_raw');}catch(e){}
-  var cfgEl=document.getElementById('fb-cfg');if(raw&&cfgEl)cfgEl.value=raw;
-  var c=null;
-  if(!raw){
-    c=FB_BAKED;
-  } else {
-    try{var cl=raw.trim().replace(/(\w+)\s*:/g,'"$1":').replace(/'/g,'"');if(cl.indexOf('{')!==0)cl=cl.substring(cl.indexOf('{'));c=JSON.parse(cl);}catch(e){}
-  }
-  if(!c||!c.databaseURL){setSP('err','Bad config');loadLocal();boot();return;}
+  // Always use baked config; localStorage override only if explicitly set and valid
+  var c=FB_BAKED;
+  try{
+    var raw=localStorage.getItem('fb_config_raw');
+    var cfgEl=document.getElementById('fb-cfg');if(raw&&cfgEl)cfgEl.value=raw;
+    if(raw){var cl=raw.trim().replace(/(\w+)\s*:/g,'"$1":').replace(/'/g,'"');if(cl.indexOf('{')!==0)cl=cl.substring(cl.indexOf('{'));var parsed=JSON.parse(cl);if(parsed&&parsed.databaseURL)c=parsed;}
+  }catch(e){}
   setSP('warn','Connecting...');
   try{
     if(!firebase.apps.length)firebase.initializeApp(c);
@@ -1192,6 +1192,7 @@ function exportJSON(){dl('data:application/json;charset=utf-8,'+encodeURICompone
 function dl(href,name){var a=document.createElement('a');a.href=href;a.download=name;a.click();}
 function saveFB(){var raw=document.getElementById('fb-cfg').value.trim();if(!raw)return;try{var cl=raw.replace(/(\w+)\s*:/g,'"$1":').replace(/'/g,'"');if(cl.indexOf('{')!==0)cl=cl.substring(cl.indexOf('{'));JSON.parse(cl);}catch(e){document.getElementById('fb-msg').textContent='Could not parse config.';return;}localStorage.setItem('fb_config_raw',raw);document.getElementById('fb-msg').style.color='#1a5c0a';document.getElementById('fb-msg').textContent='Saved — reload to connect.';}
 function clearFB(){localStorage.removeItem('fb_config_raw');document.getElementById('fb-cfg').value='';document.getElementById('fb-msg').textContent='Cleared.';}
+function clearFBAndReload(){localStorage.removeItem('fb_config_raw');location.reload();}
 function closeM(id){document.getElementById(id).classList.remove('open');}
 document.querySelectorAll('.modal-bg').forEach(function(el){el.addEventListener('click',function(e){if(e.target===el)el.classList.remove('open');});});
 function quickAddPart(woid){
