@@ -376,27 +376,7 @@ hr{border:none;border-top:1.5px solid var(--silver);margin:12px 0}
   </div>
 
   <div class="view" id="tab-settings">
-    <div class="card">
-      <div class="card-hdr">Technician Management</div>
-      <div id="tech-chips" style="margin-bottom:10px"></div>
-      <div style="display:flex;gap:7px;flex-wrap:wrap">
-        <input type="text" id="new-tech" placeholder="Tech name..." style="padding:7px 10px;border:1.5px solid var(--silver);border-radius:3px;font-size:13px;font-family:'Barlow',sans-serif;min-width:180px">
-        <button class="btn primary" onclick="addTech()">Add Tech</button>
-      </div>
-    </div>
-    <div class="card">
-      <div class="card-hdr">Firebase Cloud Sync</div>
-      <div style="font-size:13px;color:var(--gray2);margin-bottom:8px">Firebase config is baked in — the app connects automatically. If you're having trouble connecting, click <strong>Clear Saved Config</strong> to remove any old config stored in this browser, then reload.</div>
-      <div style="display:flex;gap:7px;flex-wrap:wrap;margin-bottom:8px">
-        <button class="btn sm del" onclick="clearFBAndReload()">Clear Saved Config &amp; Reload</button>
-      </div>
-      <div style="font-size:12px;color:var(--muted);margin-bottom:8px">— or paste a different config below to override —</div>
-      <textarea id="fb-cfg" style="width:100%;min-height:72px;padding:8px;border:1.5px solid var(--silver);border-radius:3px;font-family:monospace;font-size:12px;background:var(--off);color:var(--dark)" placeholder='{ apiKey: "...", databaseURL: "...", storageBucket: "...", ... }'></textarea>
-      <div style="display:flex;gap:7px;margin-top:8px;justify-content:flex-end">
-        <button class="btn sm primary" onclick="saveFB()">Use This Config</button>
-      </div>
-      <div id="fb-msg" style="font-size:12px;margin-top:5px;color:var(--muted)"></div>
-    </div>
+    <!-- EXPORT — visible to everyone -->
     <div class="card">
       <div class="card-hdr">Work Order Age Warnings</div>
       <div style="font-size:13px;color:var(--gray2);margin-bottom:10px">Orders sitting longer than these thresholds are highlighted in the work order list — amber for warning, red for overdue.</div>
@@ -417,9 +397,64 @@ hr{border:none;border-top:1.5px solid var(--silver);margin:12px 0}
         <button class="btn" onclick="exportJSON()">Full Backup (JSON)</button>
       </div>
     </div>
+
+    <!-- ADMIN SECTION — hidden behind access code -->
+    <div id="admin-locked" style="margin-top:8px">
+      <div style="display:flex;align-items:center;gap:10px;padding:12px 14px;background:var(--off);border:1.5px solid var(--silver);border-radius:3px">
+        <span style="font-size:13px;color:var(--muted);flex:1">Admin settings (technicians, Firebase) are protected.</span>
+        <input type="password" id="admin-code-input" placeholder="Access code" style="width:120px;padding:7px 9px;border:1.5px solid var(--silver);border-radius:3px;font-size:14px;font-family:Barlow,sans-serif" onkeydown="if(event.key==='Enter')checkAdminCode()">
+        <button class="btn sm primary" onclick="checkAdminCode()">Unlock</button>
+      </div>
+      <div id="admin-code-msg" style="font-size:12px;color:var(--red);padding:4px 14px;display:none">Incorrect code.</div>
+    </div>
+
+    <div id="admin-unlocked" style="display:none">
+      <div style="display:flex;justify-content:flex-end;margin-bottom:6px">
+        <button class="btn sm del" onclick="lockAdmin()">Lock Admin</button>
+      </div>
+      <div class="card">
+        <div class="card-hdr">Technician Management</div>
+        <div id="tech-chips" style="margin-bottom:10px"></div>
+        <div style="display:flex;gap:7px;flex-wrap:wrap">
+          <input type="text" id="new-tech" placeholder="Tech name..." style="padding:7px 10px;border:1.5px solid var(--silver);border-radius:3px;font-size:13px;font-family:'Barlow',sans-serif;min-width:180px">
+          <button class="btn primary" onclick="addTech()">Add Tech</button>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-hdr">Firebase Cloud Sync</div>
+        <div style="font-size:13px;color:var(--gray2);margin-bottom:8px">Firebase config is baked in — connects automatically. Use the button below if you're having connection trouble.</div>
+        <div style="display:flex;gap:7px;flex-wrap:wrap;margin-bottom:8px">
+          <button class="btn sm del" onclick="clearFBAndReload()">Clear Saved Config &amp; Reload</button>
+        </div>
+        <div style="font-size:12px;color:var(--muted);margin-bottom:8px">— or paste a different config below to override —</div>
+        <textarea id="fb-cfg" style="width:100%;min-height:72px;padding:8px;border:1.5px solid var(--silver);border-radius:3px;font-family:monospace;font-size:12px;background:var(--off);color:var(--dark)" placeholder='{ apiKey: "...", databaseURL: "...", storageBucket: "...", ... }'></textarea>
+        <div style="display:flex;gap:7px;margin-top:8px;justify-content:flex-end">
+          <button class="btn sm primary" onclick="saveFB()">Use This Config</button>
+        </div>
+        <div id="fb-msg" style="font-size:12px;margin-top:5px;color:var(--muted)"></div>
+      </div>
+    </div>
   </div>
 </div>
 
+<!-- DELETE CONFIRM MODAL -->
+<div class="modal-bg" id="del-modal" style="z-index:300">
+<div class="modal" style="max-width:360px">
+  <div class="modal-title" style="color:var(--red)">Confirm Delete</div>
+  <div id="del-modal-msg" style="font-size:14px;color:var(--gray2);margin-bottom:14px">This cannot be undone.</div>
+  <div class="f">
+    <label>Enter access code to confirm</label>
+    <input type="password" id="del-code-input" placeholder="Access code"
+      style="font-size:18px;letter-spacing:4px;text-align:center"
+      onkeydown="if(event.key==='Enter')confirmDelete()">
+  </div>
+  <div id="del-code-msg" style="font-size:12px;color:var(--red);margin-bottom:8px;display:none">Incorrect code.</div>
+  <div class="mfoot">
+    <button class="btn" onclick="closeM('del-modal')">Cancel</button>
+    <button class="btn del" onclick="confirmDelete()">Delete</button>
+  </div>
+</div>
+</div>
 <button class="fab" onclick="openNewWO()" aria-label="New Work Order">+</button>
 <!-- WORK ORDER MODAL -->
 <div class="modal-bg" id="wo-modal">
@@ -877,7 +912,7 @@ function writeContactLogs(woid,logs){if(DB){DB.ref('contactlogs/'+woid).set(logs
 function writePartOrders(){if(DB){DB.ref('partorders').set(PARTORDERS);}else{saveLocal();}}
 
 function addTech(){var n=document.getElementById('new-tech').value.trim();if(!n||TECHS.indexOf(n)>=0)return;TECHS.push(n);writeTechs();renderTechs();populateTechSels();document.getElementById('new-tech').value='';}
-function removeTech(n){if(!confirm('Remove '+n+'?'))return;TECHS=TECHS.filter(function(t){return t!==n;});writeTechs();renderTechs();populateTechSels();}
+function removeTech(n){requireAdminDelete('Remove tech '+n+'?',function(){TECHS=TECHS.filter(function(t){return t!==n;});writeTechs();renderTechs();populateTechSels();});}
 function renderTechs(){var el=document.getElementById('tech-chips');if(!el)return;el.innerHTML=TECHS.map(function(t){return '<span class="tech-chip">'+t+'<button onclick="removeTech(\''+t+'\')">&#x2715;</button></span>';}).join('');}
 function populateTechSels(){['m-tech','wo-tf'].forEach(function(id){var sel=document.getElementById(id);if(!sel)return;var cur=sel.value;sel.innerHTML=id==='m-tech'?'<option>Unassigned</option>':'<option value="">All Techs</option>';TECHS.forEach(function(t){var o=document.createElement('option');o.value=t;o.textContent=t;sel.appendChild(o);});if(cur)sel.value=cur;});}
 function populateCustSel(){/* replaced by custSearch */}
@@ -1019,7 +1054,7 @@ function saveWO(){
   var o={id:editWOid||genId(),woNum:editWOid?(prev.woNum||nextWO++):nextWO++,custId:cid,tech:document.getElementById('m-tech').value,equipType:document.getElementById('m-etype').value,brand:document.getElementById('m-brand').value,year:document.getElementById('m-year').value,product:document.getElementById('m-product').value,model:document.getElementById('m-model').value,serial:document.getElementById('m-serial').value,engine:document.getElementById('m-engine').value,hours:document.getElementById('m-hours').value,complaint:document.getElementById('m-complaint').value,notes:newN,notesTs:nts,status:document.getElementById('m-status').value,dateIn:document.getElementById('m-datein').value,estDate:document.getElementById('m-estdate').value,dateOut:document.getElementById('m-dateout').value,urgent:document.getElementById('m-urg').checked,deposit:document.getElementById('m-deposit').checked,paid:document.getElementById('m-paid').checked,partsWaiting:document.getElementById('m-parts-waiting').value,estHrs:document.getElementById('m-est-hrs').value,actHrs:document.getElementById('m-act-hrs').value,billHrs:document.getElementById('m-bill-hrs').value,parts:getParts()};
   writeOrder(o);closeM('wo-modal');
 }
-function delWO(){if(!editWOid||!confirm('Delete this work order?'))return;deleteOrder(editWOid);closeM('wo-modal');}
+function delWO(){if(!editWOid)return;var id=editWOid;requireAdminDelete('Delete work order #'+(ORDERS[id]?ORDERS[id].woNum:'')+' — this cannot be undone.',function(){deleteOrder(id);closeM('wo-modal');});}
 
 function openNewCust(){editCid=null;document.getElementById('cust-mtitle').textContent='New Customer';['c-first','c-last','c-phone','c-email','c-addr','c-notes'].forEach(function(id){document.getElementById(id).value='';});document.getElementById('cust-modal').classList.add('open');}
 function saveCust(){
@@ -1053,11 +1088,11 @@ function openAddEquip(cid,idx){
 }
 document.getElementById('eq-warranty-len').addEventListener('change',function(){var v=this.value,d=document.getElementById('eq-date').value||today();if(v&&v!=='custom'&&v!==''){var exp=new Date(d);exp.setDate(exp.getDate()+parseInt(v));document.getElementById('eq-warranty-exp').value=exp.toISOString().slice(0,10);}else if(v==='custom')document.getElementById('eq-warranty-exp').value='';});
 function saveEquip(){var eq={type:document.getElementById('eq-type').value,brand:document.getElementById('eq-brand').value,year:document.getElementById('eq-year').value,product:document.getElementById('eq-product').value,model:document.getElementById('eq-model').value,serial:document.getElementById('eq-serial').value,engine:document.getElementById('eq-engine').value,date:document.getElementById('eq-date').value,rectype:document.getElementById('eq-rectype').value,warrantyLen:document.getElementById('eq-warranty-len').value,warrantyExp:document.getElementById('eq-warranty-exp').value,warrantyNotes:document.getElementById('eq-warranty-notes').value,notes:document.getElementById('eq-notes').value};var arr=custEquip(editEqCid).slice();if(editEqIdx!==null){arr[editEqIdx]=eq;}else{arr.push(eq);}writeEquipment(editEqCid,arr);closeM('eq-modal');openCustDet(editEqCid);}
-function delEquip(){if(editEqIdx===null||!confirm('Remove?'))return;var arr=custEquip(editEqCid).slice();arr.splice(editEqIdx,1);writeEquipment(editEqCid,arr);closeM('eq-modal');openCustDet(editEqCid);}
+function delEquip(){if(editEqIdx===null)return;var cid=editEqCid,idx=editEqIdx;requireAdminDelete('Remove this equipment record?',function(){var arr=custEquip(cid).slice();arr.splice(idx,1);writeEquipment(cid,arr);closeM('eq-modal');openCustDet(cid);});}
 
 function openContactLog(woid){contactLogWOid=woid;document.getElementById('cl-type').value='Called customer';document.getElementById('cl-note').value='';var now=new Date();now.setMinutes(now.getMinutes()-now.getTimezoneOffset());document.getElementById('cl-dt').value=now.toISOString().slice(0,16);document.getElementById('contact-modal').classList.add('open');}
 function saveContactLog(){var note=document.getElementById('cl-note').value.trim();if(!note){alert('Please enter a note.');return;}var logs=CONTACTLOGS[contactLogWOid]?JSON.parse(JSON.stringify(CONTACTLOGS[contactLogWOid])):[];logs.unshift({type:document.getElementById('cl-type').value,note:note,dt:document.getElementById('cl-dt').value});writeContactLogs(contactLogWOid,logs);closeM('contact-modal');openDet(contactLogWOid);}
-function deleteContactLog(woid,idx){if(!confirm('Delete entry?'))return;var logs=CONTACTLOGS[woid]||[];logs.splice(idx,1);writeContactLogs(woid,logs);openDet(woid);}
+function deleteContactLog(woid,idx){if(!confirm('Delete this log entry?'))return;var logs=CONTACTLOGS[woid]||[];logs.splice(idx,1);writeContactLogs(woid,logs);openDet(woid);}
 
 function newWOForCustEquip(cid,eqIdx){
   var eq=custEquip(cid)[eqIdx];openNewWO();
@@ -1252,6 +1287,54 @@ function setCustById(cid){
   else{setTimeout(function(){if(CUSTS[cid])custSelect(cid);},500);}
 }
 
+var ADMIN_CODE = '8704495234';
+var _pendingDelete = null;
+
+function requireAdminDelete(msg, fn){
+  _pendingDelete = fn;
+  document.getElementById('del-modal-msg').textContent = msg;
+  document.getElementById('del-code-input').value = '';
+  document.getElementById('del-code-msg').style.display = 'none';
+  document.getElementById('del-modal').classList.add('open');
+  setTimeout(function(){var el=document.getElementById('del-code-input');if(el)el.focus();},150);
+}
+function confirmDelete(){
+  var val = document.getElementById('del-code-input').value;
+  if(val !== ADMIN_CODE){
+    var msg = document.getElementById('del-code-msg');
+    msg.style.display = 'block';
+    document.getElementById('del-code-input').value = '';
+    setTimeout(function(){msg.style.display='none';}, 2000);
+    return;
+  }
+  closeM('del-modal');
+  if(_pendingDelete){ _pendingDelete(); _pendingDelete = null; }
+}
+
+var _adminUnlocked = false;
+
+function checkAdminCode(){
+  var val = document.getElementById('admin-code-input').value;
+  var msg = document.getElementById('admin-code-msg');
+  if(val === ADMIN_CODE){
+    _adminUnlocked = true;
+    document.getElementById('admin-locked').style.display = 'none';
+    document.getElementById('admin-unlocked').style.display = 'block';
+    document.getElementById('admin-code-input').value = '';
+    msg.style.display = 'none';
+    renderTechs();
+  } else {
+    msg.style.display = 'block';
+    document.getElementById('admin-code-input').value = '';
+    setTimeout(function(){msg.style.display='none';}, 2000);
+  }
+}
+function lockAdmin(){
+  _adminUnlocked = false;
+  document.getElementById('admin-locked').style.display = 'block';
+  document.getElementById('admin-unlocked').style.display = 'none';
+}
+
 document.querySelectorAll('.modal-bg').forEach(function(el){el.addEventListener('click',function(e){if(e.target===el)el.classList.remove('open');});});
 function quickAddPart(woid){
   var desc=document.getElementById('ql-note-'+woid).value.trim();
@@ -1266,6 +1349,7 @@ function quickAddPart(woid){
   openDet(woid);
 }
 function deletePart(woid,idx){
+  if(!confirm('Remove this part?'))return;
   var o=ORDERS[woid];if(!o)return;
   var parts=(o.parts||[]).slice();parts.splice(idx,1);
   o.parts=parts;writeOrder(o);openDet(woid);
@@ -1351,7 +1435,7 @@ function togglePOFlag(cat,idx,flag){
   writePartOrders();renderPartOrders();
 }
 function deletePO(cat,idx){
-  if(!confirm('Remove this part from the list?'))return;
+  if(!confirm('Remove from list?'))return;
   PARTORDERS[cat].splice(idx,1);
   writePartOrders();renderPartOrders();
 }
@@ -1566,6 +1650,54 @@ function setCustById(cid){
   // Wait for CUSTS to be populated if needed
   if(CUSTS[cid]){custSelect(cid);}
   else{setTimeout(function(){if(CUSTS[cid])custSelect(cid);},500);}
+}
+
+var ADMIN_CODE = '8704495234';
+var _pendingDelete = null;
+
+function requireAdminDelete(msg, fn){
+  _pendingDelete = fn;
+  document.getElementById('del-modal-msg').textContent = msg;
+  document.getElementById('del-code-input').value = '';
+  document.getElementById('del-code-msg').style.display = 'none';
+  document.getElementById('del-modal').classList.add('open');
+  setTimeout(function(){var el=document.getElementById('del-code-input');if(el)el.focus();},150);
+}
+function confirmDelete(){
+  var val = document.getElementById('del-code-input').value;
+  if(val !== ADMIN_CODE){
+    var msg = document.getElementById('del-code-msg');
+    msg.style.display = 'block';
+    document.getElementById('del-code-input').value = '';
+    setTimeout(function(){msg.style.display='none';}, 2000);
+    return;
+  }
+  closeM('del-modal');
+  if(_pendingDelete){ _pendingDelete(); _pendingDelete = null; }
+}
+
+var _adminUnlocked = false;
+
+function checkAdminCode(){
+  var val = document.getElementById('admin-code-input').value;
+  var msg = document.getElementById('admin-code-msg');
+  if(val === ADMIN_CODE){
+    _adminUnlocked = true;
+    document.getElementById('admin-locked').style.display = 'none';
+    document.getElementById('admin-unlocked').style.display = 'block';
+    document.getElementById('admin-code-input').value = '';
+    msg.style.display = 'none';
+    renderTechs();
+  } else {
+    msg.style.display = 'block';
+    document.getElementById('admin-code-input').value = '';
+    setTimeout(function(){msg.style.display='none';}, 2000);
+  }
+}
+function lockAdmin(){
+  _adminUnlocked = false;
+  document.getElementById('admin-locked').style.display = 'block';
+  document.getElementById('admin-unlocked').style.display = 'none';
 }
 
 document.querySelectorAll('.modal-bg').forEach(function(el){el.addEventListener('click',function(e){if(e.target===el)el.classList.remove('open');});});
