@@ -67,7 +67,6 @@ body{font-family:'Barlow',sans-serif;font-size:16px;color:var(--dark);background
 .b-waiting{background:#FAEEDA;color:#633806;border:1px solid #EF9F27}
 .b-ready{background:#eaf3de;color:#1a5c0a}
 .b-complete{background:#e8e8e8;color:#444}
-.b-pickedup{background:#1a1a1a;color:#fff}
 .b-urgent{background:var(--red);color:#fff}
 .b-sale{background:#1a1a1a;color:#fff}
 .b-warranty{background:#eaf3de;color:#1a5c0a}
@@ -317,7 +316,7 @@ hr{border:none;border-top:1.5px solid var(--silver);margin:12px 0}
       <select id="wo-f" onchange="renderOrders()" style="min-width:160px">
         <option value="">All Statuses</option>
         <option>Intake</option><option>Diagnosing</option><option>In Repair</option>
-        <option>Waiting on Parts</option><option>Ready</option><option>Complete</option><option>Picked Up</option>
+        <option>Waiting on Parts</option><option>Ready</option><option>Picked Up</option>
       </select>
       <select id="wo-tf" onchange="renderOrders()" style="min-width:120px"><option value="">All Techs</option></select>
     </div>
@@ -367,7 +366,7 @@ hr{border:none;border-top:1.5px solid var(--silver);margin:12px 0}
   </div>
 
   <div class="view" id="tab-pickup">
-    <div style="font-size:13px;color:var(--muted);margin-bottom:12px">All orders marked Ready for Pickup or Complete but not yet picked up. Tap a phone number to call.</div>
+    <div style="font-size:13px;color:var(--muted);margin-bottom:12px">All orders marked Ready for Pickup. Tap a phone number to call.</div>
     <div id="pickup-list"><div class="empty">Loading...</div></div>
   </div>
 
@@ -527,7 +526,7 @@ hr{border:none;border-top:1.5px solid var(--silver);margin:12px 0}
     <div class="f"><label>Status</label>
       <select id="m-status" onchange="toggleWaitingRow()">
         <option>Intake</option><option>Diagnosing</option><option>In Repair</option>
-        <option>Waiting on Parts</option><option>Ready</option><option>Complete</option><option>Picked Up</option>
+        <option>Waiting on Parts</option><option>Ready</option><option>Picked Up</option>
       </select>
     </div>
     <div class="f"><label>Est. Completion</label><input type="date" id="m-estdate"></div>
@@ -704,7 +703,7 @@ var editWOid=null,editCid=null,editEqCid=null,editEqIdx=null,contactLogWOid=null
 var activeRFilter='all';
 var SVC_INTERVALS={chainsaw:12,mower:12,generator:24,trimmer:18,other:18};
 
-function bc(s){return{'Intake':'b-intake','Diagnosing':'b-diag','In Repair':'b-repair','Waiting on Parts':'b-waiting','Ready':'b-ready','Complete':'b-complete','Picked Up':'b-pickedup'}[s]||'b-intake';}
+function bc(s){return{'Intake':'b-intake','Diagnosing':'b-diag','In Repair':'b-repair','Waiting on Parts':'b-waiting','Ready':'b-ready','Picked Up':'b-complete'}[s]||'b-intake';}
 function badge(s){return '<span class="badge '+bc(s)+'">'+s+'</span>';}
 function setSP(st,t){var p=document.getElementById('sync-pill');p.className='sync-pill '+st;p.querySelector('.dot').className='dot '+(st==='ok'?'g':st==='err'?'r':'a');document.getElementById('sync-txt').textContent=t;}
 function genId(){return Date.now().toString(36)+Math.random().toString(36).slice(2,5);}
@@ -730,7 +729,7 @@ function getIntervalMonths(equipType){
 }
 
 function lastServiceDate(custId,equipType){
-  var orders=orderArr().filter(function(o){return o.custId===custId&&o.status==='Complete';});
+  var orders=orderArr().filter(function(o){return o.custId===custId&&o.status==='Picked Up';});
   if(equipType){orders=orders.filter(function(o){return(o.equipType||'').toLowerCase().indexOf((equipType||'').toLowerCase().split(' ')[0])>=0;});}
   if(!orders.length)return null;
   var dates=orders.map(function(o){return o.dateOut||o.dateIn||'';}).filter(Boolean).sort();
@@ -938,7 +937,7 @@ document.getElementById('m-est-hrs').addEventListener('input',updateHrsVariance)
 document.getElementById('m-act-hrs').addEventListener('input',updateHrsVariance);
 
 function renderDash(){
-  var all=orderArr(),open=all.filter(function(o){return o.status!=='Complete';}),urg=open.filter(function(o){return o.urgent;}),parts=open.filter(function(o){return o.status==='Waiting on Parts';}),ready=open.filter(function(o){return o.status==='Ready';}),done=all.filter(function(o){return o.status==='Complete';});
+  var all=orderArr(),open=all.filter(function(o){return o.status!=='Picked Up';}),urg=open.filter(function(o){return o.urgent;}),parts=open.filter(function(o){return o.status==='Waiting on Parts';}),ready=open.filter(function(o){return o.status==='Ready';}),done=all.filter(function(o){return o.status==='Picked Up';});
   document.getElementById('s-open').textContent=open.length;document.getElementById('s-urg').textContent=urg.length;
   document.getElementById('s-parts').textContent=parts.length;document.getElementById('s-ready').textContent=ready.length;document.getElementById('s-done').textContent=done.length;
   var el=document.getElementById('dash-list');
@@ -948,7 +947,7 @@ function renderDash(){
 
 function renderBoard(){
   var el=document.getElementById('board-inner');if(!el)return;
-  var open=orderArr().filter(function(o){return o.status!=='Complete'&&o.status!=='Picked Up';});
+  var open=orderArr().filter(function(o){return o.status!=='Picked Up';});
   var allTechs=['Unassigned'].concat(TECHS);
   el.innerHTML=allTechs.map(function(tech){
     var jobs=open.filter(function(o){return(o.tech||'Unassigned')===tech;});
@@ -976,7 +975,7 @@ function renderOrders(){
 }
 
 function renderHours(){
-  var tracked=orderArr().filter(function(o){return (o.status==='Complete'||o.status==='Picked Up')&&o.estHrs&&o.actHrs;});
+  var tracked=orderArr().filter(function(o){return o.status==='Picked Up'&&o.estHrs&&o.actHrs;});
   var tbody=document.getElementById('hours-body'),emptyEl=document.getElementById('hours-empty');
   if(!tracked.length){if(tbody)tbody.innerHTML='';if(emptyEl)emptyEl.style.display='';document.getElementById('h-tracked').textContent='0';document.getElementById('h-accuracy').textContent='—';document.getElementById('h-over').textContent='0';return;}
   if(emptyEl)emptyEl.style.display='none';
@@ -1007,7 +1006,7 @@ function renderCustomers(){
   var list=custArr().filter(function(c){if(!raw)return true;if(isPhone){var ph=(c.phone||'').replace(/\D/g,''),qq=raw.replace(/\D/g,'');return ph.indexOf(qq)>=0;}var parts=raw.trim().split(/\s+/),fn=(c.first||'').toLowerCase(),ln=(c.last||'').toLowerCase();if(parts.length>=2)return(fn.indexOf(parts[0])>=0&&ln.indexOf(parts[1])>=0)||(fn.indexOf(parts[1])>=0&&ln.indexOf(parts[0])>=0);return fn.indexOf(raw)>=0||ln.indexOf(raw)>=0||(c.phone||'').indexOf(raw)>=0;});
   var el=document.getElementById('cust-list');
   if(!list.length){el.innerHTML='<div class="empty">No customers found.</div>';return;}
-  el.innerHTML=list.map(function(c){var wos=orderArr().filter(function(o){return o.custId===c.id;}),open=wos.filter(function(o){return o.status!=='Complete';}).length,eq=custEquip(c.id);return '<div class="card" style="cursor:pointer" onclick="openCustDet(\''+c.id+'\')">'+'<div style="display:flex;align-items:center;justify-content:space-between"><div><strong style="font-size:14px;font-weight:700">'+c.first+' '+c.last+'</strong>'+(c.phone?'<span style="margin-left:10px;font-size:12px;color:var(--muted)">'+c.phone+'</span>':'')+'</div>'+'<div style="font-size:12px;color:var(--muted)">'+wos.length+' order'+(wos.length!==1?'s':'')+(open?' &middot; <strong style="color:var(--red)">'+open+' open</strong>':'')+(eq.length?' &middot; '+eq.length+' unit'+(eq.length!==1?'s':''):'')+'</div></div>'+(c.notes?'<div style="font-size:12px;color:var(--gray2);margin-top:3px">'+c.notes+'</div>':'')+(eq.length?'<div style="font-size:11px;color:var(--muted);margin-top:4px">'+eq.slice(0,3).map(function(e){return(e.brand||'')+(e.model?' '+e.model:'');}).join(' &middot; ')+(eq.length>3?' +more':'')+'</div>':'')+'</div>';}).join('');
+  el.innerHTML=list.map(function(c){var wos=orderArr().filter(function(o){return o.custId===c.id;}),open=wos.filter(function(o){return o.status!=='Picked Up';}).length,eq=custEquip(c.id);return '<div class="card" style="cursor:pointer" onclick="openCustDet(\''+c.id+'\')">'+'<div style="display:flex;align-items:center;justify-content:space-between"><div><strong style="font-size:14px;font-weight:700">'+c.first+' '+c.last+'</strong>'+(c.phone?'<span style="margin-left:10px;font-size:12px;color:var(--muted)">'+c.phone+'</span>':'')+'</div>'+'<div style="font-size:12px;color:var(--muted)">'+wos.length+' order'+(wos.length!==1?'s':'')+(open?' &middot; <strong style="color:var(--red)">'+open+' open</strong>':'')+(eq.length?' &middot; '+eq.length+' unit'+(eq.length!==1?'s':''):'')+'</div></div>'+(c.notes?'<div style="font-size:12px;color:var(--gray2);margin-top:3px">'+c.notes+'</div>':'')+(eq.length?'<div style="font-size:11px;color:var(--muted);margin-top:4px">'+eq.slice(0,3).map(function(e){return(e.brand||'')+(e.model?' '+e.model:'');}).join(' &middot; ')+(eq.length>3?' +more':'')+'</div>':'')+'</div>';}).join('');
 }
 
 function openNewWO(){
@@ -1104,7 +1103,7 @@ function newWOForCustEquip(cid,eqIdx){
 function openDet(id){
   var o=ORDERS[id];if(!o)return;var c=CUSTS[o.custId]||{};
   var prows=(o.parts||[]).map(function(p,pi){return '<tr><td style="padding:5px 8px;border-bottom:1px solid var(--off)">'+p.desc+'</td><td style="padding:5px 8px;border-bottom:1px solid var(--off);text-align:center">'+p.qty+'</td><td style="padding:5px 8px;border-bottom:1px solid var(--off);color:var(--gray2)">'+(p.note||'')+'</td><td style="padding:3px 4px;border-bottom:1px solid var(--off)"><button onclick="deletePart(\''+id+'\','+pi+')" style="background:none;border:none;cursor:pointer;color:var(--red);font-size:13px;padding:2px 5px;font-weight:700">&#x2715;</button></td></tr>';}).join('');
-  var stats=['Intake','Diagnosing','In Repair','Waiting on Parts','Ready','Complete','Picked Up'];
+  var stats=['Intake','Diagnosing','In Repair','Waiting on Parts','Ready','Picked Up'];
   var sbtns=stats.map(function(s){var isW=s==='Waiting on Parts';return '<button class="sbtn'+(isW?' waiting-btn':'')+(o.status===s?' active':'')+'" onclick="quickStatus(\''+id+'\',\''+s+'\')">'+s+'</button>';}).join('');
   var eqf=[['Type',o.equipType],['Brand',o.brand],['Year',o.year],['Product #',o.product],['Model',o.model],['Serial #',o.serial],['Engine',o.engine],['Hrs / Condition',o.hours]].filter(function(f){return f[1];});
   var atts=ATTACHMENTS[id]||[];
@@ -1228,7 +1227,7 @@ function exportCSV(type){
   if(type==='orders'){rows=[['WO#','Customer','Phone','Type','Brand','Year','Model','Serial','Engine','Hours','Status','Parts Waiting','Tech','Date In','Est Date','Date Out','Urgent','Est Hrs','Actual Hrs','Billed Hrs','Complaint','Notes']];orderArr().forEach(function(o){var c=CUSTS[o.custId]||{};rows.push([o.woNum,(c.first||'')+' '+(c.last||''),c.phone||'',o.equipType||'',o.brand||'',o.year||'',o.model||'',o.serial||'',o.engine||'',o.hours||'',o.status||'',o.partsWaiting||'',o.tech||'',o.dateIn||'',o.estDate||'',o.dateOut||'',o.urgent?'Yes':'No',o.estHrs||'',o.actHrs||'',o.billHrs||'','"'+(o.complaint||'').replace(/"/g,"''")+'"','"'+(o.notes||'').replace(/"/g,"''")+'"']);});fn='sawshop-orders-'+today()+'.csv';}
   else if(type==='customers'){rows=[['First','Last','Phone','Email','Address','Notes']];custArr().forEach(function(c){rows.push([c.first||'',c.last||'',c.phone||'',c.email||'',c.addr||'','"'+(c.notes||'').replace(/"/g,"''")+'"']);});fn='sawshop-customers-'+today()+'.csv';}
   else if(type==='equipment'){rows=[['Customer','Phone','Type','Brand','Year','Model','Serial','Engine','Date','Record Type','Warranty Exp','Warranty Notes','Notes']];custArr().forEach(function(c){custEquip(c.id).forEach(function(e){rows.push([(c.first||'')+' '+(c.last||''),c.phone||'',e.type||'',e.brand||'',e.year||'',e.model||'',e.serial||'',e.engine||'',e.date||'',e.rectype||'sale',e.warrantyExp||'',e.warrantyNotes||'','"'+(e.notes||'').replace(/"/g,"''")+'"']);});});fn='sawshop-equipment-'+today()+'.csv';}
-  else if(type==='hours'){rows=[['WO#','Customer','Tech','Equipment','Est Hrs','Actual Hrs','Billed Hrs','Variance Hrs','Variance %']];orderArr().filter(function(o){return o.status==='Complete'&&(o.estHrs||o.actHrs);}).forEach(function(o){var c=CUSTS[o.custId]||{},est=parseFloat(o.estHrs)||0,act=parseFloat(o.actHrs)||0,v=act-est,pct=est?Math.round((v/est)*100):0;rows.push([o.woNum,(c.first||'')+' '+(c.last||''),o.tech||'',(o.brand||'')+' '+(o.equipType||''),est||'',act||'',o.billHrs||'',v?v.toFixed(2):'',pct?pct+'%':'']);});fn='sawshop-hours-'+today()+'.csv';}
+  else if(type==='hours'){rows=[['WO#','Customer','Tech','Equipment','Est Hrs','Actual Hrs','Billed Hrs','Variance Hrs','Variance %']];orderArr().filter(function(o){return o.status==='Picked Up'&&(o.estHrs||o.actHrs);}).forEach(function(o){var c=CUSTS[o.custId]||{},est=parseFloat(o.estHrs)||0,act=parseFloat(o.actHrs)||0,v=act-est,pct=est?Math.round((v/est)*100):0;rows.push([o.woNum,(c.first||'')+' '+(c.last||''),o.tech||'',(o.brand||'')+' '+(o.equipType||''),est||'',act||'',o.billHrs||'',v?v.toFixed(2):'',pct?pct+'%':'']);});fn='sawshop-hours-'+today()+'.csv';}
   else{rows=[['Customer','Phone','Equipment','Type','Detail','Last Service']];buildReminders().forEach(function(r){rows.push([r.custName,r.phone,r.equip,r.type,r.detail.replace(/<[^>]*>/g,''),r.lastSvc||'']);});fn='sawshop-reminders-'+today()+'.csv';}
   var csv=rows.map(function(r){return r.join(',');}).join('\
 ');
@@ -1374,7 +1373,7 @@ function poWOSearch(){
   var res=document.getElementById('po-wo-results');
   if(!q){res.style.display='none';return;}
   var matches=orderArr().filter(function(o){
-    if(o.status==='Complete')return false;
+    if(o.status==='Picked Up')return false;
     var c=CUSTS[o.custId]||{};
     var txt=((c.first||'')+' '+(c.last||'')+' '+(c.phone||'')+' '+o.woNum).toLowerCase();
     return txt.indexOf(q)>=0;
@@ -1528,9 +1527,9 @@ function renderDaily(){
   var now=new Date();
   var todayStr=today();
   var all=orderArr();
-  var open=all.filter(function(o){return o.status!=='Complete';});
+  var open=all.filter(function(o){return o.status!=='Picked Up';});
   var ready=open.filter(function(o){return o.status==='Ready';});
-  var overdue=open.filter(function(o){return o.estDate&&o.estDate<todayStr&&o.status!=='Ready';});
+  var overdue=open.filter(function(o){return o.estDate&&o.estDate<todayStr&&o.status!=='Ready'&&o.status!=='Picked Up';});
   var old=open.filter(function(o){if(!o.dateIn)return false;return Math.floor((now-new Date(o.dateIn))/(1000*60*60*24))>=SETTINGS.ageOldDays;});
   var partsIn=[];
   ['stihl','other'].forEach(function(cat){(PARTORDERS[cat]||[]).forEach(function(p,i){if(p.received)partsIn.push({cat:cat,idx:i,p:p});});});
