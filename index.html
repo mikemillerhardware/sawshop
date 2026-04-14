@@ -50,14 +50,14 @@ body{font-family:'Barlow',sans-serif;font-size:16px;color:var(--dark);background
 .srow{display:flex;gap:7px;margin-bottom:12px;flex-wrap:wrap}
 .srow input,.srow select{padding:7px 10px;border:1.5px solid var(--silver);border-radius:3px;font-size:15px;background:var(--white);color:var(--dark);font-family:'Barlow',sans-serif}
 .srow input{flex:1;min-width:150px}
-.wo-row{display:flex;align-items:center;gap:10px;padding:10px 12px;border:1.5px solid var(--silver);border-radius:3px;margin-bottom:7px;background:var(--white);cursor:pointer;transition:border-color .15s}
+.wo-row{display:flex;align-items:center;gap:10px;padding:12px 14px;border:1.5px solid var(--silver);border-radius:3px;margin-bottom:7px;background:var(--white);cursor:pointer;transition:border-color .15s}
 .wo-row:hover{border-color:var(--red)}
 .wo-row.urgent{border-left:4px solid var(--red)}
 .wo-row.waiting{border-left:4px solid #BA7517}
 .wo-num{font-size:12px;color:var(--muted);font-weight:700;min-width:46px;font-family:'Barlow Condensed',sans-serif}
 .wo-main{flex:1;min-width:0}
 .wo-cust{font-weight:700;font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.wo-equip{font-size:12px;color:var(--gray2)}
+.wo-equip{font-size:15px;font-weight:600;color:var(--dark)}
 .wo-tech{font-size:12px;color:var(--muted);min-width:70px;text-align:right}
 .wo-meta{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
 .badge{display:inline-block;padding:2px 7px;border-radius:2px;font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase}
@@ -208,7 +208,7 @@ hr{border:none;border-top:1.5px solid var(--silver);margin:12px 0}
   .srow{gap:5px}
   .srow input,.srow select{font-size:14px;padding:6px 8px}
   .wo-cust{font-size:14px}
-  .wo-equip{font-size:12px}
+  .wo-equip{font-size:14px}
   .sect-lbl{font-size:11px}
   .status-btns{gap:4px}
   .sbtn{padding:6px 8px;font-size:12px}
@@ -917,7 +917,7 @@ function populateTechSels(){['m-tech','wo-tf'].forEach(function(id){var sel=docu
 function populateCustSel(){/* replaced by custSearch */}
 function populateCustSelLegacy(){var sel=document.getElementById('m-cust');if(!sel||sel.tagName!=='SELECT')return;var cur=sel.value;sel.innerHTML='<option value="">-- Select Customer --</option>';custArr().forEach(function(c){var o=document.createElement('option');o.value=c.id;o.textContent=c.first+' '+c.last+(c.phone?' ('+c.phone+')':'');sel.appendChild(o);});if(cur)sel.value=cur;}
 
-function orderArr(){return Object.values(ORDERS).sort(function(a,b){if(b.urgent!==a.urgent)return(b.urgent?1:0)-(a.urgent?1:0);return b.woNum-a.woNum;});}
+function orderArr(){return Object.values(ORDERS).sort(function(a,b){if(b.urgent!==a.urgent)return(b.urgent?1:0)-(a.urgent?1:0);var da=a.dateIn||'',db=b.dateIn||'';if(da&&db)return da<db?-1:da>db?1:0;return a.woNum-b.woNum;});}
 function custArr(){return Object.values(CUSTS).sort(function(a,b){return(a.last||'').localeCompare(b.last||'');});}
 function custEquip(cid){return EQUIPMENT[cid]||[];}
 function refreshAll(){renderDash();renderBoard();renderOrders();renderHours();renderReminders();renderCustomers();renderPartOrders();renderPickup();renderDaily();}
@@ -994,7 +994,7 @@ function woRow(o,c){
     +'<div class="wo-main">'
     +'<div class="wo-cust">'+custName+(c&&c.phone?'<span style="font-size:15px;font-weight:700;color:var(--dark);margin-left:10px">'+c.phone+'</span>':'')+'</div>'
     +'<div class="wo-equip">'+equip+(o.serial?' | SN: '+o.serial:'')+(isWaiting&&o.partsWaiting?' · '+o.partsWaiting:'')+'</div>'
-    +(o.dateIn?'<div style="font-size:10px;color:var(--muted);margin-top:1px">In: '+o.dateIn+(o.tech?' · '+o.tech:'')+'</div>':'')
+    +(o.dateIn?'<div style="font-size:12px;color:var(--muted);margin-top:2px">In: '+o.dateIn+(o.tech?' · '+o.tech:'')+'</div>':'')
     +'</div>'
     +'<div class="wo-meta">'+(o.urgent?'<span class="badge b-urgent">Urgent</span>':'')+badge(o.status||'Intake')+(o.estHrs?'<span style="font-size:10px;color:var(--muted)">'+o.estHrs+'h</span>':'')+'</div>'
     +'</div>';
