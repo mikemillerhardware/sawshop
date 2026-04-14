@@ -56,7 +56,7 @@ body{font-family:'Barlow',sans-serif;font-size:16px;color:var(--dark);background
 .wo-row.waiting{border-left:4px solid #BA7517}
 .wo-num{font-size:12px;color:var(--muted);font-weight:700;min-width:46px;font-family:'Barlow Condensed',sans-serif}
 .wo-main{flex:1;min-width:0}
-.wo-cust{font-weight:700;font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.wo-cust{font-weight:700;font-size:17px;text-decoration:underline;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .wo-equip{font-size:15px;font-weight:600;color:var(--dark)}
 .wo-tech{font-size:12px;color:var(--muted);min-width:70px;text-align:right}
 .wo-meta{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
@@ -207,7 +207,7 @@ hr{border:none;border-top:1.5px solid var(--silver);margin:12px 0}
   .board-col{width:180px}
   .srow{gap:5px}
   .srow input,.srow select{font-size:14px;padding:6px 8px}
-  .wo-cust{font-size:14px}
+  .wo-cust{font-size:16px}
   .wo-equip{font-size:14px}
   .sect-lbl{font-size:11px}
   .status-btns{gap:4px}
@@ -994,7 +994,7 @@ function woRow(o,c){
     +'<div class="wo-main">'
     +'<div class="wo-cust">'+custName+(c&&c.phone?'<span style="font-size:15px;font-weight:700;color:var(--dark);margin-left:10px">'+c.phone+'</span>':'')+'</div>'
     +'<div class="wo-equip">'+equip+(o.serial?' | SN: '+o.serial:'')+(isWaiting&&o.partsWaiting?' · '+o.partsWaiting:'')+'</div>'
-    +(o.dateIn?'<div style="font-size:12px;color:var(--muted);margin-top:2px">In: '+o.dateIn+(o.tech?' · '+o.tech:'')+'</div>':'')
+    +(o.dateIn?'<div style="font-size:12px;font-weight:700;color:var(--muted);margin-top:2px">In: '+o.dateIn+(o.tech?' · '+o.tech:'')+'</div>':'')
     +'</div>'
     +'<div class="wo-meta">'+(o.urgent?'<span class="badge b-urgent">Urgent</span>':'')+badge(o.status||'Intake')+(o.estHrs?'<span style="font-size:10px;color:var(--muted)">'+o.estHrs+'h</span>':'')+'</div>'
     +'</div>';
