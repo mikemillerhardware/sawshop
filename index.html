@@ -50,17 +50,17 @@ body{font-family:'Barlow',sans-serif;font-size:16px;color:var(--dark);background
 .srow{display:flex;gap:7px;margin-bottom:12px;flex-wrap:wrap}
 .srow input,.srow select{padding:7px 10px;border:1.5px solid var(--silver);border-radius:3px;font-size:15px;background:var(--white);color:var(--dark);font-family:'Barlow',sans-serif}
 .srow input{flex:1;min-width:150px}
-.wo-row{display:flex;align-items:center;gap:10px;padding:12px 14px;border:1.5px solid var(--silver);border-radius:3px;margin-bottom:7px;background:var(--white);cursor:pointer;transition:border-color .15s}
+.wo-row{display:flex;align-items:center;gap:10px;padding:15px 18px;border:1.5px solid var(--silver);border-radius:3px;margin-bottom:9px;background:var(--white);cursor:pointer;transition:border-color .15s}
 .wo-row:hover{border-color:var(--red)}
 .wo-row.urgent{border-left:4px solid var(--red)}
 .wo-row.waiting{border-left:4px solid #BA7517}
-.wo-num{font-size:12px;color:var(--muted);font-weight:700;min-width:46px;font-family:'Barlow Condensed',sans-serif}
+.wo-num{font-size:15px;color:var(--muted);font-weight:700;min-width:46px;font-family:'Barlow Condensed',sans-serif}
 .wo-main{flex:1;min-width:0}
-.wo-cust{font-weight:700;font-size:17px;text-decoration:underline;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.wo-equip{font-size:15px;font-weight:600;color:var(--dark)}
+.wo-cust{font-weight:700;font-size:21px;text-decoration:underline;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.wo-equip{font-size:19px;font-weight:600;color:var(--dark)}
 .wo-tech{font-size:12px;color:var(--muted);min-width:70px;text-align:right}
 .wo-meta{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
-.badge{display:inline-block;padding:2px 7px;border-radius:2px;font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase}
+.badge{display:inline-block;padding:3px 9px;border-radius:2px;font-size:14px;font-weight:700;letter-spacing:.05em;text-transform:uppercase}
 .b-intake{background:#e6f1fb;color:#0c447c}
 .b-diag{background:#faeeda;color:#633806}
 .b-repair{background:#eeedfe;color:#3c3489}
@@ -156,7 +156,7 @@ hr{border:none;border-top:1.5px solid var(--silver);margin:12px 0}
 .hrs-bar.over{background:var(--red)}
 
 /* REMINDERS */
-.reminder-row{display:flex;align-items:flex-start;gap:12px;padding:12px 14px;border:1.5px solid var(--silver);border-radius:3px;margin-bottom:8px;background:var(--white)}
+.reminder-row{display:flex;align-items:flex-start;gap:12px;padding:15px 18px;border:1.5px solid var(--silver);border-radius:3px;margin-bottom:8px;background:var(--white)}
 .reminder-row.overdue{border-left:4px solid var(--red)}
 .reminder-row.due-soon{border-left:4px solid #BA7517}
 .reminder-row.seasonal{border-left:4px solid #7F77DD}
@@ -207,8 +207,8 @@ hr{border:none;border-top:1.5px solid var(--silver);margin:12px 0}
   .board-col{width:180px}
   .srow{gap:5px}
   .srow input,.srow select{font-size:14px;padding:6px 8px}
-  .wo-cust{font-size:16px}
-  .wo-equip{font-size:14px}
+  .wo-cust{font-size:20px}
+  .wo-equip{font-size:18px}
   .sect-lbl{font-size:11px}
   .status-btns{gap:4px}
   .sbtn{padding:6px 8px;font-size:12px}
@@ -399,7 +399,7 @@ hr{border:none;border-top:1.5px solid var(--silver);margin:12px 0}
 
     <!-- ADMIN SECTION — hidden behind access code -->
     <div id="admin-locked" style="margin-top:8px">
-      <div style="display:flex;align-items:center;gap:10px;padding:12px 14px;background:var(--off);border:1.5px solid var(--silver);border-radius:3px">
+      <div style="display:flex;align-items:center;gap:10px;padding:15px 18px;background:var(--off);border:1.5px solid var(--silver);border-radius:3px">
         <span style="font-size:13px;color:var(--muted);flex:1">Admin settings (technicians, Firebase) are protected.</span>
         <input type="password" id="admin-code-input" placeholder="Access code" style="width:120px;padding:7px 9px;border:1.5px solid var(--silver);border-radius:3px;font-size:14px;font-family:Barlow,sans-serif" onkeydown="if(event.key==='Enter')checkAdminCode()">
         <button class="btn sm primary" onclick="checkAdminCode()">Unlock</button>
@@ -992,9 +992,9 @@ function woRow(o,c){
   return '<div class="wo-row'+(o.urgent?' urgent':isWaiting?' waiting':'')+'" onclick="openDet(\''+o.id+'\')">'  
     +'<span class="wo-num">#'+o.woNum+(o.tag?'<br><span style="font-size:10px;color:var(--muted);font-weight:400">Tag: '+o.tag+'</span>':'')+'</span>'
     +'<div class="wo-main">'
-    +'<div class="wo-cust">'+custName+(c&&c.phone?'<span style="font-size:15px;font-weight:700;color:var(--dark);margin-left:10px">'+c.phone+'</span>':'')+'</div>'
+    +'<div class="wo-cust">'+custName+(c&&c.phone?'<span style="font-size:19px;font-weight:700;color:var(--dark);margin-left:12px">'+c.phone+'</span>':'')+'</div>'
     +'<div class="wo-equip">'+equip+(o.serial?' | SN: '+o.serial:'')+(isWaiting&&o.partsWaiting?' · '+o.partsWaiting:'')+'</div>'
-    +(o.dateIn?'<div style="font-size:12px;font-weight:700;color:var(--muted);margin-top:2px">In: '+o.dateIn+(o.tech?' · '+o.tech:'')+'</div>':'')
+    +(o.dateIn?'<div style="font-size:15px;font-weight:700;color:var(--muted);margin-top:3px">In: '+o.dateIn+(o.tech?' · '+o.tech:'')+'</div>':'')
     +'</div>'
     +'<div class="wo-meta">'+(o.urgent?'<span class="badge b-urgent">Urgent</span>':'')+badge(o.status||'Intake')+(o.estHrs?'<span style="font-size:10px;color:var(--muted)">'+o.estHrs+'h</span>':'')+'</div>'
     +'</div>';
