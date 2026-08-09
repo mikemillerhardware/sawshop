@@ -1670,7 +1670,7 @@ function guideSections(){return [
 ['3. Taking in a repair (your #1 job)',
  '<p>When a customer brings something in:</p><ol><li>Tap <strong>+ New Work Order</strong> (red button, or the <strong>+</strong> on your phone).</li><li><strong>Customer:</strong> search their name or phone. New customer? Tap <strong>+ New</strong> and add them.</li><li><strong>Equipment:</strong> pick the type and fill in brand, model, and <strong>serial #</strong> &mdash; the more detail the better (you&rsquo;ll need the serial for warranty).</li><li><strong>What&rsquo;s wrong:</strong> put it in the <em>Customer Complaint</em> box, in their words (&ldquo;won&rsquo;t start&rdquo;, &ldquo;smokes&rdquo;).</li><li><strong>Hang tag #:</strong> write the same number on a paper tag and hang it on the unit.</li><li><strong>Est. Completion:</strong> the app suggests a date based on how busy the shop is &mdash; tap <strong>Use</strong>, or set your own.</li><li>Tap <strong>Save Work Order</strong>, then <strong>Print Work Order</strong>.</li></ol><p>Hand the customer the top <strong>Counter Copy</strong> (their claim ticket); keep the tech sheet with the unit.</p>'],
 ['4. Working a repair',
- '<p>Tap any job to open it. From there you can:</p><ul><li><strong>Update the status</strong> as you go: Intake &rarr; Diagnosing &rarr; In Repair &rarr; Waiting on Parts &rarr; Ready &rarr; Picked Up. Just tap the status buttons.</li><li><strong>Add parts &amp; labor:</strong> type the part + quantity, then <strong>+ Stock Part</strong> (off the shelf) or <strong>+ Stihl / Other Part</strong> (needs ordering).</li><li><strong>Add notes:</strong> type and tap <strong>+ Add Note</strong>, or tap <strong>&#127908;</strong> and just talk &mdash; great for greasy hands.</li><li><strong>Attach photos:</strong> snap the damage or the serial plate.</li><li><strong>Drop-off signature:</strong> tap <strong>Capture</strong> on &ldquo;Drop-off &mdash; Authorizes Diagnosis&rdquo; and have the customer sign.</li></ul>'],
+ '<p>Tap any job to open it. From there you can:</p><ul><li><strong>Update the status</strong> as you go: Intake &rarr; Diagnosing &rarr; In Repair &rarr; Waiting on Parts &rarr; Ready &rarr; Picked Up. Just tap the status buttons.</li><li><strong>Add parts &amp; labor:</strong> type the part # and description, then tap <strong>+ Add Part</strong>. If it needs to be ordered, check <strong>Needs to be ordered</strong> first &mdash; it will also show up in &#128295; Parts to Order.</li><li><strong>Add notes:</strong> type and tap <strong>+ Add Note</strong>, or tap <strong>&#127908;</strong> and just talk &mdash; great for greasy hands.</li><li><strong>Attach photos:</strong> snap the damage or the serial plate.</li><li><strong>Drop-off signature:</strong> tap <strong>Capture</strong> on &ldquo;Drop-off &mdash; Authorizes Diagnosis&rdquo; and have the customer sign.</li></ul>'],
 ['5. Ordering parts',
  '<p>When a part needs ordering it shows up in <strong>&#128295; Parts to Order</strong>, grouped by vendor. Pick the vendor from the dropdown, place the order, and tap <strong>Order &rarr; Received</strong> when it arrives. Need a new vendor? Add one right there or in Settings.</p>'],
 ['6. Keeping the customer informed',
@@ -2197,9 +2197,8 @@ function openDet(id){
     +'<div style="width:96px"><div style="font-size:10px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--muted);margin-bottom:3px">Part #</div><input type="text" id="ql-pn-'+id+'" placeholder="optional" style="width:100%;padding:6px 9px;border:1.5px solid var(--silver);border-radius:3px;font-size:13px;font-family:Barlow,sans-serif;background:var(--white);color:var(--dark)"></div>'
     +'<div style="flex:2;min-width:120px"><div style="font-size:10px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--muted);margin-bottom:3px">Description</div><input type="text" id="ql-note-'+id+'" placeholder="e.g. Air filter, Labor..." style="width:100%;padding:6px 9px;border:1.5px solid var(--silver);border-radius:3px;font-size:13px;font-family:Barlow,sans-serif;background:var(--white);color:var(--dark)"></div>'
     +'<div style="width:60px"><div style="font-size:10px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--muted);margin-bottom:3px">Qty</div><input type="number" id="ql-qty-'+id+'" value="1" min="1" style="width:100%;padding:6px 9px;border:1.5px solid var(--silver);border-radius:3px;font-size:13px;font-family:Barlow,sans-serif;background:var(--white);color:var(--dark)"></div>'
-    +'<button class="btn sm primary" onclick="quickAddPart(\''+id+'\')" style="align-self:flex-end">+ Stock Part</button>'
-    +'<button class="btn sm amber" onclick="quickAddOrderPart(\''+id+'\',\'stihl\')" style="align-self:flex-end">+ Stihl Part</button>'
-    +'<button class="btn sm amber" onclick="quickAddOrderPart(\''+id+'\',\'other\')" style="align-self:flex-end">+ Other Part</button>'
+    +'<label style="display:flex;align-items:center;gap:5px;font-size:12px;color:var(--gray2);align-self:flex-end;padding:6px 0;white-space:nowrap"><input type="checkbox" id="ql-order-'+id+'" style="width:15px;height:15px;accent-color:var(--red)"> Needs to be ordered</label>'
+    +'<button class="btn sm primary" onclick="quickAddPart(\''+id+'\')" style="align-self:flex-end">+ Add Part</button>'
     +'</div>'
     +'<div class="sect-lbl">Customer Contact Log</div>'+logHtml
     +'<button class="btn sm outline" onclick="openContactLog(\''+id+'\')" style="margin-top:8px">+ Log Contact</button>'
@@ -2595,37 +2594,29 @@ function downloadInvoice(id){
   doc.save('Miller-Parts-Invoice-WO'+(o.woNum||'')+'.pdf');
 }
 function quickAddPart(woid){
+  // One button: always adds to the WO's own parts list. If "Needs to be ordered" is checked,
+  // it also drops into Parts to Order (vendor left blank — assign it there whenever, same as any other part).
   var desc=document.getElementById('ql-note-'+woid).value.trim();
   if(!desc){alert('Enter a description.');return;}
   var qty=parseFloat(document.getElementById('ql-qty-'+woid).value)||1;
   var o=ORDERS[woid];if(!o)return;
   var pn=(document.getElementById('ql-pn-'+woid)||{}).value;pn=pn?pn.trim():'';
+  var needsOrder=!!(document.getElementById('ql-order-'+woid)||{}).checked;
   var parts=(o.parts||[]).slice();
-  parts.push({pn:pn,desc:desc,qty:qty,note:''});
+  parts.push({pn:pn,desc:desc,qty:qty,note:needsOrder?'On order':''});
   o.parts=parts;writeOrder(o);
+  if(needsOrder){
+    var equip=[o.brand,o.equipType,o.product?'P#'+o.product:'',o.model?'— '+o.model:'',o.serial?'SN:'+o.serial:''].filter(Boolean).join(' ');
+    var item={pn:pn,desc:desc,qty:qty,equip:equip,notes:'',
+      woId:woid,woNum:o.woNum||null,vendor:'',
+      ordered:false,received:false,paid:false,added:today()};
+    if(!PARTORDERS.other)PARTORDERS.other=[];
+    PARTORDERS.other.push(item);
+    writePartOrders();renderPartOrders();
+  }
   document.getElementById('ql-note-'+woid).value='';
   document.getElementById('ql-qty-'+woid).value='1';
-  openDet(woid);
-}
-function quickAddOrderPart(woid,cat){
-  // One tap: part goes on the WO's parts list AND onto the Parts to Order list, linked to this WO
-  var desc=document.getElementById('ql-note-'+woid).value.trim();
-  if(!desc){alert('Enter a description.');return;}
-  var qty=parseFloat(document.getElementById('ql-qty-'+woid).value)||1;
-  var o=ORDERS[woid];if(!o)return;
-  var pn=(document.getElementById('ql-pn-'+woid)||{}).value;pn=pn?pn.trim():'';
-  var parts=(o.parts||[]).slice();
-  parts.push({pn:pn,desc:desc,qty:qty,note:'On order'});
-  o.parts=parts;writeOrder(o);
-  var equip=[o.brand,o.equipType,o.product?'P#'+o.product:'',o.model?'— '+o.model:'',o.serial?'SN:'+o.serial:''].filter(Boolean).join(' ');
-  var item={pn:pn,desc:desc,qty:qty,equip:equip,notes:'',
-    woId:woid,woNum:o.woNum||null,vendor:cat==='stihl'?'Stihl':'',
-    ordered:false,received:false,paid:false,added:today()};
-  if(!PARTORDERS[cat])PARTORDERS[cat]=[];
-  PARTORDERS[cat].push(item);
-  writePartOrders();renderPartOrders();
-  document.getElementById('ql-note-'+woid).value='';
-  document.getElementById('ql-qty-'+woid).value='1';
+  if(document.getElementById('ql-order-'+woid))document.getElementById('ql-order-'+woid).checked=false;
   openDet(woid);
 }
 // ── Signatures (drop-off authorization + pickup receipt) ─────────────────
