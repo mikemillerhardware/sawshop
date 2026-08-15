@@ -419,8 +419,7 @@ hr{border:none;border-top:1.5px solid var(--silver);margin:12px 0}
     <div style="font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-bottom:10px">Parts to Order &mdash; organized by vendor</div>
     <div class="srow">
       <input type="text" id="po-q" placeholder="Search part #, customer, WO#, equipment, vendor..." oninput="renderPartOrders()">
-      <button class="btn primary" onclick="openPartOrder('stihl')">+ Stihl Part</button>
-      <button class="btn primary" onclick="openPartOrder('other')">+ Other Part</button>
+      <button class="btn primary" onclick="openPartOrder()">+ Special Order Part</button>
       <button class="btn" id="po-archive-btn" onclick="togglePOArchive()">Received ✓</button>
     </div>
     <div class="po-grid" id="po-cards" style="display:grid;grid-template-columns:1fr 1fr;gap:14px;align-items:start"></div>
@@ -473,7 +472,7 @@ hr{border:none;border-top:1.5px solid var(--silver);margin:12px 0}
       </div>
     </div>
     <!-- EXPORT — visible to everyone -->
-    <div class="card admin-only">
+    <div class="card">
       <div class="card-hdr">Work Order Age Warnings</div>
       <div style="font-size:13px;color:var(--gray2);margin-bottom:10px">Orders sitting longer than these thresholds are highlighted in the work order list — amber for warning, red for overdue.</div>
       <div style="display:flex;gap:16px;flex-wrap:wrap;align-items:center">
@@ -482,7 +481,7 @@ hr{border:none;border-top:1.5px solid var(--silver);margin:12px 0}
         <button class="btn sm primary" onclick="saveAgeSettings()">Save</button>
       </div>
     </div>
-    <div class="card admin-only">
+    <div class="card">
       <div class="card-hdr">Customer &ldquo;Track My Repair&rdquo; Link</div>
       <div style="font-size:13px;color:var(--gray2);margin-bottom:10px">When ON, text messages to customers include a private link to a live status page for their repair (first name, equipment, and status only &mdash; no phone or address). Turn OFF to stop sharing status links.</div>
       <label style="display:flex;align-items:center;gap:9px;font-size:15px;font-weight:600;cursor:pointer">
@@ -490,7 +489,7 @@ hr{border:none;border-top:1.5px solid var(--silver);margin:12px 0}
         <span id="tracker-on-lbl">Enable Track My Repair links</span>
       </label>
     </div>
-    <div class="card admin-only">
+    <div class="card">
       <div class="card-hdr">Export &amp; Backup</div>
       <div style="display:flex;gap:8px;flex-wrap:wrap">
         <button class="btn" onclick="exportCSV('orders')">Work Orders CSV</button>
@@ -501,33 +500,34 @@ hr{border:none;border-top:1.5px solid var(--silver);margin:12px 0}
       </div>
     </div>
 
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:10px">
+        <div class="card-hdr" style="margin-bottom:0">&#128202; This Week&rsquo;s Snapshot</div>
+        <button class="btn sm" onclick="printWeeklySnapshot()">Print</button>
+      </div>
+      <div id="weekly-snapshot" style="margin-top:8px"></div>
+    </div>
+    <div class="card">
+      <div class="card-hdr">&#128295; Log Equipment from Work Order History</div>
+      <div style="font-size:13px;color:var(--gray2);margin-bottom:8px">Every <em>new</em> work order now automatically logs its equipment on the customer's record as &ldquo;Serviced by Miller Hardware&rdquo; &mdash; deduped so repeat visits for the same unit don't pile up. This is the one-time catch-up pass for your <em>existing</em> work order history. Shows exactly what would be created before anything is saved.</div>
+      <div id="equip-backfill-box"><div class="empty" style="padding:6px 0">Checking...</div></div>
+    </div>
+    <div class="card">
+      <div class="card-hdr">&#128203; Customer Name / Phone Cleanup</div>
+      <div style="font-size:13px;color:var(--gray2);margin-bottom:8px">Standardizes name capitalization and phone format (xxx-xxx-xxxx) across your existing customer list. New entries are already cleaned up automatically &mdash; this is a one-time pass over what's already on file. Shows exactly what would change before anything is saved.</div>
+      <div id="cust-cleanup-box"><div class="empty" style="padding:6px 0">Checking...</div></div>
+    </div>
+    <div class="card">
+      <div class="card-hdr">&#128296; Equipment Brand Spelling Cleanup</div>
+      <div style="font-size:13px;color:var(--gray2);margin-bottom:8px">Fixes known misspellings/casing of your actual brands (Stihl, Husqvarna, Echo, etc.) on work orders and equipment records &mdash; e.g. &ldquo;Sthil&rdquo;, &ldquo;STHIL&rdquo;, &ldquo;sthl&rdquo; all become &ldquo;Stihl&rdquo;. Only touches known brand names on this list, not free-text notes. Shows exactly what would change before anything is saved.</div>
+      <div id="brand-cleanup-box"><div class="empty" style="padding:6px 0">Checking...</div></div>
+    </div>
+    <div class="card">
+      <div class="card-hdr">&#128269; Possible Duplicate Customers</div>
+      <div id="dup-cust-list"><div class="empty" style="padding:6px 0">Checking...</div></div>
+    </div>
+
     <div id="admin-unlocked" style="display:none">
-      <div class="card">
-        <div style="display:flex;justify-content:space-between;align-items:center;gap:10px">
-          <div class="card-hdr" style="margin-bottom:0">&#128202; This Week&rsquo;s Snapshot</div>
-          <button class="btn sm" onclick="printWeeklySnapshot()">Print</button>
-        </div>
-        <div id="weekly-snapshot" style="margin-top:8px"></div>
-      </div>
-      <div class="card">
-        <div class="card-hdr">&#128295; Log Equipment from Work Order History</div>
-        <div style="font-size:13px;color:var(--gray2);margin-bottom:8px">Every <em>new</em> work order now automatically logs its equipment on the customer's record as &ldquo;Serviced by Miller Hardware&rdquo; &mdash; deduped so repeat visits for the same unit don't pile up. This is the one-time catch-up pass for your <em>existing</em> work order history. Shows exactly what would be created before anything is saved.</div>
-        <div id="equip-backfill-box"><div class="empty" style="padding:6px 0">Checking...</div></div>
-      </div>
-      <div class="card">
-        <div class="card-hdr">&#128203; Customer Name / Phone Cleanup</div>
-        <div style="font-size:13px;color:var(--gray2);margin-bottom:8px">Standardizes name capitalization and phone format (xxx-xxx-xxxx) across your existing customer list. New entries are already cleaned up automatically &mdash; this is a one-time pass over what's already on file. Shows exactly what would change before anything is saved.</div>
-        <div id="cust-cleanup-box"><div class="empty" style="padding:6px 0">Checking...</div></div>
-      </div>
-      <div class="card">
-        <div class="card-hdr">&#128296; Equipment Brand Spelling Cleanup</div>
-        <div style="font-size:13px;color:var(--gray2);margin-bottom:8px">Fixes known misspellings/casing of your actual brands (Stihl, Husqvarna, Echo, etc.) on work orders and equipment records &mdash; e.g. &ldquo;Sthil&rdquo;, &ldquo;STHIL&rdquo;, &ldquo;sthl&rdquo; all become &ldquo;Stihl&rdquo;. Only touches known brand names on this list, not free-text notes. Shows exactly what would change before anything is saved.</div>
-        <div id="brand-cleanup-box"><div class="empty" style="padding:6px 0">Checking...</div></div>
-      </div>
-      <div class="card">
-        <div class="card-hdr">&#128269; Possible Duplicate Customers</div>
-        <div id="dup-cust-list"><div class="empty" style="padding:6px 0">Checking...</div></div>
-      </div>
       <div class="card">
         <div class="card-hdr">Firebase Cloud Sync</div>
         <div style="font-size:13px;color:var(--gray2);margin-bottom:8px">Firebase config is baked in — connects automatically. Use the button below if you're having connection trouble.</div>
@@ -879,12 +879,16 @@ hr{border:none;border-top:1.5px solid var(--silver);margin:12px 0}
 <!-- PART ORDER MODAL -->
 <div class="modal-bg" id="part-order-modal" style="z-index:230">
 <div class="modal">
-  <div class="modal-title" id="po-mtitle">Add Part to Order</div>
+  <div class="modal-title" id="po-mtitle">Add Special Order Part</div>
   <div class="f"><label>Part #</label><input type="text" id="po-pn" placeholder="e.g. 1141 120 1603 (optional)"></div>
   <div class="f"><label>Description</label><input type="text" id="po-desc" placeholder="e.g. Carburetor kit"></div>
   <div class="f"><label>Qty</label><input type="number" id="po-qty" value="1" min="1" style="max-width:140px"></div>
+  <div class="f"><label>Order From</label><select id="po-vendor"></select></div>
   <div class="f"><label>For Equipment</label><input type="text" id="po-equip" placeholder="e.g. Stihl MS 271 (optional)"></div>
   <div class="f"><label>Notes</label><input type="text" id="po-notes" placeholder="e.g. Customer approved, ordered 4/10"></div>
+  <label style="display:flex;align-items:center;gap:7px;font-size:14px;font-weight:600;cursor:pointer;margin-bottom:6px">
+    <input type="checkbox" id="po-special" style="width:16px;height:16px;accent-color:var(--red)"> Special Order Part
+  </label>
   <label style="display:flex;align-items:center;gap:7px;font-size:14px;font-weight:600;cursor:pointer;margin-bottom:12px">
     <input type="checkbox" id="po-paid" style="width:16px;height:16px;accent-color:var(--red)"> Parts Paid For
   </label>
@@ -1179,7 +1183,7 @@ function applyRole(){
   document.querySelectorAll('.admin-only').forEach(function(el){el.style.display=admin?'':'none';});
   var au=document.getElementById('admin-unlocked');
   if(au)au.style.display=admin?'block':'none';
-  if(admin){renderTechs();renderVendors();renderDupCustomers();renderWeeklySnapshot();renderCustomerCleanup();renderBrandCleanup();renderEquipmentBackfill();}
+  renderTechs();renderVendors();renderDupCustomers();renderWeeklySnapshot();renderCustomerCleanup();renderBrandCleanup();renderEquipmentBackfill();
   var rl=document.getElementById('account-role');
   if(rl){rl.textContent=admin?'OWNER':'STAFF';rl.style.color=admin?'var(--red)':'var(--gray2)';}
 }
@@ -1234,6 +1238,10 @@ function addVendor(){var n=document.getElementById('new-vendor').value.trim();if
 function removeVendor(n){if(!confirm('Remove vendor '+n+'?'))return;VENDORS=VENDORS.filter(function(v){return v!==n;});writeVendors();renderVendors();renderPartOrders();}
 function renderVendors(){var el=document.getElementById('vendor-chips');if(!el)return;if(!VENDORS.length){el.innerHTML='<div style="font-size:12px;color:var(--muted);font-style:italic">No vendors yet — add your suppliers below.</div>';return;}el.innerHTML='';VENDORS.forEach(function(v){var chip=document.createElement('span');chip.className='tech-chip';chip.appendChild(document.createTextNode(v));var btn=document.createElement('button');btn.innerHTML='&#x2715;';btn.onclick=function(){removeVendor(v);};chip.appendChild(btn);el.appendChild(chip);});}
 function populateTechSels(){['m-tech','wo-tf'].forEach(function(id){var sel=document.getElementById(id);if(!sel)return;var cur=sel.value;sel.innerHTML=id==='m-tech'?'<option>Unassigned</option>':'<option value="">All Techs</option>';TECHS.forEach(function(t){var o=document.createElement('option');o.value=t;o.textContent=t;sel.appendChild(o);});if(cur)sel.value=cur;});}
+function vendorOptionListHTML(){
+  var list=['Stihl'].concat(VENDORS.filter(function(v){return v!=='Stihl';}));
+  return '<option value="">None</option>'+list.map(function(v){return '<option value="'+v.replace(/"/g,'&quot;')+'">'+v+'</option>';}).join('');
+}
 
 
 function orderArr(){return Object.values(ORDERS).sort(function(a,b){if(b.urgent!==a.urgent)return(b.urgent?1:0)-(a.urgent?1:0);var da=a.dateIn||'',db=b.dateIn||'';if(da&&db)return da<db?-1:da>db?1:0;return a.woNum-b.woNum;});}
@@ -1345,7 +1353,6 @@ function renderEquipmentBackfill(){
     +'<button class="btn primary" style="margin-top:10px;width:100%;justify-content:center" onclick="applyEquipmentBackfill()">Create These '+results.length+' Equipment Record'+(results.length!==1?'s':'')+'</button>';
 }
 function applyEquipmentBackfill(){
-  if(!isAdmin()){alert('Only the shop owner can run this.');return;}
   var results=computeEquipmentBackfillPreview();
   if(!results.length)return;
   var custSet={};results.forEach(function(r){custSet[r.custId]=1;});
@@ -1412,7 +1419,6 @@ function renderBrandCleanup(){
     +'<button class="btn primary" style="margin-top:10px;width:100%;justify-content:center" onclick="applyBrandCleanup()">Fix These '+changes.length+' Brand Name'+(changes.length!==1?'s':'')+'</button>';
 }
 function applyBrandCleanup(){
-  if(!isAdmin()){alert('Only the shop owner can run this.');return;}
   var changes=computeBrandCleanupPreview();
   if(!changes.length)return;
   if(!confirm('Fix '+changes.length+' brand name'+(changes.length!==1?'s':'')+' (misspellings/casing only — e.g. "Sthil" → "Stihl")?\n\nThis cannot be undone.'))return;
@@ -1461,7 +1467,6 @@ function renderCustomerCleanup(){
     +'<button class="btn primary" style="margin-top:10px;width:100%;justify-content:center" onclick="applyCustomerCleanup()">Apply These '+changes.length+' Change'+(changes.length!==1?'s':'')+'</button>';
 }
 function applyCustomerCleanup(){
-  if(!isAdmin()){alert('Only the shop owner can run this.');return;}
   var changes=computeCustomerCleanupPreview();
   if(!changes.length)return;
   if(!confirm('Update '+changes.length+' customer record'+(changes.length!==1?'s':'')+' with cleaned-up names/phone numbers?\n\nThis cannot be undone.'))return;
@@ -1545,7 +1550,7 @@ function showTab(t){
   document.getElementById('tab-'+t).classList.add('active');
   if(t==='daily')renderDaily();
   if(t==='parts')renderPartOrders();
-  if(t==='settings'){renderInstallBox();if(isAdmin()){renderDupCustomers();renderWeeklySnapshot();renderCustomerCleanup();renderBrandCleanup();renderEquipmentBackfill();}}
+  if(t==='settings'){renderInstallBox();renderDupCustomers();renderWeeklySnapshot();renderCustomerCleanup();renderBrandCleanup();renderEquipmentBackfill();}
 }
 
 function toggleWaitingRow(){document.getElementById('waiting-parts-row').style.display=document.getElementById('m-status').value==='Waiting on Parts'?'block':'none';}
@@ -2197,6 +2202,7 @@ function openDet(id){
     +'<div style="width:96px"><div style="font-size:10px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--muted);margin-bottom:3px">Part #</div><input type="text" id="ql-pn-'+id+'" placeholder="optional" style="width:100%;padding:6px 9px;border:1.5px solid var(--silver);border-radius:3px;font-size:13px;font-family:Barlow,sans-serif;background:var(--white);color:var(--dark)"></div>'
     +'<div style="flex:2;min-width:120px"><div style="font-size:10px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--muted);margin-bottom:3px">Description</div><input type="text" id="ql-note-'+id+'" placeholder="e.g. Air filter, Labor..." style="width:100%;padding:6px 9px;border:1.5px solid var(--silver);border-radius:3px;font-size:13px;font-family:Barlow,sans-serif;background:var(--white);color:var(--dark)"></div>'
     +'<div style="width:60px"><div style="font-size:10px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--muted);margin-bottom:3px">Qty</div><input type="number" id="ql-qty-'+id+'" value="1" min="1" style="width:100%;padding:6px 9px;border:1.5px solid var(--silver);border-radius:3px;font-size:13px;font-family:Barlow,sans-serif;background:var(--white);color:var(--dark)"></div>'
+    +'<div style="width:120px"><div style="font-size:10px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--muted);margin-bottom:3px">Order From</div><select id="ql-vendor-'+id+'" style="width:100%;padding:6px 9px;border:1.5px solid var(--silver);border-radius:3px;font-size:13px;font-family:Barlow,sans-serif;background:var(--white);color:var(--dark)">'+vendorOptionListHTML()+'</select></div>'
     +'<label style="display:flex;align-items:center;gap:5px;font-size:12px;color:var(--gray2);align-self:flex-end;padding:6px 0;white-space:nowrap"><input type="checkbox" id="ql-order-'+id+'" style="width:15px;height:15px;accent-color:var(--red)"> Needs to be ordered</label>'
     +'<button class="btn sm primary" onclick="quickAddPart(\''+id+'\')" style="align-self:flex-end">+ Add Part</button>'
     +'</div>'
@@ -2595,20 +2601,21 @@ function downloadInvoice(id){
 }
 function quickAddPart(woid){
   // One button: always adds to the WO's own parts list. If "Needs to be ordered" is checked,
-  // it also drops into Parts to Order (vendor left blank — assign it there whenever, same as any other part).
+  // it also drops into Parts to Order, tagged with whatever vendor was picked (or blank — assign it there whenever).
   var desc=document.getElementById('ql-note-'+woid).value.trim();
   if(!desc){alert('Enter a description.');return;}
   var qty=parseFloat(document.getElementById('ql-qty-'+woid).value)||1;
   var o=ORDERS[woid];if(!o)return;
   var pn=(document.getElementById('ql-pn-'+woid)||{}).value;pn=pn?pn.trim():'';
   var needsOrder=!!(document.getElementById('ql-order-'+woid)||{}).checked;
+  var vendor=(document.getElementById('ql-vendor-'+woid)||{}).value||'';
   var parts=(o.parts||[]).slice();
   parts.push({pn:pn,desc:desc,qty:qty,note:needsOrder?'On order':''});
   o.parts=parts;writeOrder(o);
   if(needsOrder){
     var equip=[o.brand,o.equipType,o.product?'P#'+o.product:'',o.model?'— '+o.model:'',o.serial?'SN:'+o.serial:''].filter(Boolean).join(' ');
     var item={pn:pn,desc:desc,qty:qty,equip:equip,notes:'',
-      woId:woid,woNum:o.woNum||null,vendor:'',
+      woId:woid,woNum:o.woNum||null,vendor:vendor,
       ordered:false,received:false,paid:false,added:today()};
     if(!PARTORDERS.other)PARTORDERS.other=[];
     PARTORDERS.other.push(item);
@@ -2703,12 +2710,11 @@ function deletePart(woid,idx){
   var parts=(o.parts||[]).slice();parts.splice(idx,1);
   o.parts=parts;writeOrder(o);openDet(woid);
 }
-var _poCategory=null;
-function openPartOrder(cat){
-  _poCategory=cat;
-  document.getElementById('po-mtitle').textContent='Add to '+(cat==='stihl'?'Stihl':'Other')+' Parts List';
+function openPartOrder(){
+  document.getElementById('po-mtitle').textContent='Add Special Order Part';
   ['po-pn','po-desc','po-equip','po-notes'].forEach(function(id){document.getElementById(id).value='';});
-  document.getElementById('po-qty').value='1';document.getElementById('po-paid').checked=false;
+  document.getElementById('po-qty').value='1';document.getElementById('po-paid').checked=false;document.getElementById('po-special').checked=false;
+  document.getElementById('po-vendor').innerHTML=vendorOptionListHTML();
   document.getElementById('part-order-modal').classList.add('open');
 }
 function savePartOrder(){
@@ -2718,10 +2724,11 @@ function savePartOrder(){
   var item={pn:pn,desc:desc,qty:parseInt(document.getElementById('po-qty').value)||1,
     equip:document.getElementById('po-equip').value.trim(),
     notes:document.getElementById('po-notes').value.trim(),
-    woId:null,woNum:null,vendor:_poCategory==='stihl'?'Stihl':'',
+    woId:null,woNum:null,vendor:document.getElementById('po-vendor').value||'',
+    special:document.getElementById('po-special').checked,
     ordered:false,received:false,paid:document.getElementById('po-paid').checked,added:today()};
-  if(!PARTORDERS[_poCategory])PARTORDERS[_poCategory]=[];
-  PARTORDERS[_poCategory].push(item);
+  if(!PARTORDERS.other)PARTORDERS.other=[];
+  PARTORDERS.other.push(item);
   writePartOrders();closeM('part-order-modal');renderPartOrders();
 }
 function togglePOFlag(cat,idx,flag){
@@ -2781,7 +2788,8 @@ function renderPartOrders(){
     el.appendChild(aCard);
     return;
   }
-  // Collect all pending parts across both categories, then render one card per vendor
+  // Collect all pending (not-received) parts across both categories, then render vendor cards:
+  // one "open cart" card (items not yet Ordered) + a separate card per closed batch (items Ordered together).
   var pending=[];
   ['stihl','other'].forEach(function(cat){(PARTORDERS[cat]||[]).forEach(function(p,i){if(!p.received)pending.push({cat:cat,i:i,p:p});});});
   if(!pending.length){el.innerHTML='<div class="empty" style="grid-column:1/-1;padding:16px 0">No parts to order.</div>';return;}
@@ -2793,14 +2801,94 @@ function renderPartOrders(){
   Object.keys(groups).forEach(function(v){if(vOrder.indexOf(v)<0)vOrder.push(v);});
   vOrder.forEach(function(v){
     var items=groups[v];if(!items||!items.length)return;
-    var card=document.createElement('div');card.className='card';card.style.marginBottom='0';
-    var hdr=document.createElement('div');hdr.className='card-hdr';
-    if(!v)hdr.style.color='#BA7517';
-    hdr.textContent=(v||'⚠ Needs Vendor')+' ('+items.length+')';
-    card.appendChild(hdr);
-    items.forEach(function(it){card.appendChild(buildPORow(it.cat,it.i,it.p));});
-    el.appendChild(card);
+    var open=items.filter(function(it){return !it.p.batchId;});
+    var batches={};
+    items.forEach(function(it){if(it.p.batchId){if(!batches[it.p.batchId])batches[it.p.batchId]=[];batches[it.p.batchId].push(it);}});
+    if(open.length)el.appendChild(buildVendorCard(v,null,open));
+    Object.keys(batches).sort(function(a,b){return (batches[b][0].p.batchOrderedAt||'').localeCompare(batches[a][0].p.batchOrderedAt||'');})
+      .forEach(function(bid){el.appendChild(buildVendorCard(v,bid,batches[bid]));});
   });
+}
+var _poCollapsed={};
+function vendorKeyFor(cat,p){return cat==='stihl'?'Stihl':(p.vendor||'');}
+function buildVendorCard(v,batchId,items){
+  var card=document.createElement('div');card.className='card';card.style.marginBottom='0';
+  var key=v+'|'+(batchId||'open');
+  var collapsed=!!_poCollapsed[key];
+  var hdrRow=document.createElement('div');hdrRow.style.cssText='display:flex;justify-content:space-between;align-items:center;gap:8px;cursor:pointer';
+  var hdr=document.createElement('div');hdr.className='card-hdr';hdr.style.marginBottom='0';
+  if(!v)hdr.style.color='#BA7517';
+  hdr.textContent=(v||'⚠ Needs Vendor')+(batchId?' — Ordered '+(items[0].p.batchOrderedAt||''):'')+' ('+items.length+')';
+  var caret=document.createElement('span');caret.textContent=collapsed?'▸':'▾';caret.style.cssText='font-size:12px;color:var(--muted)';
+  hdrRow.appendChild(hdr);hdrRow.appendChild(caret);
+  hdrRow.onclick=function(){_poCollapsed[key]=!collapsed;renderPartOrders();};
+  card.appendChild(hdrRow);
+  if(!collapsed){
+    var actions=document.createElement('div');actions.style.cssText='display:flex;gap:6px;flex-wrap:wrap;margin:8px 0';
+    var bRecAll=document.createElement('button');bRecAll.className='btn sm';bRecAll.textContent='Select All → Received';
+    bRecAll.onclick=function(){selectAllReceive(v,batchId);};
+    actions.appendChild(bRecAll);
+    if(!batchId){
+      var bClose=document.createElement('button');bClose.className='btn sm primary';bClose.textContent='✓ Mark Ordered — Close This List';
+      bClose.onclick=function(){closeVendorCart(v);};
+      actions.appendChild(bClose);
+    }
+    var bDl=document.createElement('button');bDl.className='btn sm';bDl.textContent='⬇ Download List';
+    bDl.onclick=function(){downloadPartsOrderList(v,batchId,items.map(function(it){return it.p;}));};
+    actions.appendChild(bDl);
+    card.appendChild(actions);
+    items.forEach(function(it){card.appendChild(buildPORow(it.cat,it.i,it.p));});
+  }
+  return card;
+}
+function closeVendorCart(v){
+  if(!confirm('Mark this list as Ordered? New parts added for '+(v||'this vendor')+' will start a fresh list.'))return;
+  var bid='b'+Date.now(),dt=today();
+  ['stihl','other'].forEach(function(cat){(PARTORDERS[cat]||[]).forEach(function(p){
+    if(p.received||p.batchId)return;
+    if(vendorKeyFor(cat,p)!==v)return;
+    p.batchId=bid;p.batchOrderedAt=dt;p.ordered=true;
+  });});
+  writePartOrders();renderPartOrders();
+}
+function selectAllReceive(v,batchId){
+  if(!confirm('Mark all items in this list as Received?'))return;
+  var dt=today();
+  ['stihl','other'].forEach(function(cat){(PARTORDERS[cat]||[]).forEach(function(p){
+    if(p.received)return;
+    if(vendorKeyFor(cat,p)!==v)return;
+    if((p.batchId||null)!==(batchId||null))return;
+    p.received=true;p.receivedOn=dt;p.ordered=true;
+  });});
+  writePartOrders();renderPartOrders();
+}
+function downloadPartsOrderList(v,batchId,items){
+  if(!(window.jspdf&&window.jspdf.jsPDF)){alert('PDF tool is still loading — give it a second and tap Download again.');return;}
+  if(!items||!items.length){alert('Nothing to list yet.');return;}
+  var jsPDF=window.jspdf.jsPDF;
+  var doc=new jsPDF({unit:'pt',format:'letter'});
+  var M=54,y=58;
+  doc.setFont('helvetica','bold');doc.setFontSize(16);
+  doc.text('MILLER HARDWARE COMPANY, INC.',M,y);
+  y+=32;
+  doc.setFont('helvetica','bold');doc.setFontSize(13);
+  doc.text('PARTS ORDER LIST',M,y);
+  y+=20;
+  doc.setFontSize(10);
+  var ref=[['Vendor',v||'(unassigned)'],['Date',batchId?(items[0].batchOrderedAt||today()):today()],['Status',batchId?'Ordered':'Not yet ordered']];
+  ref.forEach(function(r){doc.setFont('helvetica','bold');doc.text(r[0]+':',M,y);doc.setFont('helvetica','normal');doc.text(String(r[1]),M+100,y);y+=15;});
+  y+=10;
+  var body=items.map(function(p){return [p.pn||'',p.desc||'',String(p.qty||''),p.woNum?('WO #'+p.woNum):''];});
+  doc.autoTable({
+    startY:y,margin:{left:M,right:M},
+    head:[['Part #','Description','Qty','For']],
+    body:body,
+    theme:'grid',
+    styles:{font:'helvetica',fontSize:10,cellPadding:6,lineColor:[200,200,200],lineWidth:0.5,textColor:[26,26,26]},
+    headStyles:{fillColor:[26,26,26],textColor:255,fontStyle:'bold'},
+    columnStyles:{0:{cellWidth:120},2:{cellWidth:40,halign:'center'}}
+  });
+  doc.save('Miller-PartsOrder-'+(v||'Unassigned').replace(/[^a-z0-9]+/gi,'-')+'-'+today()+'.pdf');
 }
 function buildPORow(cat,i,p){
       var row=document.createElement('div');
@@ -2808,7 +2896,7 @@ function buildPORow(cat,i,p){
       row.style.cssText='display:flex;align-items:flex-start;gap:8px;padding:7px 0;border-bottom:1px solid var(--off)';
       if(p.received)row.style.opacity='0.65';
       var info=document.createElement('div');info.style.cssText='flex:1;min-width:0';
-      info.innerHTML='<div style="font-size:13px;font-weight:600">'+(p.pn?'<span style="font-family:monospace;color:var(--gray2);font-weight:700">'+p.pn+'</span> &nbsp;':'')+p.desc+(p.qty>1?' <span style="color:var(--muted)">×'+p.qty+'</span>':'')+'</div>'
+      info.innerHTML='<div style="font-size:13px;font-weight:600">'+(p.special?'<span style="font-size:10px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:#fff;background:var(--red);padding:2px 6px;border-radius:3px;margin-right:6px">Special Order</span>':'')+(p.pn?'<span style="font-family:monospace;color:var(--gray2);font-weight:700">'+p.pn+'</span> &nbsp;':'')+p.desc+(p.qty>1?' <span style="color:var(--muted)">×'+p.qty+'</span>':'')+'</div>'
         +(p.equip?'<div style="font-size:11px;color:var(--muted)">'+p.equip+'</div>':'')
         +(p.notes?'<div style="font-size:11px;color:var(--muted)">'+p.notes+'</div>':'')
         +(p.received&&p.receivedOn?'<div style="font-size:11px;color:#2d7d1e;font-weight:600">Received '+p.receivedOn+'</div>':'');
@@ -2822,8 +2910,8 @@ function buildPORow(cat,i,p){
         info.insertBefore(woDiv,info.children[1]||null);
       }
       var btns=document.createElement('div');btns.className='po-btns';btns.style.cssText='display:flex;gap:5px;flex-shrink:0;flex-wrap:wrap;align-items:center';
-      if(cat!=='stihl'){
-        // Only "Other" parts pick a vendor — Stihl parts have exactly one source
+      if(cat!=='stihl'&&!p.batchId){
+        // Only "Other" parts pick a vendor — Stihl parts have exactly one source. Locked once the list is closed (Ordered).
         var vSel=document.createElement('select');
         vSel.style.cssText='padding:4px 6px;border:1.5px solid var(--silver);border-radius:3px;font-size:12px;font-family:Barlow,sans-serif;background:var(--white);color:var(--dark);max-width:120px';
         var v0=document.createElement('option');v0.value='';v0.textContent='Vendor?';vSel.appendChild(v0);
@@ -2834,10 +2922,16 @@ function buildPORow(cat,i,p){
         vSel.onchange=(function(c,idx){return function(){PARTORDERS[c][idx].vendor=this.value;writePartOrders();renderPartOrders();};})(cat,i);
         btns.appendChild(vSel);
       }
-      var bOrd=document.createElement('button');
-      bOrd.className='btn sm'+(p.ordered?' primary':'');
-      bOrd.textContent=p.ordered?'✓ Ordered':'Order';
-      bOrd.onclick=(function(c,idx){return function(){togglePOFlag(c,idx,'ordered');};})(cat,i);
+      if(p.batchId){
+        var bTag=document.createElement('span');bTag.style.cssText='font-size:11px;color:var(--muted);white-space:nowrap';bTag.textContent='Ordered '+(p.batchOrderedAt||'');
+        btns.appendChild(bTag);
+      }else{
+        var bOrd=document.createElement('button');
+        bOrd.className='btn sm'+(p.ordered?' primary':'');
+        bOrd.textContent=p.ordered?'✓ Ordered':'Order';
+        bOrd.onclick=(function(c,idx){return function(){togglePOFlag(c,idx,'ordered');};})(cat,i);
+        btns.appendChild(bOrd);
+      }
       var bRec=document.createElement('button');
       bRec.className='btn sm'+(p.received?' success':'');
       bRec.textContent=p.received?'✓ In':'Received';
@@ -2849,7 +2943,7 @@ function buildPORow(cat,i,p){
       var bDel=document.createElement('button');
       bDel.className='btn sm del';bDel.textContent='✕';
       bDel.onclick=(function(c,idx){return function(){deletePO(c,idx);};})(cat,i);
-      btns.appendChild(bOrd);btns.appendChild(bRec);btns.appendChild(bPaid);btns.appendChild(bDel);
+      btns.appendChild(bRec);btns.appendChild(bPaid);btns.appendChild(bDel);
       row.appendChild(info);row.appendChild(btns);
       return row;
 }
