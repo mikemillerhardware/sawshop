@@ -423,6 +423,7 @@ hr{border:none;border-top:1.5px solid var(--silver);margin:12px 0}
       <button class="btn" id="po-archive-btn" onclick="togglePOArchive()">Received ✓</button>
     </div>
     <div class="po-grid" id="po-cards" style="display:grid;grid-template-columns:1fr 1fr;gap:14px;align-items:start"></div>
+    <div id="po-history" style="margin-top:10px"></div>
   </div>
 
   <div class="view" id="tab-settings">
@@ -2754,6 +2755,7 @@ function togglePOArchive(){
 }
 function renderPartOrders(){
   var el=document.getElementById('po-cards');if(!el)return;
+  renderPartHistory();
   var q=((document.getElementById('po-q')||{}).value||'').toLowerCase().trim();
   if(q){
     // Search ALL parts (pending + received) across both categories — matches part, equip, notes, vendor, WO#, customer
@@ -2889,6 +2891,50 @@ function downloadPartsOrderList(v,batchId,items){
     columnStyles:{0:{cellWidth:120},2:{cellWidth:40,halign:'center'}}
   });
   doc.save('Miller-PartsOrder-'+(v||'Unassigned').replace(/[^a-z0-9]+/gi,'-')+'-'+today()+'.pdf');
+}
+// ── Order History: past closed carts (fully received), kept for up to a year, tucked into a small collapsible list ──
+var _poHistoryOpen=false;
+var _poHistoryExpanded={};
+function renderPartHistory(){
+  var el=document.getElementById('po-history');if(!el)return;
+  var cutoff=new Date();cutoff.setDate(cutoff.getDate()-365);
+  var cutoffStr=cutoff.toISOString().slice(0,10);
+  var batches={};
+  ['stihl','other'].forEach(function(cat){(PARTORDERS[cat]||[]).forEach(function(p,i){
+    if(!p.batchId)return;
+    if(!batches[p.batchId])batches[p.batchId]={vendor:cat==='stihl'?'Stihl':(p.vendor||''),batchOrderedAt:p.batchOrderedAt||'',items:[]};
+    batches[p.batchId].items.push({cat:cat,i:i,p:p});
+  });});
+  var history=Object.keys(batches).map(function(k){return {id:k,b:batches[k]};})
+    .filter(function(x){return x.b.items.length&&x.b.items.every(function(it){return it.p.received;});})
+    .filter(function(x){return (x.b.batchOrderedAt||'0000-00-00')>=cutoffStr;})
+    .sort(function(a,b){return (b.b.batchOrderedAt||'').localeCompare(a.b.batchOrderedAt||'');});
+  el.innerHTML='';
+  if(!history.length)return;
+  var bar=document.createElement('div');
+  bar.style.cssText='font-size:12px;color:var(--muted);cursor:pointer;padding:6px 2px;user-select:none';
+  bar.textContent=(_poHistoryOpen?'▾':'▸')+' 📜 Order History ('+history.length+')';
+  bar.onclick=function(){_poHistoryOpen=!_poHistoryOpen;renderPartHistory();};
+  el.appendChild(bar);
+  if(!_poHistoryOpen)return;
+  var list=document.createElement('div');list.style.cssText='margin-top:4px;border:1px solid var(--silver);border-radius:4px;overflow:hidden';
+  history.forEach(function(x){
+    var expanded=!!_poHistoryExpanded[x.id];
+    var row=document.createElement('div');
+    row.style.cssText='padding:7px 10px;border-bottom:1px solid var(--off);cursor:pointer;font-size:12px;display:flex;justify-content:space-between;align-items:center;background:var(--white)';
+    row.innerHTML='<span>'+(x.b.vendor||'(unassigned)')+' — Ordered '+(x.b.batchOrderedAt||'')+' <span style="color:var(--muted)">('+x.b.items.length+' item'+(x.b.items.length!==1?'s':'')+')</span></span><span style="color:var(--muted)">'+(expanded?'▾':'▸')+'</span>';
+    row.onclick=function(){_poHistoryExpanded[x.id]=!expanded;renderPartHistory();};
+    list.appendChild(row);
+    if(expanded){
+      var detail=document.createElement('div');detail.style.cssText='padding:8px 10px;background:var(--off)';
+      var dlBtn=document.createElement('button');dlBtn.className='btn sm';dlBtn.textContent='⬇ Download List';
+      dlBtn.onclick=function(e){e.stopPropagation();downloadPartsOrderList(x.b.vendor,x.id,x.b.items.map(function(it){return it.p;}));};
+      detail.appendChild(dlBtn);
+      x.b.items.forEach(function(it){detail.appendChild(buildPORow(it.cat,it.i,it.p));});
+      list.appendChild(detail);
+    }
+  });
+  el.appendChild(list);
 }
 function buildPORow(cat,i,p){
       var row=document.createElement('div');
