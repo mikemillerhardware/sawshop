@@ -416,7 +416,7 @@ hr{border:none;border-top:1.5px solid var(--silver);margin:12px 0}
   </div>
 
   <div class="view" id="tab-parts">
-    <div style="font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-bottom:10px">Parts to Order &mdash; organized by vendor</div>
+    <div style="font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-bottom:10px">Parts to Order &mdash; organized by vendor <span id="po-loc-label" style="color:var(--red)"></span></div>
     <div class="srow">
       <input type="text" id="po-q" placeholder="Search part #, customer, WO#, equipment, vendor..." oninput="renderPartSearch()">
       <select id="po-mode" onchange="renderPartOrders()" style="padding:9px 10px;border:1.5px solid var(--silver);border-radius:3px;font-size:13px;font-family:Barlow,sans-serif;background:var(--white);color:var(--dark)">
@@ -2623,7 +2623,7 @@ function quickAddPart(woid){
   if(needsOrder){
     var equip=[o.brand,o.equipType,o.product?'P#'+o.product:'',o.model?'— '+o.model:'',o.serial?'SN:'+o.serial:''].filter(Boolean).join(' ');
     var item={pn:pn,desc:desc,qty:qty,equip:equip,notes:'',
-      woId:woid,woNum:o.woNum||null,vendor:vendor,
+      woId:woid,woNum:o.woNum||null,vendor:vendor,location:o.location||'Yellville',
       ordered:false,received:false,paid:false,added:today(),addedBy:myDisplayName()};
     if(!PARTORDERS.other)PARTORDERS.other=[];
     PARTORDERS.other.push(item);
@@ -2732,7 +2732,7 @@ function savePartOrder(){
   var item={pn:pn,desc:desc,qty:parseInt(document.getElementById('po-qty').value)||1,
     equip:document.getElementById('po-equip').value.trim(),
     notes:document.getElementById('po-notes').value.trim(),
-    woId:null,woNum:null,vendor:document.getElementById('po-vendor').value||'',
+    woId:null,woNum:null,vendor:document.getElementById('po-vendor').value||'',location:defaultLocation(),
     special:document.getElementById('po-special').checked,
     ordered:false,received:false,paid:document.getElementById('po-paid').checked,added:today(),addedBy:myDisplayName()};
   if(!PARTORDERS.other)PARTORDERS.other=[];
@@ -2754,13 +2754,16 @@ function deletePO(cat,idx){
   writePartOrders();renderPartOrders();
 }
 // Search is a separate, standalone lookup — it renders into its own area and never takes over the ordering view below it.
+// Parts to Order is strictly per-location — staff only ever see their own store's carts, never the other's, no toggle to peek.
+function partLocMatches(p){return (p.location||'Yellville')===defaultLocation();}
 function renderPartSearch(){
   var el=document.getElementById('po-search-results');if(!el)return;
   var q=((document.getElementById('po-q')||{}).value||'').toLowerCase().trim();
   if(!q){el.innerHTML='';return;}
-  // Search ALL parts (pending + received) across both categories — matches part, equip, notes, vendor, WO#, customer
+  // Search ALL parts (pending + received) across both categories, scoped to this store only — matches part, equip, notes, vendor, WO#, customer
   var matches=[];
   ['stihl','other'].forEach(function(cat){(PARTORDERS[cat]||[]).forEach(function(p,i){
+    if(!partLocMatches(p))return;
     var wo=p.woId&&ORDERS[p.woId]?ORDERS[p.woId]:null;
     var c=wo&&CUSTS[wo.custId]?CUSTS[wo.custId]:{};
     var txt=((p.pn||'')+' '+(p.desc||'')+' '+(p.equip||'')+' '+(p.notes||'')+' '+(p.vendor||'')+' '+(p.woNum||'')+' '+(c.first||'')+' '+(c.last||'')).toLowerCase();
@@ -2777,13 +2780,14 @@ function renderPartSearch(){
 }
 function renderPartOrders(){
   var el=document.getElementById('po-cards');if(!el)return;
+  var locLbl=document.getElementById('po-loc-label');if(locLbl)locLbl.textContent='— '+defaultLocation()+' only';
   renderPartSearch();
   var mode=(document.getElementById('po-mode')||{}).value||'pending';
   if(mode==='received'){
     // Parts Previously Ordered — everything ever marked received, newest first
     document.getElementById('po-history').innerHTML='';
     var rec=[];
-    ['stihl','other'].forEach(function(cat){(PARTORDERS[cat]||[]).forEach(function(p,i){if(p.received)rec.push({cat:cat,i:i,p:p});});});
+    ['stihl','other'].forEach(function(cat){(PARTORDERS[cat]||[]).forEach(function(p,i){if(p.received&&partLocMatches(p))rec.push({cat:cat,i:i,p:p});});});
     rec.sort(function(a,b){return (b.p.receivedOn||'').localeCompare(a.p.receivedOn||'');});
     el.innerHTML='';
     var aCard=document.createElement('div');aCard.className='card';aCard.style.cssText='grid-column:1/-1;margin-bottom:0';
@@ -2798,7 +2802,7 @@ function renderPartOrders(){
   // Collect all pending (not-received) parts across both categories, then render vendor cards:
   // one "open cart" card (items not yet Ordered) + a separate card per closed batch (items Ordered together).
   var pending=[];
-  ['stihl','other'].forEach(function(cat){(PARTORDERS[cat]||[]).forEach(function(p,i){if(!p.received)pending.push({cat:cat,i:i,p:p});});});
+  ['stihl','other'].forEach(function(cat){(PARTORDERS[cat]||[]).forEach(function(p,i){if(!p.received&&partLocMatches(p))pending.push({cat:cat,i:i,p:p});});});
   if(!pending.length){el.innerHTML='<div class="empty" style="grid-column:1/-1;padding:16px 0">No parts to order.</div>';return;}
   el.innerHTML='';
   var groups={};
@@ -2891,7 +2895,7 @@ function buildVendorCard(v,batchId,items){
         var desc=descIn.value.trim();
         if(!desc){alert('Enter a description.');return;}
         var item={pn:pnIn.value.trim(),desc:desc,qty:parseInt(qtyIn.value)||1,equip:'',notes:'',
-          woId:null,woNum:null,vendor:v,special:specCk.checked,
+          woId:null,woNum:null,vendor:v,location:defaultLocation(),special:specCk.checked,
           ordered:false,received:false,paid:false,added:today(),addedBy:myDisplayName()};
         if(!PARTORDERS.other)PARTORDERS.other=[];
         PARTORDERS.other.push(item);
@@ -2909,6 +2913,7 @@ function closeVendorCart(v){
   var bid='b'+Date.now(),dt=today();
   ['stihl','other'].forEach(function(cat){(PARTORDERS[cat]||[]).forEach(function(p){
     if(p.received||p.batchId)return;
+    if(!partLocMatches(p))return;
     if(vendorKeyFor(cat,p)!==v)return;
     p.batchId=bid;p.batchOrderedAt=dt;p.ordered=true;
   });});
@@ -2919,6 +2924,7 @@ function selectAllReceive(v,batchId){
   var dt=today();
   ['stihl','other'].forEach(function(cat){(PARTORDERS[cat]||[]).forEach(function(p){
     if(p.received)return;
+    if(!partLocMatches(p))return;
     if(vendorKeyFor(cat,p)!==v)return;
     if((p.batchId||null)!==(batchId||null))return;
     p.received=true;p.receivedOn=dt;p.ordered=true;
@@ -2978,6 +2984,7 @@ function renderPartHistory(){
   var batches={};
   ['stihl','other'].forEach(function(cat){(PARTORDERS[cat]||[]).forEach(function(p,i){
     if(!p.batchId)return;
+    if(!partLocMatches(p))return;
     if(!batches[p.batchId])batches[p.batchId]={vendor:cat==='stihl'?'Stihl':(p.vendor||''),batchOrderedAt:p.batchOrderedAt||'',items:[]};
     batches[p.batchId].items.push({cat:cat,i:i,p:p});
   });});
