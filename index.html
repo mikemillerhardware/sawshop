@@ -2816,14 +2816,15 @@ function vendorKeyFor(cat,p){return cat==='stihl'?'Stihl':(p.vendor||'');}
 function buildVendorCard(v,batchId,items){
   var card=document.createElement('div');card.className='card';card.style.marginBottom='0';
   var key=v+'|'+(batchId||'open');
-  var collapsed=!!_poCollapsed[key];
+  // Collapsed by default — a quick "vendor + count" glance across every list at once; click to open the full cart.
+  var collapsed=_poCollapsed[key]!==false;
   var hdrRow=document.createElement('div');hdrRow.style.cssText='display:flex;justify-content:space-between;align-items:center;gap:8px;cursor:pointer';
   var hdr=document.createElement('div');hdr.className='card-hdr';hdr.style.marginBottom='0';
   if(!v)hdr.style.color='#BA7517';
   hdr.textContent=(v||'⚠ Needs Vendor')+(batchId?' — Ordered '+(items[0].p.batchOrderedAt||''):'')+' ('+items.length+')';
   var caret=document.createElement('span');caret.textContent=collapsed?'▸':'▾';caret.style.cssText='font-size:12px;color:var(--muted)';
   hdrRow.appendChild(hdr);hdrRow.appendChild(caret);
-  hdrRow.onclick=function(){_poCollapsed[key]=!collapsed;renderPartOrders();};
+  hdrRow.onclick=function(){_poCollapsed[key]=collapsed?false:true;renderPartOrders();};
   card.appendChild(hdrRow);
   if(!collapsed){
     var actions=document.createElement('div');actions.style.cssText='display:flex;gap:6px;flex-wrap:wrap;margin:8px 0';
@@ -2839,6 +2840,30 @@ function buildVendorCard(v,batchId,items){
     bDl.onclick=function(){downloadPartsOrderList(v,batchId,items.map(function(it){return it.p;}));};
     actions.appendChild(bDl);
     card.appendChild(actions);
+    if(!batchId){
+      // Add straight into this open cart — vendor is already implied by the card you're in.
+      var addRow=document.createElement('div');
+      addRow.style.cssText='display:flex;gap:6px;flex-wrap:wrap;align-items:flex-end;padding:8px;background:var(--off);border-radius:3px;margin-bottom:8px';
+      var pnIn=document.createElement('input');pnIn.type='text';pnIn.placeholder='Part # (optional)';pnIn.style.cssText='width:110px;padding:5px 8px;border:1.5px solid var(--silver);border-radius:3px;font-size:12px;font-family:Barlow,sans-serif;background:var(--white);color:var(--dark)';
+      var descIn=document.createElement('input');descIn.type='text';descIn.placeholder='Description';descIn.style.cssText='flex:1;min-width:120px;padding:5px 8px;border:1.5px solid var(--silver);border-radius:3px;font-size:12px;font-family:Barlow,sans-serif;background:var(--white);color:var(--dark)';
+      var qtyIn=document.createElement('input');qtyIn.type='number';qtyIn.value='1';qtyIn.min='1';qtyIn.style.cssText='width:55px;padding:5px 8px;border:1.5px solid var(--silver);border-radius:3px;font-size:12px;font-family:Barlow,sans-serif;background:var(--white);color:var(--dark)';
+      var specLbl=document.createElement('label');specLbl.style.cssText='display:flex;align-items:center;gap:4px;font-size:11px;color:var(--gray2);white-space:nowrap;padding-bottom:6px';
+      var specCk=document.createElement('input');specCk.type='checkbox';specCk.style.cssText='width:14px;height:14px;accent-color:var(--red)';
+      specLbl.appendChild(specCk);specLbl.appendChild(document.createTextNode('Special'));
+      var addBtn=document.createElement('button');addBtn.className='btn sm primary';addBtn.textContent='+ Add to This Cart';
+      addBtn.onclick=function(){
+        var desc=descIn.value.trim();
+        if(!desc){alert('Enter a description.');return;}
+        var item={pn:pnIn.value.trim(),desc:desc,qty:parseInt(qtyIn.value)||1,equip:'',notes:'',
+          woId:null,woNum:null,vendor:v,special:specCk.checked,
+          ordered:false,received:false,paid:false,added:today()};
+        if(!PARTORDERS.other)PARTORDERS.other=[];
+        PARTORDERS.other.push(item);
+        writePartOrders();renderPartOrders();
+      };
+      addRow.appendChild(pnIn);addRow.appendChild(descIn);addRow.appendChild(qtyIn);addRow.appendChild(specLbl);addRow.appendChild(addBtn);
+      card.appendChild(addRow);
+    }
     items.forEach(function(it){card.appendChild(buildPORow(it.cat,it.i,it.p));});
   }
   return card;
