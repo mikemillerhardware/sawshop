@@ -419,13 +419,13 @@ hr{border:none;border-top:1.5px solid var(--silver);margin:12px 0}
     <div style="font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-bottom:10px">Parts to Order &mdash; organized by vendor</div>
     <div class="srow">
       <input type="text" id="po-q" placeholder="Search part #, customer, WO#, equipment, vendor..." oninput="renderPartSearch()">
-    </div>
-    <div id="po-search-results" style="margin-bottom:10px"></div>
-    <div class="srow">
       <select id="po-mode" onchange="renderPartOrders()" style="padding:9px 10px;border:1.5px solid var(--silver);border-radius:3px;font-size:13px;font-family:Barlow,sans-serif;background:var(--white);color:var(--dark)">
         <option value="pending">📦 Parts on Order</option>
         <option value="received">✅ Parts Previously Ordered</option>
       </select>
+    </div>
+    <div id="po-search-results" style="margin-bottom:10px"></div>
+    <div class="srow">
       <button class="btn primary" onclick="openPartOrder(false)">+ Add Part</button>
       <button class="btn primary" onclick="openPartOrder(true)">+ Special Order Part</button>
     </div>
@@ -2872,6 +2872,9 @@ function buildVendorCard(v,batchId,items){
     var bDl=document.createElement('button');bDl.className='btn sm';bDl.textContent='⬇ Download List';
     bDl.onclick=function(){downloadPartsOrderList(v,batchId,items.map(function(it){return it.p;}));};
     actions.appendChild(bDl);
+    var bPr=document.createElement('button');bPr.className='btn sm';bPr.textContent='🖨 Print List';
+    bPr.onclick=function(){printPartsOrderList(v,batchId,items.map(function(it){return it.p;}));};
+    actions.appendChild(bPr);
     card.appendChild(actions);
     if(!batchId){
       // Add straight into this open cart — vendor is already implied by the card you're in.
@@ -2950,6 +2953,21 @@ function downloadPartsOrderList(v,batchId,items){
   });
   doc.save('Miller-PartsOrder-'+(v||'Unassigned').replace(/[^a-z0-9]+/gi,'-')+'-'+today()+'.pdf');
 }
+function printPartsOrderList(v,batchId,items){
+  if(!items||!items.length){alert('Nothing to list yet.');return;}
+  var rows=items.map(function(p){return '<tr><td style="padding:6px 8px;border:1px solid #999;font-family:monospace">'+(p.pn||'')+'</td><td style="padding:6px 8px;border:1px solid #999">'+(p.desc||'')+'</td><td style="padding:6px 8px;border:1px solid #999;text-align:center">'+(p.qty||'')+'</td><td style="padding:6px 8px;border:1px solid #999">'+(p.woNum?'WO #'+p.woNum:'')+'</td></tr>';}).join('');
+  var html='<div style="font-family:Arial,sans-serif;max-width:720px;margin:0 auto;padding:22px;color:#1a1a1a">'
+    +'<div style="font-weight:700;font-size:18px">MILLER HARDWARE COMPANY, INC.</div>'
+    +'<div style="font-weight:700;font-size:14px;margin-top:14px">PARTS ORDER LIST</div>'
+    +'<div style="font-size:12px;margin-top:10px"><strong>Vendor:</strong> '+(v||'(unassigned)')+'</div>'
+    +'<div style="font-size:12px"><strong>Date:</strong> '+(batchId?(items[0].batchOrderedAt||today()):today())+'</div>'
+    +'<div style="font-size:12px;margin-bottom:12px"><strong>Status:</strong> '+(batchId?'Ordered':'Not yet ordered')+'</div>'
+    +'<table style="width:100%;border-collapse:collapse;font-size:12px"><thead><tr>'
+    +'<th style="padding:6px 8px;border:1px solid #999;text-align:left">Part #</th><th style="padding:6px 8px;border:1px solid #999;text-align:left">Description</th><th style="padding:6px 8px;border:1px solid #999;text-align:center">Qty</th><th style="padding:6px 8px;border:1px solid #999;text-align:left">For</th>'
+    +'</tr></thead><tbody>'+rows+'</tbody></table></div>';
+  var pa=document.getElementById('print-area');pa.innerHTML=html;pa.style.display='block';
+  setTimeout(function(){window.print();setTimeout(function(){pa.style.display='none';},500);},150);
+}
 // ── Order History: past closed carts (fully received), kept for up to a year, tucked into a small collapsible list ──
 var _poHistoryOpen=false;
 var _poHistoryExpanded={};
@@ -2988,6 +3006,10 @@ function renderPartHistory(){
       var dlBtn=document.createElement('button');dlBtn.className='btn sm';dlBtn.textContent='⬇ Download List';
       dlBtn.onclick=function(e){e.stopPropagation();downloadPartsOrderList(x.b.vendor,x.id,x.b.items.map(function(it){return it.p;}));};
       detail.appendChild(dlBtn);
+      var prBtn=document.createElement('button');prBtn.className='btn sm';prBtn.textContent='🖨 Print List';
+      prBtn.style.marginLeft='6px';
+      prBtn.onclick=function(e){e.stopPropagation();printPartsOrderList(x.b.vendor,x.id,x.b.items.map(function(it){return it.p;}));};
+      detail.appendChild(prBtn);
       x.b.items.forEach(function(it){detail.appendChild(buildPORow(it.cat,it.i,it.p));});
       list.appendChild(detail);
     }
