@@ -418,9 +418,16 @@ hr{border:none;border-top:1.5px solid var(--silver);margin:12px 0}
   <div class="view" id="tab-parts">
     <div style="font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-bottom:10px">Parts to Order &mdash; organized by vendor</div>
     <div class="srow">
-      <input type="text" id="po-q" placeholder="Search part #, customer, WO#, equipment, vendor..." oninput="renderPartOrders()">
-      <button class="btn primary" onclick="openPartOrder()">+ Special Order Part</button>
-      <button class="btn" id="po-archive-btn" onclick="togglePOArchive()">Received ✓</button>
+      <input type="text" id="po-q" placeholder="Search part #, customer, WO#, equipment, vendor..." oninput="renderPartSearch()">
+    </div>
+    <div id="po-search-results" style="margin-bottom:10px"></div>
+    <div class="srow">
+      <select id="po-mode" onchange="renderPartOrders()" style="padding:9px 10px;border:1.5px solid var(--silver);border-radius:3px;font-size:13px;font-family:Barlow,sans-serif;background:var(--white);color:var(--dark)">
+        <option value="pending">📦 Parts on Order</option>
+        <option value="received">✅ Parts Previously Ordered</option>
+      </select>
+      <button class="btn primary" onclick="openPartOrder(false)">+ Add Part</button>
+      <button class="btn primary" onclick="openPartOrder(true)">+ Special Order Part</button>
     </div>
     <div class="po-grid" id="po-cards" style="display:grid;grid-template-columns:1fr 1fr;gap:14px;align-items:start"></div>
     <div id="po-history" style="margin-top:10px"></div>
@@ -2711,10 +2718,10 @@ function deletePart(woid,idx){
   var parts=(o.parts||[]).slice();parts.splice(idx,1);
   o.parts=parts;writeOrder(o);openDet(woid);
 }
-function openPartOrder(){
-  document.getElementById('po-mtitle').textContent='Add Special Order Part';
+function openPartOrder(preSpecial){
+  document.getElementById('po-mtitle').textContent=preSpecial?'Add Special Order Part':'Add Part';
   ['po-pn','po-desc','po-equip','po-notes'].forEach(function(id){document.getElementById(id).value='';});
-  document.getElementById('po-qty').value='1';document.getElementById('po-paid').checked=false;document.getElementById('po-special').checked=false;
+  document.getElementById('po-qty').value='1';document.getElementById('po-paid').checked=false;document.getElementById('po-special').checked=!!preSpecial;
   document.getElementById('po-vendor').innerHTML=vendorOptionListHTML();
   document.getElementById('part-order-modal').classList.add('open');
 }
@@ -2746,50 +2753,48 @@ function deletePO(cat,idx){
   PARTORDERS[cat].splice(idx,1);
   writePartOrders();renderPartOrders();
 }
-var _poShowArchive=false;
-function togglePOArchive(){
-  _poShowArchive=!_poShowArchive;
-  var b=document.getElementById('po-archive-btn');
-  if(b)b.classList.toggle('primary',_poShowArchive);
-  renderPartOrders();
+// Search is a separate, standalone lookup — it renders into its own area and never takes over the ordering view below it.
+function renderPartSearch(){
+  var el=document.getElementById('po-search-results');if(!el)return;
+  var q=((document.getElementById('po-q')||{}).value||'').toLowerCase().trim();
+  if(!q){el.innerHTML='';return;}
+  // Search ALL parts (pending + received) across both categories — matches part, equip, notes, vendor, WO#, customer
+  var matches=[];
+  ['stihl','other'].forEach(function(cat){(PARTORDERS[cat]||[]).forEach(function(p,i){
+    var wo=p.woId&&ORDERS[p.woId]?ORDERS[p.woId]:null;
+    var c=wo&&CUSTS[wo.custId]?CUSTS[wo.custId]:{};
+    var txt=((p.pn||'')+' '+(p.desc||'')+' '+(p.equip||'')+' '+(p.notes||'')+' '+(p.vendor||'')+' '+(p.woNum||'')+' '+(c.first||'')+' '+(c.last||'')).toLowerCase();
+    if(txt.indexOf(q)>=0)matches.push({cat:cat,i:i,p:p});
+  });});
+  el.innerHTML='';
+  var sCard=document.createElement('div');sCard.className='card';sCard.style.marginBottom='0';
+  var sHdr=document.createElement('div');sHdr.className='card-hdr';
+  sHdr.textContent='Search Results ('+matches.length+') — includes received parts';
+  sCard.appendChild(sHdr);
+  if(!matches.length){var none=document.createElement('div');none.className='empty';none.style.padding='10px 0';none.textContent='No parts match.';sCard.appendChild(none);}
+  else{matches.forEach(function(it){sCard.appendChild(buildPORow(it.cat,it.i,it.p));});}
+  el.appendChild(sCard);
 }
 function renderPartOrders(){
   var el=document.getElementById('po-cards');if(!el)return;
-  renderPartHistory();
-  var q=((document.getElementById('po-q')||{}).value||'').toLowerCase().trim();
-  if(q){
-    // Search ALL parts (pending + received) across both categories — matches part, equip, notes, vendor, WO#, customer
-    var matches=[];
-    ['stihl','other'].forEach(function(cat){(PARTORDERS[cat]||[]).forEach(function(p,i){
-      var wo=p.woId&&ORDERS[p.woId]?ORDERS[p.woId]:null;
-      var c=wo&&CUSTS[wo.custId]?CUSTS[wo.custId]:{};
-      var txt=((p.pn||'')+' '+(p.desc||'')+' '+(p.equip||'')+' '+(p.notes||'')+' '+(p.vendor||'')+' '+(p.woNum||'')+' '+(c.first||'')+' '+(c.last||'')).toLowerCase();
-      if(txt.indexOf(q)>=0)matches.push({cat:cat,i:i,p:p});
-    });});
-    el.innerHTML='';
-    var sCard=document.createElement('div');sCard.className='card';sCard.style.cssText='grid-column:1/-1;margin-bottom:0';
-    var sHdr=document.createElement('div');sHdr.className='card-hdr';
-    sHdr.textContent='Search Results ('+matches.length+') — includes received parts';
-    sCard.appendChild(sHdr);
-    if(!matches.length){var none=document.createElement('div');none.className='empty';none.style.padding='10px 0';none.textContent='No parts match.';sCard.appendChild(none);}
-    else{matches.forEach(function(it){sCard.appendChild(buildPORow(it.cat,it.i,it.p));});}
-    el.appendChild(sCard);
-    return;
-  }
-  if(_poShowArchive){
-    // Received Archive — everything ever marked received, newest first
+  renderPartSearch();
+  var mode=(document.getElementById('po-mode')||{}).value||'pending';
+  if(mode==='received'){
+    // Parts Previously Ordered — everything ever marked received, newest first
+    document.getElementById('po-history').innerHTML='';
     var rec=[];
     ['stihl','other'].forEach(function(cat){(PARTORDERS[cat]||[]).forEach(function(p,i){if(p.received)rec.push({cat:cat,i:i,p:p});});});
     rec.sort(function(a,b){return (b.p.receivedOn||'').localeCompare(a.p.receivedOn||'');});
     el.innerHTML='';
     var aCard=document.createElement('div');aCard.className='card';aCard.style.cssText='grid-column:1/-1;margin-bottom:0';
-    var aHdr=document.createElement('div');aHdr.className='card-hdr';aHdr.textContent='Received Archive ('+rec.length+')';
+    var aHdr=document.createElement('div');aHdr.className='card-hdr';aHdr.textContent='Parts Previously Ordered ('+rec.length+')';
     aCard.appendChild(aHdr);
     if(!rec.length){var aNone=document.createElement('div');aNone.className='empty';aNone.style.padding='10px 0';aNone.textContent='Nothing received yet.';aCard.appendChild(aNone);}
     else{rec.forEach(function(it){aCard.appendChild(buildPORow(it.cat,it.i,it.p));});}
     el.appendChild(aCard);
     return;
   }
+  renderPartHistory();
   // Collect all pending (not-received) parts across both categories, then render vendor cards:
   // one "open cart" card (items not yet Ordered) + a separate card per closed batch (items Ordered together).
   var pending=[];
