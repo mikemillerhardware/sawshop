@@ -2837,7 +2837,7 @@ function buildVendorCard(v,batchId,items){
   var collapsed=_poCollapsed[key]!==false;
   var hdrRow=document.createElement('div');hdrRow.style.cssText='display:flex;justify-content:space-between;align-items:center;gap:10px;cursor:pointer';
   var hdrLeft=document.createElement('div');hdrLeft.style.cssText='display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;min-width:0';
-  var hdr=document.createElement('div');hdr.className='card-hdr';hdr.style.marginBottom='0';
+  var hdr=document.createElement('div');hdr.className='card-hdr';hdr.style.cssText='margin-bottom:0;font-size:18px;font-weight:800;color:var(--red)';
   if(!v)hdr.style.color='#BA7517';
   hdr.textContent=(v||'⚠ Needs Vendor')+(batchId?' — Ordered '+(items[0].p.batchOrderedAt||''):'')+' ('+items.length+')';
   hdrLeft.appendChild(hdr);
