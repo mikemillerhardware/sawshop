@@ -2617,7 +2617,7 @@ function quickAddPart(woid){
     var equip=[o.brand,o.equipType,o.product?'P#'+o.product:'',o.model?'— '+o.model:'',o.serial?'SN:'+o.serial:''].filter(Boolean).join(' ');
     var item={pn:pn,desc:desc,qty:qty,equip:equip,notes:'',
       woId:woid,woNum:o.woNum||null,vendor:vendor,
-      ordered:false,received:false,paid:false,added:today()};
+      ordered:false,received:false,paid:false,added:today(),addedBy:myDisplayName()};
     if(!PARTORDERS.other)PARTORDERS.other=[];
     PARTORDERS.other.push(item);
     writePartOrders();renderPartOrders();
@@ -2727,7 +2727,7 @@ function savePartOrder(){
     notes:document.getElementById('po-notes').value.trim(),
     woId:null,woNum:null,vendor:document.getElementById('po-vendor').value||'',
     special:document.getElementById('po-special').checked,
-    ordered:false,received:false,paid:document.getElementById('po-paid').checked,added:today()};
+    ordered:false,received:false,paid:document.getElementById('po-paid').checked,added:today(),addedBy:myDisplayName()};
   if(!PARTORDERS.other)PARTORDERS.other=[];
   PARTORDERS.other.push(item);
   writePartOrders();closeM('part-order-modal');renderPartOrders();
@@ -2856,7 +2856,7 @@ function buildVendorCard(v,batchId,items){
         if(!desc){alert('Enter a description.');return;}
         var item={pn:pnIn.value.trim(),desc:desc,qty:parseInt(qtyIn.value)||1,equip:'',notes:'',
           woId:null,woNum:null,vendor:v,special:specCk.checked,
-          ordered:false,received:false,paid:false,added:today()};
+          ordered:false,received:false,paid:false,added:today(),addedBy:myDisplayName()};
         if(!PARTORDERS.other)PARTORDERS.other=[];
         PARTORDERS.other.push(item);
         writePartOrders();renderPartOrders();
@@ -2970,6 +2970,7 @@ function buildPORow(cat,i,p){
       info.innerHTML='<div style="font-size:13px;font-weight:600">'+(p.special?'<span style="font-size:10px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:#fff;background:var(--red);padding:2px 6px;border-radius:3px;margin-right:6px">Special Order</span>':'')+(p.pn?'<span style="font-family:monospace;color:var(--gray2);font-weight:700">'+p.pn+'</span> &nbsp;':'')+p.desc+(p.qty>1?' <span style="color:var(--muted)">×'+p.qty+'</span>':'')+'</div>'
         +(p.equip?'<div style="font-size:11px;color:var(--muted)">'+p.equip+'</div>':'')
         +(p.notes?'<div style="font-size:11px;color:var(--muted)">'+p.notes+'</div>':'')
+        +(p.addedBy?'<div style="font-size:11px;color:var(--muted)">Added by '+p.addedBy+'</div>':'')
         +(p.received&&p.receivedOn?'<div style="font-size:11px;color:#2d7d1e;font-weight:600">Received '+p.receivedOn+'</div>':'');
       if(p.woNum){
         var wo=p.woId&&ORDERS[p.woId]?ORDERS[p.woId]:null;
