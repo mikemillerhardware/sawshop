@@ -429,7 +429,7 @@ hr{border:none;border-top:1.5px solid var(--silver);margin:12px 0}
       <button class="btn primary" onclick="openPartOrder(false)">+ Add Part</button>
       <button class="btn primary" onclick="openPartOrder(true)">+ Special Order Part</button>
     </div>
-    <div class="po-grid" id="po-cards" style="display:grid;grid-template-columns:1fr 1fr;gap:14px;align-items:start"></div>
+    <div class="po-grid" id="po-cards" style="display:grid;grid-template-columns:1fr;gap:10px;align-items:start"></div>
     <div id="po-history" style="margin-top:10px"></div>
   </div>
 
@@ -2804,8 +2804,11 @@ function renderPartOrders(){
   var groups={};
   // Stihl parts always group under "Stihl" — single-source, no vendor choice needed
   pending.forEach(function(it){var v=it.cat==='stihl'?'Stihl':(it.p.vendor||'');if(!groups[v])groups[v]=[];groups[v].push(it);});
-  var vOrder=['','Stihl'].concat(VENDORS.filter(function(v){return v!=='Stihl';}));
-  Object.keys(groups).forEach(function(v){if(vOrder.indexOf(v)<0)vOrder.push(v);});
+  // Alphabetical by vendor name — "⚠ Needs Vendor" (blank) pinned first since it's a warning state, not just a name.
+  var vOrder=Object.keys(groups).sort(function(a,b){
+    if(!a&&!b)return 0;if(!a)return -1;if(!b)return 1;
+    return a.toLowerCase().localeCompare(b.toLowerCase());
+  });
   vOrder.forEach(function(v){
     var items=groups[v];if(!items||!items.length)return;
     var open=items.filter(function(it){return !it.p.batchId;});
@@ -2818,17 +2821,42 @@ function renderPartOrders(){
 }
 var _poCollapsed={};
 function vendorKeyFor(cat,p){return cat==='stihl'?'Stihl':(p.vendor||'');}
+function batchProgress(batchId){
+  var total=0,received=0;
+  ['stihl','other'].forEach(function(cat){(PARTORDERS[cat]||[]).forEach(function(p){if(p.batchId===batchId){total++;if(p.received)received++;}});});
+  return {total:total,received:received};
+}
 function buildVendorCard(v,batchId,items){
   var card=document.createElement('div');card.className='card';card.style.marginBottom='0';
   var key=v+'|'+(batchId||'open');
   // Collapsed by default — a quick "vendor + count" glance across every list at once; click to open the full cart.
   var collapsed=_poCollapsed[key]!==false;
-  var hdrRow=document.createElement('div');hdrRow.style.cssText='display:flex;justify-content:space-between;align-items:center;gap:8px;cursor:pointer';
+  var hdrRow=document.createElement('div');hdrRow.style.cssText='display:flex;justify-content:space-between;align-items:center;gap:10px;cursor:pointer';
+  var hdrLeft=document.createElement('div');hdrLeft.style.cssText='display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;min-width:0';
   var hdr=document.createElement('div');hdr.className='card-hdr';hdr.style.marginBottom='0';
   if(!v)hdr.style.color='#BA7517';
   hdr.textContent=(v||'⚠ Needs Vendor')+(batchId?' — Ordered '+(items[0].p.batchOrderedAt||''):'')+' ('+items.length+')';
-  var caret=document.createElement('span');caret.textContent=collapsed?'▸':'▾';caret.style.cssText='font-size:12px;color:var(--muted)';
-  hdrRow.appendChild(hdr);hdrRow.appendChild(caret);
+  hdrLeft.appendChild(hdr);
+  // Wider single-column cards have room for a bit more context on the collapsed line.
+  var infoParts=[];
+  if(batchId){
+    var prog=batchProgress(batchId);
+    infoParts.push(prog.received+' of '+prog.total+' received');
+  }else{
+    var totalQty=items.reduce(function(s,it){return s+(it.p.qty||0);},0);
+    var specialCount=items.filter(function(it){return it.p.special;}).length;
+    var oldest=items.map(function(it){return it.p.added;}).filter(Boolean).sort()[0];
+    infoParts.push('qty '+totalQty);
+    if(specialCount)infoParts.push(specialCount+' special');
+    if(oldest)infoParts.push('oldest added '+oldest);
+  }
+  if(infoParts.length){
+    var infoSpan=document.createElement('span');infoSpan.style.cssText='font-size:12px;color:var(--muted)';
+    infoSpan.textContent=infoParts.join(' · ');
+    hdrLeft.appendChild(infoSpan);
+  }
+  var caret=document.createElement('span');caret.textContent=collapsed?'▸':'▾';caret.style.cssText='font-size:12px;color:var(--muted);flex-shrink:0';
+  hdrRow.appendChild(hdrLeft);hdrRow.appendChild(caret);
   hdrRow.onclick=function(){_poCollapsed[key]=collapsed?false:true;renderPartOrders();};
   card.appendChild(hdrRow);
   if(!collapsed){
